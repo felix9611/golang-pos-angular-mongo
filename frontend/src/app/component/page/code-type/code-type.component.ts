@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { getApiWithAuth, postApiWithAuth } from '../../../../tool/httpRequest-auth'
+import { deleteApiWithAuth, getApiWithAuth, postApiWithAuth } from '../../../../tool/httpRequest-auth'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'
@@ -81,7 +81,7 @@ export class CodeTypeComponent {
     }
 
     editForm: CodeTypeForm = {
-        _id: '',
+        id: '',
         valueCode: '',
         valueName: '',
         type: ''
@@ -100,7 +100,7 @@ export class CodeTypeComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/base/code-type/create' : `/base/code-type/update`
+        const url = this.editForm.id === '' ? '/base/code-type/create' : `/base/code-type/update`
 
         const res = await postApiWithAuth(url, this.editForm)
 
@@ -112,7 +112,7 @@ export class CodeTypeComponent {
             this.loadCodeTypeLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 valueCode: '',
                 valueName: '',
                 type: ''
@@ -144,9 +144,9 @@ export class CodeTypeComponent {
     }
 
     async handleRemove() {
-        const url = `/base/code-type/remove/${this.handleRemoveId}`
+        const url = `/base/code-type/void/${this.handleRemoveId}`
 
-        const res: any = await getApiWithAuth(url)
+        const res: any = await deleteApiWithAuth(url)
 
         this.message.info(res.msg)
 
