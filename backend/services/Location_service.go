@@ -223,6 +223,9 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 		"$or": []bson.M{
 			{"placeCode": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 			{"placeName": bson.M{"$regex": pageDto.Name, "$options": "i"}},
+			{"country": bson.M{"$regex": pageDto.Name, "$options": "i"}},
+			{"address": bson.M{"$regex": pageDto.Name, "$options": "i"}},
+			{"zipCode": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 		},
 	}
 
