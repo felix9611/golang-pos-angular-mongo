@@ -79,7 +79,7 @@ export class DepartmentComponent {
     }
 
     editForm: DepartmentForm = {
-        _id: '',
+        id: '',
         deptCode: '',
         deptName: '',
         remark: ''
@@ -98,12 +98,12 @@ export class DepartmentComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/sys/department/create' : `/sys/department/update`
+        const url = this.editForm.id === '' ? '/sys/department/create' : `/sys/department/update/${this.editForm.id}`
 
         const res = await postApiWithAuth(url, {
             
             ...this.editForm,
-            ...this.editForm._id ? { _id: this.editForm._id} : {},
+            ...this.editForm.id ? { _id: this.editForm.id} : {},
         })
 
         if (res.msg) {
@@ -114,7 +114,7 @@ export class DepartmentComponent {
             this.loadDepartmentLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 deptCode: '',
                 deptName: '',
                 remark: ''
@@ -124,8 +124,8 @@ export class DepartmentComponent {
 
     async loadDepartmentLists() {
         const res = await postApiWithAuth('/sys/department/list', this.searchForm)
-        this.dataLists = res.lists
-        this.totals = res.total
+        this.dataLists = res.data.lists
+        this.totals = res.data.total
     }
 
     showDialog() {
@@ -146,11 +146,11 @@ export class DepartmentComponent {
     }
 
     async handleRemove() {
-        const url = `/sys/department/remove/${this.handleRemoveId}`
+        const url = `/sys/department/void/${this.handleRemoveId}`
 
-        const res: any = await getApiWithAuth(url)
+        const res: any = await deleteApiWithAuth(url)
 
-        this.message.info(res.msg)
+        this.message.info(res.message)
 
         this.closeRemoveDialog()
         this.loadDepartmentLists()
@@ -163,7 +163,7 @@ export class DepartmentComponent {
 
     async getOneData(id:string) {
         const res = await getApiWithAuth(`/sys/department/one/${id}`)
-        this.editForm = res
+        this.editForm = res.data
         this.okText = 'Update'
         this.showDialog()
     }
