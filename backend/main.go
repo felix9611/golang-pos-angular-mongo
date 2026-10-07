@@ -71,5 +71,5 @@ func main() {
 	controllers.RegisterExcelFieldMatchRoutes(api, authServiceMiddleware)
 	controllers.RegisterWriteOffsRoutes(api, authServiceMiddleware)
 
-	router.Run(":6500")
+	router.Run(":6600")
 }
