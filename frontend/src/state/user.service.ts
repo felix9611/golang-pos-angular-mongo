@@ -104,12 +104,12 @@ export class UserStoreService {
 
     async loadUserInfo() {
         const data = await getApiWithAuth('/auth/user-profile')
-        this.setUser(data)
+        this.setUser(data.data)
     }
 
     async verifyToken(): Promise<boolean> {
-        const result: { status: boolean } = await getApiWithAuth('/auth/verify-token')
-        if (result.status) {
+        const result: { username: string } = await getApiWithAuth('/auth/verify-token')
+        if (result && result.username !== '') {
             return true
         } else {
             return false

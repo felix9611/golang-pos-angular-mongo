@@ -41,10 +41,10 @@ export class LoginComponent implements OnInit{
 
     async login() {
 
-        const res = await postApiWithAuth('/auth/login', this.loginForm)
+        const res = await postApiWithAuth('/login', this.loginForm)
 
         if (!res.msg) {
-            this.userStoreService.setAccessToken(res.accessToken)
+            this.userStoreService.setAccessToken(res.token)
             const checkpoint = await this.userStoreService.isAuthenticated()
             if (checkpoint) {
                 this.router.navigate(['/'])
