@@ -39,8 +39,8 @@ func ConnectDatabase() {
 		log.Fatalf("[MongoDB] ❌ Connection Error: %v", err)
 	}
 
-	DB = client.Database("fixedasset-golang")
-	log.Println("✅ Connected to MongoDB: fixedasset-golang")
+	DB = client.Database("pos-golang")
+	log.Println("✅ Connected to MongoDB: pos-golang")
 }
 
 func GetCollection(name string) *mongo.Collection {
