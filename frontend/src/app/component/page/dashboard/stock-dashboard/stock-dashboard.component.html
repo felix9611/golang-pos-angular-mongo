@@ -1,0 +1,85 @@
+<div class="bg-white p-[2rem] grid grid-cols-1 gap-3 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-2 lg:flex gap-2 p-5 shawdow-lg border-2 border-[#A9A9A9] rounded-lg w-full">
+        <div class="w-[210px] h-full">
+            <nz-select
+                nzSize="large"
+                class="w-full h-full" 
+                name="typeId" 
+                [(ngModel)]="globalFilter.typeIds"  
+                nzMode="multiple" nzAllowClear  nzShowArrow
+                 nzPlaceHolder="Asset Type">
+                @for (option of typeLists; track option) {
+                  <nz-option [nzLabel]="option.typeName" [nzValue]="option._id"></nz-option>
+                }
+            </nz-select>
+        </div>
+        <div class="w-[210px] h-full">
+            <nz-select
+                nzSize="large"
+                class="w-full h-full" 
+                name="placeId" 
+                [(ngModel)]="globalFilter.placeIds"  
+                nzMode="multiple" nzAllowClear   nzShowArrow
+                 nzPlaceHolder="Location">
+                @for (option of placeLists; track option) {
+                  <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                }
+            </nz-select>
+        </div>
+        <div class="w-[210px] h-full">
+            <nz-select
+                nzSize="large"
+                class="w-full h-full" 
+                name="deptId" 
+                [(ngModel)]="globalFilter.deptIds"  
+                nzMode="multiple" nzAllowClear  nzShowArrow
+                 nzPlaceHolder="Department">
+                @for (option of deptLists; track option) {
+                  <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                }
+            </nz-select>
+        </div>
+        <div (click)="runSearch()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+            Search
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div class="p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total Qtys Sales by per Product Type</div>
+            <app-chart class="w-[100%]" *ngIf="byTypeAndQtysLoading" [(chartData)]="byTypeAndQtys" />
+        </div>
+        <div class="p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total Price Sales by per Product Type</div>
+            <app-chart class="w-[100%]" *ngIf="byTypeAndPriceLoading" [(chartData)]="byTypeAndPrice" />
+        </div>
+        <div class="p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total Qtys Sales by per Department</div>
+            <app-chart class="w-[100%]" *ngIf="byDeptAndQtysLoading" [(chartData)]="byDeptAndQtys" />
+        </div>
+        <div class="p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total Price Sales by per Department</div>
+            <app-chart class="w-[100%]" *ngIf="byDeptAndPriceLoading" [(chartData)]="byDeptAndPrice" />
+        </div>
+        <div class="p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total In-Stock Qtys by per Location</div>
+            <app-chart class="w-[100%]" *ngIf="byLocationAndQtysLoading" [(chartData)]="byLocationAndQtys" />
+        </div>
+        <div class="p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total Price and Cost by per Location</div>
+            <app-chart class="w-[100%]" *ngIf="byLocationAndPriceLoading" [(chartData)]="byLocationAndPrice" />
+        </div>
+
+        <div class="lg:col-span-2 p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total Qtys of Inventory Reocrd</div>
+            <app-chart class="w-[100%]" *ngIf="invintoryRecordQtysLoading" [(chartData)]="invintoryRecordQtys" />
+        </div>
+
+        <div class="lg:col-span-2 p-2 shawdow-lg border-2 border-[#A9A9A9] rounded-lg">
+            <div class="font-bold">Total Cost of Inventory Reocrd</div>
+            <app-chart class="w-[100%]" *ngIf="invintoryRecordPricesLoading" [(chartData)]="invintoryRecordPrices" />
+        </div>
+        
+    </div>
+
+</div>

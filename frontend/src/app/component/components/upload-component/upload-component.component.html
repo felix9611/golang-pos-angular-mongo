@@ -1,0 +1,13 @@
+<div class="py-6">
+    <nz-upload
+    class="upload-list-inline"
+      [(nzFileList)]="fileList"
+      nzListType="picture"
+      (nzChange)="handleChange($event)"
+    >
+    <button nz-button>
+      <nz-icon nzType="upload" />
+      Click to Upload
+    </button>
+    </nz-upload>
+</div>

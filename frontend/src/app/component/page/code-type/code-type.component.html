@@ -1,0 +1,137 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6"   *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name/Code" [(ngModel)]="searchForm.name" />
+            </div>
+            <div (click)="loadCodeTypeLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div   *ngIf="userRightInside.write" (click)="showDialog()" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+            <div class="w-[200px] border-1 border-[#D17600] text-center px-1 py-2 rounded-lg">
+                <app-download-excel-template 
+                    *ngIf="userRightInside.upload"
+                    class="text-[#D17600] hover:text-[#B06400]" 
+                    buttonLabel="Download Excel Template" 
+                    excelFileName="CODE_TYPE_template.xlsx" 
+                    [excelFieldList]="excelFieldList" 
+                />
+            </div>
+            <div class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                <app-upload-dialog
+                    *ngIf="userRightInside.upload"
+                    uploadButtonLabel="Upload"
+                    uploadApiUrl="/base/code-type/batch-create"
+                    [excelFieldList]="excelFieldList"
+                    [dbFieldList]="dbFieldList"
+                />
+            </div>
+            <div class="w-[150px] bg-[#ffac69] hover:bg-[#f0944a] text-white text-center px-1 py-2 rounded-lg">
+                <app-download-excel-data 
+                    [dataFieldList]="dbFieldList"
+                    buttonLabel="Download Excel Data"
+                    excelFileName="CODE_TYPE_data.xlsx"
+                    [excelFieldList]="excelFieldList"
+                    downloadDataApiPath="/base/code-type/filter/list"
+                    dataMode="post"
+                    [filterSet]="searchForm"
+                />
+            </div>
+        </div>
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Value Code</th>
+                        <th>Value Name</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.type}}</td>
+                        <td>{{data.valueCode}}</td>
+                        <td>{{data.valueName}}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    *ngIf="userRightInside.update"
+                                    (click)="getOneData(data._id)" 
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Edit
+                                </div>
+                                <div 
+                                    *ngIf="userRightInside.delete"
+                                    (click)="handleRomeve(data._id)"
+                                    class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                    Delete
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadCodeTypeLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadCodeTypeLists()"
+        ></nz-pagination>
+
+        <nz-modal 
+            nzWidth="700px"
+            [(nzVisible)]="editFormDialog" 
+            (nzOnCancel)="closeDialog()"
+            (nzOnOk)="submitForm()"
+            nzTitle="Code Type Form"
+            [nzOkText]="okText"
+        >
+            <ng-container *nzModalContent>
+                <form nz-form>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Type</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                          <input nz-input type="text" id="type" name="type" [(ngModel)]="editForm.type" />
+                        </nz-form-control>
+                      </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="6" nzFor="email">Value Code</nz-form-label>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input type="text" id="valueCode" name="valueCode" [(ngModel)]="editForm.valueCode" />
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="6" nzFor="email">Value Name</nz-form-label>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input type="text" id="valueName" name="valueName" [(ngModel)]="editForm.valueName" />
+                      </nz-form-control>
+                    </nz-form-item>
+                </form>
+            </ng-container>
+           
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="removeDialog" 
+            nzTitle="Confirm Delete"
+            (nzOnCancel)="closeRemoveDialog()"
+            (nzOnOk)="handleRemove()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to confirm delete this asset type?
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

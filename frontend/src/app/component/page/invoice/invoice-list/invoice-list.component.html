@@ -1,0 +1,100 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6"  *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+           <div>
+                <nz-range-picker
+                    nzSize="large"
+                    class="h-full"
+                    name="date"
+                    [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                    [(ngModel)]="searchForm.dateRange"
+                ></nz-range-picker>
+            </div>
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" name="number" placeholder="Invoice No." [(ngModel)]="searchForm.number" />
+            </div>
+            
+            <div (click)="loadInvoiceLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div class="w-[150px] bg-[#ffac69] hover:bg-[#f0944a] text-white text-center px-1 py-2 rounded-lg">
+                <app-download-excel-data 
+                    [dataFieldList]="dbFieldList"
+                    buttonLabel="Download Excel Data"
+                    excelFileName="INVOICE_data.xlsx"
+                    [excelFieldList]="excelFieldList"
+                    downloadDataApiPath="/invoice/filter/list"
+                    dataMode="post"
+                    [filterSet]="searchForm"
+                />
+            </div>
+        </div>
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Invoice No.</th>
+                        <th>Location Name</th>
+                        <th>Total Amount</th>
+                        <th>Tax Ref. No.</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.number}}</td>
+                        <td>{{data.location.placeName}}</td>
+                        <td>{{data.totalAmount}}</td>
+                        <td>{{data.taxRefNo	}}</td>
+                        <td>
+                            <div *ngIf="data.status === 1">Active</div>
+                            <div *ngIf="data.status === 0">Inactive</div>
+                        </td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    (click)="openDetail(data._id)"
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Detail
+                                </div>
+                                <div 
+                                    *ngIf="userRightInside.delete"
+                                    (click)="handleRomeve(data._id)"
+                                    class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                    Void
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadInvoiceLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadInvoiceLists()"
+        ></nz-pagination>
+
+        <nz-modal
+            [(nzVisible)]="removeDialog" 
+            nzTitle="Confirm"
+            (nzOnCancel)="closeRemoveDialog()"
+            (nzOnOk)="goToVoid()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to confirm void this invoice?
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

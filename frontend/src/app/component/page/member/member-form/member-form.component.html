@@ -1,0 +1,137 @@
+<div class="bg-white p-[1rem]">
+    <div>
+      <div class="flex py-3 gap-5">
+          <div class="text-[2rem] hover:text-[#ff9200] px-3" (click)="backToList()">
+              <mat-icon cl aria-hidden="false" fontIcon="chevron_left"></mat-icon>
+          </div>
+          <div class="text-center text-[2rem] font-bold">Member Form</div>
+      </div>
+        <form nz-form class="grid lg:grid-cols-4 p-2 gap-2">
+            <nz-form-item>
+              <div class="px-1 w-[105px] flex items-center">Member Code</div>
+                <nz-form-control>
+                  <input nz-input type="text" name="memberCode" [(ngModel)]="editForm.memberCode"  [disabled]="true" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="lg:col-span-3">
+                <div class="px-1 w-[105px] flex items-center">Name</div>
+                <nz-form-control>
+                  <input class="w-[100%]" nz-input type="text" name="name" [(ngModel)]="editForm.name" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="lg:col-span-4">
+                <div class="px-1 w-[105px] flex items-center">Address</div>
+                <nz-form-control >
+                  <textarea nz-input name="address" [(ngModel)]="editForm.address"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <div class="px-1 w-[105px] flex items-center">Phone</div>
+                  <nz-form-control>
+                    <input nz-input type="text" name="phone" [(ngModel)]="editForm.phone" />
+                  </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <div class="px-1 w-[105px] flex items-center">Email</div>
+                  <nz-form-control>
+                    <input nz-input type="text" name="email" [(ngModel)]="editForm.email" />
+                  </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <div class="px-1 w-[105px] flex items-center">Fax</div>
+                  <nz-form-control>
+                    <input nz-input type="text" name="fax" [(ngModel)]="editForm.fax" />
+                  </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <div class="px-1 w-[105px] flex items-center">Member Class</div>
+                <nz-form-control>
+                    <nz-select name="deptId" [(ngModel)]="editForm.classId" nzAllowClear  nzShowArrow nzPlaceHolder="Please select">
+                        @for (option of memberClassList; track option) {
+                          <nz-option [nzLabel]="option.className" [nzValue]="option._id"></nz-option>
+                        }
+                      </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="lg:col-span-4">
+                <div class="px-1 w-[105px] flex items-center">Remark</div>
+                <nz-form-control >
+                  <textarea nz-input name="remark" [(ngModel)]="editForm.remark"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+            <div class="lg:col-span-4 py-2 font-bold text-[1.5rem] pl-5">
+              Special Day
+            </div>
+            <div class="lg:col-span-4 grid lg:grid-cols-4 gap-5">
+              <div>
+                <nz-form-item class="lg:col-span-3">
+                  <div class="px-1 w-[105px] flex items-center">Day Name</div>
+                    <nz-form-control>
+                      <input class="w-[100%]" nz-input type="text" name="specialDayFormName" [(ngModel)]="specialDayForm.name" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item class="lg:col-span-3">
+                  <div class="px-1 w-[105px] flex items-center">Date</div>
+                    <nz-form-control>
+                      <nz-date-picker
+                        class="w-[100%]"
+                        name="invoiceDate"
+                        nzShowTime
+                        nzFormat="yyyy-MM-dd"
+                        [(ngModel)]="specialDayForm.date"
+                    >
+                    </nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <div class="px-1 w-[105px] flex items-center">Remark</div>
+                    <nz-form-control >
+                      <textarea nz-input name="remark" [(ngModel)]="specialDayForm.remark"></textarea>
+                    </nz-form-control>
+                </nz-form-item>
+                <div (click)="putItemSpecialDay()" class="rounded-lg border-2 text-[#32c244] border-[#32c244] bg-[#a2ff80] hover:bg-[#91e274] p-1 w-[100px] text-center ">
+                  Add
+                </div>
+              </div>
+              <div class="lg:col-span-3">
+                <nz-table
+                  [nzData]="editForm.memberSpecialDays"
+                  #dataTable
+                  nzFrontPagination="false"
+                >
+                  <thead>
+                    <tr>
+                      <th>Day Name</th>
+                      <th>Date</th>
+                      <th>Remark</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of editForm.memberSpecialDays; index as i;">
+                      <td>{{data.name}}</td>
+                      <td>{{dateFormat(data.date)}}</td>
+                      <td>{{data.remark}}</td>
+                      <td>
+                        <div 
+                          (click)="removeRowSpecialDay(i, data._id)"
+                            class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                            Delete
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+        </form>
+        <div class="flex gap-5 py-5">
+          <div (click)="resetForm()" class="rounded-lg border-2 text-[#bf7b00] border-[#bf7b00] bg-[#fbd695] hover:bg-[#dabc87] p-1 w-[100px] text-center ">
+            Reset
+          </div>
+          <div (click)="submitForm()" class="rounded-lg border-2 text-[#32c244] border-[#32c244] bg-[#a2ff80] hover:bg-[#91e274] p-1 w-[100px] text-center ">
+            {{ editForm._id ? 'Update' : 'Create' }}
+          </div>
+        </div>
+    </div>
+</div>

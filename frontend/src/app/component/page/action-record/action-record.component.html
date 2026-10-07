@@ -1,0 +1,37 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6" *ngIf="userRightInside.read">
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Action Name</th>
+                        <th>Action Method</th>
+                        <th>Action From</th>
+                        <th>Success OR Failure</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.actionName}}</td>
+                        <td>{{data.actionMethod}}</td>
+                        <td>{{data.actionFrom}}</td>
+                        <td>{{data.actionSuccess}}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadRecordLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadRecordLists()"
+        ></nz-pagination>
+
+    </div>
+</div>

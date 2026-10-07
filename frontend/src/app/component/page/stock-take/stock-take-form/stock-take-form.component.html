@@ -1,0 +1,161 @@
+<div class="bg-white p-[1rem]">
+    <div *ngIf="userRightInside.write">
+        <div class="flex py-3 gap-5">
+            <div class="text-[2rem] hover:text-[#ff9200] px-3" (click)="backToList()">
+                <mat-icon cl aria-hidden="false" fontIcon="chevron_left"></mat-icon>
+            </div>
+            <div class="text-center text-[2rem] font-bold">
+                Stock Detail Form (
+                <span *ngIf="editForm.status === 2">
+                    Finish
+                </span>
+                <span *ngIf="editForm.status === 1">
+                    Active
+                </span>
+                <span *ngIf="editForm.status === 0">
+                    Cancel
+                </span>)
+            </div>
+        </div>
+        <form nz-form class="grid lg:grid-cols-4 p-2 gap-2">
+            <nz-form-item>
+                <div class="px-1 w-[90px] flex items-center">Action Name</div>
+                <nz-form-control>
+                    <input class="w-[100%]" nz-input type="text" name="actionName" [(ngModel)]="editForm.actionName" [disabled]="editForm.status !== 1" />
+                  </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <div class="px-1 w-[60px] flex items-center">Location</div>
+                <nz-form-control [nzSpan]="14">
+                    <nz-select
+                        [disabled]="editForm.status !== 1"
+                        class="w-full h-full" 
+                        name="actionPlaceId" 
+                        [(ngModel)]="editForm.actionPlaceId"  
+                        nzAllowClear nzShowArrow
+                        nzPlaceHolder="Please Select">
+                        @for (option of placeLists; track option) {
+                        <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                        }
+                    </nz-select>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <div class="px-1 w-[105px] flex items-center">Created At</div>
+                <nz-form-control>
+                  <nz-date-picker
+                        class="w-[100%]"
+                        name="createdTime"
+                        nzShowTime
+                        nzFormat="yyyy-MM-dd HH:mm:ss"
+                        [(ngModel)]="editForm.createdTime"
+                        disabled
+                    >
+                    </nz-date-picker>
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <div class="px-1 w-[90px] flex items-center">Created By</div>
+                <nz-form-control>
+                    <input class="w-[100%]" nz-input type="text" name="createBy" [(ngModel)]="editForm.createBy" disabled />
+                  </nz-form-control>
+            </nz-form-item>
+            <nz-form-item class="lg:col-span-4">
+                <div class="px-1 w-[90px] flex items-center">Remark</div>
+                <nz-form-control>
+                    <textarea nz-input id="remark" name="remark" [(ngModel)]="editForm.remark" [disabled]="editForm.status !== 1"></textarea>
+                  </nz-form-control>
+            </nz-form-item>
+        </form>
+        <div class="flex justify-start">
+            <div
+                (click)="updateForm()"
+                class="rounded-lg border-2 text-[#32c244] border-[#32c244] bg-[#a2ff80] hover:bg-[#91e274] p-1 w-[100px] text-center "
+            >
+                Update Form
+            </div>
+        </div>
+        <div class="grid lg:grid-cols-4 py-5">
+            <div *ngIf="editForm.status === 1">
+                <form nz-form class="p-2 gap-2">
+                    <nz-form-item>
+                        <div class="px-1 w-[90px] flex items-center">Product Code</div>
+                        <nz-form-control>
+                            <input class="w-[100%]" nz-input type="text" name="assetCode" [(ngModel)]="itemForm.productCode" (ngModelChange)="assetCodeChanged($event)"/>
+                          </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[90px] flex items-center">Product Name</div>
+                        <nz-form-control>
+                            <input class="w-[100%]" nz-input type="text" name="assetName" [(ngModel)]="itemForm.productName" disabled />
+                          </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[90px] flex items-center">Status</div>
+                        <nz-form-control>
+                            <input class="w-[100%]" nz-input type="text" name="status" [(ngModel)]="itemForm.status" disabled/>
+                          </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Recorded Qtys</div>
+                        <nz-form-control class="w-full">
+                            <nz-input-number [style.width.%]="100" name="orgQty" [(ngModel)]="itemForm.orgQty" [disabled]="true"></nz-input-number>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Qtys</div>
+                        <nz-form-control class="w-full">
+                            <nz-input-number [style.width.%]="100" name="checkQty" [(ngModel)]="itemForm.checkQty"></nz-input-number>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item class="lg:col-span-4">
+                        <div class="px-1 w-[90px] flex items-center">Remark</div>
+                        <nz-form-control>
+                            <textarea nz-input id="remark" name="remark" [(ngModel)]="itemForm.remark"></textarea>
+                          </nz-form-control>
+                    </nz-form-item>
+                </form>
+                <div class="flex justify-start">
+                    <div
+                        (click)="submitItem()"
+                        class="rounded-lg border-2 text-[#32c244] border-[#32c244] bg-[#a2ff80] hover:bg-[#91e274] p-1 w-[100px] text-center "
+                    >
+                        Add
+                    </div>
+                </div>
+            </div>
+            <div [class]="`lg:col-span-${editForm.status === 1 ? '3' : '4'}`">
+                <nz-table
+                    class="px-2"
+                    [nzData]="editForm.stockTakeItems"
+                    #dataTable
+                    nzFrontPagination="false"
+                >
+                    <thead>
+                        <tr>
+                            <th>Product Code</th>
+                            <th>Product Name</th>
+                            <th>Qtys</th>
+                            <th>Qty Check</th>
+                            <th>Status</th>
+                            <th>Final Status</th>
+                            <th>Check Time</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of editForm.stockTakeItems">
+                            <td>{{data.productCode}}</td>
+                            <td>{{data.product.productName}}</td>
+                            <td>{{data.qty}}</td>
+                            <td>{{data.status}}</td>
+                            <td>{{data.finalStatus}}</td>
+                            <td>{{ dateFormat(data.checkTime) }}</td>
+                            <td>{{ data.remark }}</td>
+                        </tr>
+                    </tbody>
+                </nz-table>
+            </div>
+        </div>
+    </div>
+</div>

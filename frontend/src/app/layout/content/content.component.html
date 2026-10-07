@@ -1,0 +1,7 @@
+<div class="min-h-screen bg-gray-100 flex flex-col">
+    <div class="py-[5rem] w-full sm:w-screen bg-[#ededed] flex flex-col flex-1">
+      <div [class]="isMenuExpanded ? 'lg:pl-[16rem] pl-[5rem] sm:pl-[11rem] pr-[1rem]' : 'pl-[1rem]'" class="flex-1">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+<div class="bg-white p-[1rem]">
+  <div class="py-2 font-bold text-[2rem] pl-5">
+    Stock Move
+  </div>
+    <div class="grid lg:grid-cols-3 gap-2">
+        <div class="lg:col-span-1">
+            <form nz-form>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Product Code</div>
+                      <nz-form-control>
+                        <input nz-input type="text" name="productCode" [(ngModel)]="stockInForm.productCode" (ngModelChange)="productCodeChanged($event)" />
+                      </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Product Code</div>
+                      <nz-form-control>
+                        <input nz-input type="text" name="productName" [(ngModel)]="productForm.productName" [disabled]="true" />
+                      </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Location From</div>
+                      <nz-form-control>
+                        <nz-select
+                            class="w-full h-full" 
+                            name="locationId" 
+                            [(ngModel)]="stockInForm.fromLocationId"  
+                            nzAllowClear  nzShowArrow>
+                            @for (option of locationList; track option) {
+                                <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                            }
+                        </nz-select>
+                      </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <div class="px-1 w-[105px] flex items-center">Location To</div>
+                    <nz-form-control>
+                      <nz-select
+                          class="w-full h-full" 
+                          name="locationId" 
+                          [(ngModel)]="stockInForm.toLocationId"  
+                          nzAllowClear  nzShowArrow>
+                          @for (option of locationList; track option) {
+                              <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                          }
+                      </nz-select>
+                    </nz-form-control>
+              </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Qty</div>
+                    <nz-form-control class="w-full">
+                        <nz-input-number [style.width.%]="100" name="qty" [(ngModel)]="stockInForm.qty" (ngModelChange)="qtyChanged($event)"></nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Total Cost Price</div>
+                    <nz-form-control class="w-full">
+                        <nz-input-number [style.width.%]="100" name="totalCost" [(ngModel)]="stockInForm.totalCost" [nzDisabled]="true"></nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="w-[105px] flex items-center">Total Retail Price</div>
+                    <nz-form-control class="w-full">
+                        <nz-input-number [style.width.%]="100" name="totalPrice" [(ngModel)]="stockInForm.totalPrice" [nzDisabled]="true"></nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+                <div class="flex gap-5">
+                    <div (click)="resetForm()" class="rounded-lg border-2 text-[#bf7b00] border-[#bf7b00] bg-[#fbd695] hover:bg-[#dabc87] p-1 w-[100px] text-center ">
+                      Reset
+                    </div>
+                    <div (click)="submitForm()" class="rounded-lg border-2 text-[#32c244] border-[#32c244] bg-[#a2ff80] hover:bg-[#91e274] p-1 w-[100px] text-center ">
+                      Submit
+                    </div>
+                  </div>
+            </form>
+        </div>
+        <div class="lg:col-span-2">
+          <product-location *ngIf="reloadProductLocation" />
+        </div>
+    </div>
+</div>

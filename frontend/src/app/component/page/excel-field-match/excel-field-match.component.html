@@ -1,0 +1,167 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6"  *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name/Code" [(ngModel)]="searchForm.name" />
+            </div>
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="type" name="type" placeholder="Input Type" [(ngModel)]="searchForm.type" />
+            </div>
+            <div (click)="loadRecordLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div *ngIf="userRightInside.write" (click)="showDialog()" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+        </div>
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.functionCode}}</td>
+                        <td>{{data.functionName}}</td>
+                        <td>{{data.functionType}}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    *ngIf="userRightInside.update"
+                                    (click)="getOneData(data._id)" 
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Edit
+                                </div>
+                                <div 
+                                    *ngIf="userRightInside.delete"
+                                    (click)="handleRomeve(data._id)"
+                                    class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                    Delete
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadRecordLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadRecordLists()"
+        ></nz-pagination>
+
+        <nz-modal 
+            nzWidth="800px"
+            [(nzVisible)]="editFormDialog" 
+            (nzOnCancel)="closeDialog()"
+            (nzOnOk)="submitForm()"
+            nzTitle="Setting Form"
+            [nzOkText]="okText"
+        >
+            <ng-container *nzModalContent>
+                <form nz-form>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="4" nzFor="email">Function Code</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input type="text" id="functionCode" name="functionCode" [(ngModel)]="editForm.functionCode" />
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="4" nzFor="email">Function Name</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input type="text" id="functionName" name="functionName" [(ngModel)]="editForm.functionName" />
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="4" nzFor="type">Type</nz-form-label>
+                        <nz-form-control>
+                            <nz-select
+                                class="w-full h-full" 
+                                name="placeId" 
+                                [(ngModel)]="editForm.functionType"  
+                                nzAllowClear nzShowArrow
+                                nzPlaceHolder="Please Select">
+                                @for (option of codeTypeLists; track option) {
+                                <nz-option [nzLabel]="option.valueName" [nzValue]="option.valueCode"></nz-option>
+                                }
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="4" nzFor="type">Field Seting</nz-form-label>
+                        <div class="w-full">
+                            <div class="grid grid-cols-4 text-center bg-gray-100 py-2">
+                                <div>Database Field Key</div>
+                                <div>Excel Field Name Key</div>
+                                <div>Field Sort</div>
+                                <div>Action</div>
+                            </div>
+                            <div *ngFor="let option of editForm.fieldLists; let i = index">
+                                <div class="grid grid-cols-4 py-2 divide-y-1 divide-gray-100">
+                                    <div class="px-1">{{  option.dbFieldName  }}</div>
+                                    <div class="px-1">{{  option.excelFieldName  }}</div>
+                                    <div class="text-center">{{  option.sort  }}</div>
+                                    <div class="text-center">
+                                        <button nz-button nzType="link" nzDanger (click)="deleteRow(i)">Delete</button>
+                                    </div>
+                                </div>    
+                            </div>
+                        </div>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="4" nzFor="dbFieldName">Database Field Key</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input type="text" id="dbFieldName" name="dbFieldName" [(ngModel)]="fieldForm.dbFieldName" />
+                      </nz-form-control>
+                    </nz-form-item>
+
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="4" nzFor="dbFieldName">Database Field Key</nz-form-label>
+                      <nz-form-control>
+                        <input nz-input type="text" id="dbFieldName" name="dbFieldName" [(ngModel)]="fieldForm.excelFieldName" />
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="4" nzFor="dbFieldName">Sort</nz-form-label>
+                        <nz-form-control class="w-full">
+                            <nz-input-number [style.width.%]="100" name="sort" [(ngModel)]="fieldForm.sort"></nz-input-number>
+                        </nz-form-control>
+                    </nz-form-item>
+
+                    <div class="text-center" (click)="fieldAddRow()">
+                                + Add To Row
+                    </div>
+                    
+                    
+                </form>
+            </ng-container>
+           
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="removeDialog" 
+            nzTitle="Confirm Delete"
+            (nzOnCancel)="closeRemoveDialog()"
+            (nzOnOk)="handleRemove()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to confirm delete this record?
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

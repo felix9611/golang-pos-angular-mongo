@@ -1,0 +1,18 @@
+<header class="fixed top-0 left-0 w-full bg-white z-1 py-[1.9rem] shadow-lg">
+    <nav>
+        <div class="fixed absolute top-0 right-0 grid grid-cols-2 gap-5">
+            <div class="py-[0.4rem]">
+                <a routerLink="user-info" class="flex items-center justify-center gap-5">
+                    <div class="font-bold flex items-center hover:text-[#0054B5]">{{ userInfo.username }}</div>
+                    <div *ngIf="!userInfo.avatarBase64" class="border-1 w-[3rem] h-[3rem] rounded-full"></div>
+                    <img *ngIf="userInfo.avatarBase64" [src]="userInfo.avatarBase64" class="border-1 max-h-[3rem] max-w-[3rem] rounded-full" />
+                </a>
+            </div>
+            <div class="py-1 flex items-center">
+                <a class="flex items-center justify-center gap-5 hover:text-[#002E64]" (click)="logout()">
+                    <mat-icon aria-hidden="false" fontIcon="logout"></mat-icon>
+                </a>
+            </div>
+        </div>
+    </nav>
+  </header>

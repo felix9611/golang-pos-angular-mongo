@@ -1,0 +1,177 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6" *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name/Code" [(ngModel)]="searchForm.name" />
+            </div>
+            <div class="w-[200px]">
+                <nz-select 
+                    nzSize="large"
+                    name="department" 
+                    [(ngModel)]="searchForm.roleIds"  
+                    nzPlaceHolder="Roles"  
+                    nzMode="multiple"  
+                    nzAllowClear  nzShowArrow
+                    [nzShowArrow]="true">
+                    @for (option of roleLists; track option) {
+                        <nz-option [nzLabel]="option.name" [nzValue]="option._id"></nz-option>
+                    }
+                </nz-select>
+            </div>
+            <div class="w-[200px]">
+                <nz-select name="deptId" nzSize="large" [(ngModel)]="searchForm.deptIds" nzAllowClear nzMode="multiple"   nzShowArrow nzPlaceHolder="Departments">
+                    @for (option of deptLists; track option) {
+                      <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                    }
+                  </nz-select>
+            </div>
+            <div (click)="loadUserLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div *ngIf="userRightInside.write" (click)="showDialog()" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+        </div>
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.username}}</td>
+                        <td>{{data.email}}</td>
+                        <td>{{data.department && data.department.deptName}}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    *ngIf="userRightInside.update"
+                                    (click)="getOneData(data._id)" 
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Edit
+                                </div>
+                                <div 
+                                    *ngIf="data.username !== 'admin' && userRightInside.delete"
+                                    (click)="handleRomeve(data._id)"
+                                    class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                    Delete
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadUserLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadUserLists()"
+        ></nz-pagination>
+
+        <nz-modal 
+            nzWidth="700px"
+            [(nzVisible)]="editFormDialog" 
+            (nzOnCancel)="closeDialog()"
+            (nzOnOk)="submitForm()"
+            nzTitle="User Form"
+            [nzOkText]="okText"
+        >
+            <ng-container *nzModalContent>
+                <form nz-form>
+                    <nz-form-item>
+                        <img [src]="editForm.avatarBase64" class="w-[50%] md:w-[35%] lg:w-[20%] h-[50%] md:h-[35%] lg:h-[50%]"/>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Upload New Avatar</nz-form-label>
+                        <nz-form-control [nzSpan]="12">
+                            <div class="grid grid-cols-3 gap-2">
+                                <nz-upload
+                                    class="avatar-uploader"
+                                    nzName="avatar"
+                                    nzListType="picture-card"
+                                    nzName="avatar"
+                                    nzListType="picture-card"
+                                    [nzShowUploadList]="false"
+                                    [nzBeforeUpload]="beforeUpload"
+                                    (nzChange)="handleChange($event)"
+                                >
+                                </nz-upload>
+                                <img class="w-[128px]" [src]="avatarUrl" />
+                            </div>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="6" nzFor="email">Username</nz-form-label>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input type="text" id="username" name="username" [(ngModel)]="editForm.username"/>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item *ngIf="!editForm._id">
+                        <nz-form-label [nzSpan]="6" nzFor="email">Password</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                          Will preset <span class="font-bold">888888</span>
+                        </nz-form-control>
+                      </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="6" nzFor="email">Email</nz-form-label>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input type="email" id="email" name="email" [(ngModel)]="editForm.email" />
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Department</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-select name="deptId" [(ngModel)]="editForm.deptId" nzAllowClear  nzShowArrow nzPlaceHolder="Please select">
+                                @for (option of deptLists; track option) {
+                                  <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                                }
+                              </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Roles</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-select 
+                                name="department" 
+                                [(ngModel)]="editForm.roles"  
+                                nzPlaceHolder="Please select"  
+                                nzMode="multiple"  
+                                nzAllowClear  nzShowArrow
+                                [nzShowArrow]="true">
+                                @for (option of roleLists; track option) {
+                                    <nz-option [nzLabel]="option.name" [nzValue]="option._id"></nz-option>
+                                }
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
+            </ng-container>
+           
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="removeDialog" 
+            nzTitle="Confirm Delete"
+            (nzOnCancel)="closeRemoveDialog()"
+            (nzOnOk)="handleRemove()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to confirm invalidate this account?
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

@@ -1,0 +1,23 @@
+<div>
+    <nz-modal 
+        [nzWidth]="widthInBox"
+        [(nzVisible)]="isOpen" 
+        (nzOnCancel)="closeDialog()"
+        [nzFooter]="modalFooter"
+        [nzCancelDisabled]="true"
+        nzTitle="QR Tag"
+        [nzOkLoading]="false"
+    >
+        <ng-container *nzModalContent>
+            <div>
+                <qrcode [qrdata]="qrCodeString" [width]="256" [errorCorrectionLevel]="'M'" />
+                <div [innerHTML]="randomHtml"></div>
+                
+            </div>
+        </ng-container>
+        <ng-template #modalFooter>
+            <button nz-button nzType="primary" (click)="closeDialog()">Close</button>
+        </ng-template>
+    </nz-modal>
+    
+</div>

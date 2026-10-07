@@ -1,0 +1,74 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" name="assetCode" placeholder="Asset Code" [(ngModel)]="searchForm.assetCode" />
+            </div>
+            <div class="w-[300px] h-full">
+                <nz-select
+                    nzSize="large"
+                    class="w-full h-full" 
+                    name="typeId" 
+                    [(ngModel)]="searchForm.locationIds"  
+                    nzMode="multiple" 
+                    nzAllowClear  
+                    nzShowArrow
+                    nzPlaceHolder="Location"
+                >
+                    @for (option of locationList; track option) {
+                        <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                    }
+                </nz-select>
+            </div>
+            <div (click)="loadProductLocationLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div class="w-[150px] bg-[#ffac69] hover:bg-[#f0944a] text-white text-center px-1 py-2 rounded-lg">
+                <app-download-excel-data 
+                    [dataFieldList]="dbFieldList"
+                    buttonLabel="Download Excel Data"
+                    excelFileName="PRODUCT_LOCATION_LIST_data.xlsx"
+                    [excelFieldList]="excelFieldList"
+                    downloadDataApiPath="/product/product-list/filter/location-list"
+                    dataMode="post"
+                    [filterSet]="searchForm"
+                />
+            </div>
+        </div>
+        <nz-table
+            [nzData]="dataLists"
+            #dataTable
+            nzFrontPagination="false"
+        >
+            <thead>
+                <tr>
+                    <th>Product Code</th>
+                    <th>Product Name</th>
+                    <th>Location Name</th>
+                    <th>Qty</th>
+                    <th>Total Cost</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of dataTable.data">
+                    <td>{{ data.product.productCode }}</td>
+                    <td>{{ data.product.productName }}</td>
+                    <td>{{ data.location.placeName }}</td>
+                    <td>{{ data.qty }}</td>
+                    <td>{{ data.totalCost }}</td>
+                    <td>{{ data.totalPrice }}</td>
+                </tr>
+            </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadProductLocationLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadProductLocationLists()"
+        ></nz-pagination>
+
+    </div>
+</div>

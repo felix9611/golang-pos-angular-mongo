@@ -1,0 +1,84 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6"  *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+           <div>
+                <nz-range-picker
+                    nzSize="large"
+                    class="h-full"
+                    name="date"
+                    [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                    [(ngModel)]="searchForm.dateRange"
+                ></nz-range-picker>
+            </div>
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" name="number" placeholder="Invoice No." [(ngModel)]="searchForm.number" />
+            </div>
+            
+            <div (click)="loadInvoiceLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div class="w-[150px] bg-[#ffac69] hover:bg-[#f0944a] text-white text-center px-1 py-2 rounded-lg">
+                <app-download-excel-data 
+                    [dataFieldList]="dbFieldList"
+                    buttonLabel="Download Excel Data"
+                    excelFileName="RETURN_INVOICE_data.xlsx"
+                    [excelFieldList]="excelFieldList"
+                    downloadDataApiPath="/return-invoice/filter/list"
+                    dataMode="post"
+                    [filterSet]="searchForm"
+                />
+            </div>
+        </div>
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Invoice No.</th>
+                        <th>Return Case No.</th>
+                        <th>Tax Ref. No.</th>
+                        <th>Location Name</th>
+                        <th>Total Paid Amount</th>
+                        <th>Total Refund Amount</th>
+                        <th>Invoice Date</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.invoiceNumber}}</td>
+                        <td>{{data.returnCaseNumber}}</td>
+                        <td>{{data.invoice.taxRefNo}}</td>
+                        <td>{{data.location.placeName}}</td>
+                        <td>{{data.invoice.totalAmount}}</td>
+                        <td>{{data.refundAmount}}</td>
+                        <td>{{  dateFormat(data.invoice.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    (click)="openDetail(data._id)"
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Detail
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadInvoiceLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadInvoiceLists()"
+        ></nz-pagination>
+    </div>
+</div>

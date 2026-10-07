@@ -1,0 +1,148 @@
+<div class="bg-white p-[6rem] ">
+    <div class="grid lg:grid-cols-2">
+        <div>
+            <form nz-form>
+                <nz-form-item>
+                    <img [src]="userInfo.avatarBase64" class="w-[50%] md:w-[35%] lg:w-[20%] h-[50%] md:h-[35%] lg:h-[50%]"/>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="email">Upload New Avatar</nz-form-label>
+                    <nz-form-control>
+                        <div class="grid grid-cols-3">
+                            <nz-upload
+                                class="avatar-uploader"
+                                nzName="avatar"
+                                nzListType="picture-card"
+                                nzName="avatar"
+                                nzListType="picture-card"
+                                [nzShowUploadList]="false"
+                                [nzBeforeUpload]="beforeUpload"
+                                (nzChange)="handleChange($event)"
+                            >
+                            </nz-upload>
+                            <img class="w-[128px]" [src]="avatarUrl" />
+                            <div class="w-[100px] flex items-center justify-center">
+                                <div *ngIf="avatarUrl" (click)="handleUpdateAvatar()" class="hover:bg-[#71CAD8] bg-[#7FEFFF] border-1 border-[#71CAD8] text-[#4F909A] text-center p-1 rounded-lg">
+                                    Confirm Update
+                                </div>
+                            </div>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="username">Usernane</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        {{ userInfo.username }}
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="email">E-mail</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        {{ userInfo.email }}
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="department">Department</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        {{ userInfo.department?.deptName }}
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="roles">Roles</nz-form-label>
+                    <nz-form-control [nzSpan]="20">
+                        <div *ngFor="let role of userInfo.roleLists" class="flex gap-3">
+                            <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
+                                {{ role.name }}
+                            </div>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+            </form>
+            <div>
+                <div class="py-2">
+                    <div (click)="openResetPWDialog()" class="w-[200px] hover:bg-[#71CAD8] bg-[#7FEFFF] border-1 border-[#71CAD8] text-[#4F909A] text-center p-1 rounded-lg">
+                        Reset Password
+                    </div>
+                </div>
+            </div>
+        
+            <nz-modal
+                [(nzVisible)]="resetPwDialog" 
+                nzTitle="Reset Password"
+                (nzOnCancel)="closeResetPWDialog()"
+                (nzOnOk)="submitForm()"
+            >
+                <ng-container *nzModalContent>
+                    <form nz-form>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="8" nzFor="email">New Password</nz-form-label>
+                            <nz-form-control [nzSpan]="14">
+                                <nz-input-group [nzSuffix]="suffixTemplate1">
+                                     <input
+                                        [type]="passwordVisible ? 'text' : 'password'"
+                                        nz-input
+                                        placeholder="input password"
+                                        [(ngModel)]="resetPwForm.newPassword"
+                                    />
+                                </nz-input-group>
+                                <ng-template #suffixTemplate1>
+                                    <span
+                                        nz-icon
+                                        class="ant-input-password-icon"
+                                        [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                                        (click)="passwordVisible = !passwordVisible"
+                                    ></span>
+                                </ng-template>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <nz-form-label [nzSpan]="8" nzFor="email">Again New Password</nz-form-label>
+        
+                            <nz-form-control [nzSpan]="14">
+                                <nz-input-group [nzSuffix]="suffixTemplate2">
+                                    <input
+                                       [type]="passwordVisible ? 'text' : 'password'"
+                                       nz-input
+                                       placeholder="input password"
+                                       [(ngModel)]="resetPwForm.againNewPassword"
+                                   />
+                               </nz-input-group>
+                               <ng-template #suffixTemplate2>
+                                   <span
+                                       nz-icon
+                                       class="ant-input-password-icon"
+                                       [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                                       (click)="passwordVisible = !passwordVisible"
+                                   ></span>
+                               </ng-template>
+                            </nz-form-control>
+                            
+                        </nz-form-item>
+                    </form>
+                </ng-container>
+            </nz-modal>
+        </div>
+        <div>
+            <nz-table
+                [nzData]="userInfo.loginRecords"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>IP Address</th>
+                        <th>Status</th>
+                        <th>Login At</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of userInfo.loginRecords">
+                        <td>{{ data.ipAddress }}</td>
+                        <td>{{ data.loginStatus }}</td>
+                        <td>{{ dateFormat(data.loginTime) }}</td>
+                    </tr>
+                </tbody>
+            </nz-table>
+        </div>
+    </div>
+</div>

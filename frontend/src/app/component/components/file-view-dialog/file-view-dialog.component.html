@@ -1,0 +1,27 @@
+<div>
+    <nz-modal 
+        [(nzVisible)]="fileDialogOpen" 
+        [nzFooter]="modalFooter"
+        (nzOnCancel)="closeFileDialog()"
+        nzTitle="View Files"
+    >
+        <ng-container *nzModalContent>
+            <div class="p-2" *ngFor="let file of fileList">
+                <div class="py-2 border-1 border p-2 rounded-lg border-[#979797]">
+                    <img [src]="file[filePathKey]" />
+                    <div class="py-2 text-center">
+                        {{ file[fileNameKey]}}
+                        <span class="text-[2rem] hover:text-[#ff9200] p-2" (click)="removeFile(file._id)">
+                            <mat-icon aria-hidden="false" fontIcon="close"></mat-icon>
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </ng-container>
+        <ng-template #modalFooter>
+            <button nz-button nzType="primary" (click)="closeFileDialog()">Close</button>
+          </ng-template>
+    </nz-modal>
+    
+</div>

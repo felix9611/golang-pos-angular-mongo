@@ -1,0 +1,158 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6" *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name" [(ngModel)]="searchForm.name" />
+            </div>
+            <div class="w-[150px] h-full">
+                <nz-select
+                    nzSize="large"
+                    class="w-full h-full" 
+                    name="placeId" 
+                    [(ngModel)]="searchForm.placeIds"  
+                    nzMode="multiple" nzAllowClear nzShowArrow
+                     nzPlaceHolder="Location">
+                    @for (option of placeLists; track option) {
+                      <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                    }
+                </nz-select>
+            </div>
+            <div (click)="loadStockTakeLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div *ngIf="userRightInside.write" (click)="showDialog()" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+        </div>
+        <nz-table
+            [nzData]="dataLists"
+            #dataTable
+            nzFrontPagination="false"
+        >
+            <thead>
+                <tr>
+                    <th>Action Name</th>
+                    <th>Place Code</th>
+                    <th>Place Name</th>
+                    <th>Created Time</th>
+                    <th>Created By</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let data of dataTable.data">
+                    <td>{{data.actionName}}</td>
+                    <td>{{data.location.placeCode}}</td>
+                    <td>{{data.location.placeName}}</td>
+                    <td>{{ dateFormat(data.createdTime)}}</td>
+                    <td>{{data.createBy}}</td>
+                    <td>
+                        <div *ngIf="data.status === 2">
+                            Finish
+                        </div>
+                        <div *ngIf="data.status === 1">
+                            Active
+                        </div>
+                        <div *ngIf="data.status === 0">
+                            Cancel
+                        </div>
+                    </td>
+                    <td>
+                        <div class="flex gap-3">
+                            <div 
+                                *ngIf="userRightInside.update"
+                                (click)="getToDetail(data._id)"
+                                class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                Detail
+                            </div>
+                            <div 
+                                *ngIf="data.status === 1 && userRightInside.delete"
+                                (click)="openCancelDialog(data._id)"
+                                class="w-[100px] bg-[#ffba5e] hover:bg-[#eca13c] border-1 border-[#c47000] text-[#c47000] text-center p-1 rounded-lg">
+                                Cancel
+                            </div>
+                            <div 
+                                *ngIf="data.status === 1 && userRightInside.update"
+                                (click)="openFinishDialog(data._id)"
+                                class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                Finished
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadStockTakeLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadStockTakeLists()"
+        ></nz-pagination>
+
+        <nz-modal 
+            nzWidth="700px"
+            [(nzVisible)]="formDialog" 
+            (nzOnCancel)="closeDialog()"
+            (nzOnOk)="submitForm()"
+            nzTitle="Stock Take Form"
+            nzOkText="Submit"
+        >
+            <ng-container *nzModalContent>
+                <form nz-form>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Action Name</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                          <input nz-input type="text" id="actionName" name="actionName" [(ngModel)]="editForm.actionName" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Location Code</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-select
+                                class="w-full h-full" 
+                                name="actionPlaceId" 
+                                [(ngModel)]="editForm.actionPlaceId"  
+                                nzAllowClear nzShowArrow
+                                nzPlaceHolder="Please Select">
+                                @for (option of placeLists; track option) {
+                                <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                                }
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Remark</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                          <textarea nz-input id="remark" name="remark" [(ngModel)]="editForm.remark"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
+            </ng-container>
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="finishDialogVisible" 
+            nzTitle="Confirm"
+            (nzOnCancel)="closeFinishDialog()"
+            (nzOnOk)="finshForm()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to finish this stock take form?
+            </ng-container>
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="cancelDialogVisible" 
+            nzTitle="Confirm"
+            (nzOnCancel)="closeCancelDialog()"
+            (nzOnOk)="cancelForm()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to cancel this stock take form?
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

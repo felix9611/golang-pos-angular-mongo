@@ -1,0 +1,141 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name" [(ngModel)]="searchForm.name" />
+            </div>
+            <div (click)="loadSysMenuLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div (click)="showEditDialog()" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+        </div>
+        <nz-table #nzTable [nzData]="dataLists" nzTableLayout="fixed" nzFrontPagination="false">
+            <thead>
+                <tr>
+                    <th nzWidth="60px"></th>
+                    <th>Name</th>
+                    <th>Icon</th>
+                    <th>Path</th>
+                    <th>Sort</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (data of dataLists; track data) {
+                <tr>
+                    <td *ngIf="data.childrens.length === 0"></td>
+                    <td *ngIf="data.childrens.length > 0" [(nzExpand)]="data.expand"></td>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.icon }}</td>
+                    <td>{{ data.path }}</td>
+                    <td>{{ data.sort }}</td>
+                    <td>
+                        <div class="flex gap-3">
+                            <div 
+                                (click)="getDataById(data._id)" 
+                                class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Edit
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr [nzExpand]="data.expand" *ngIf="data.childrens.length > 0">
+                    <nz-table nzFrontPagination="false" #nzTable [nzData]="data.childrens" nzTableLayout="fixed">
+                        <tbody>
+                            @for (child of data.childrens; track child) {
+                                <tr>
+                                    <td>{{ child.name }}</td>
+                                    <td>{{ child.icon }}</td>
+                                    <td>{{ child.path }}</td>
+                                    <td>{{ child.sort }}</td>
+                                    <td>
+                                        <div class="flex gap-3">
+                                            <div 
+                                                (click)="getDataById(child._id)" 
+                                                class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                                    Edit
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </nz-table>
+                </tr>
+                }
+            </tbody>
+        </nz-table>
+
+        <nz-modal 
+            nzWidth="500px"
+            [(nzVisible)]="editDialogVisible" 
+            (nzOnCancel)="closeEditDialog()"
+            (nzOnOk)="submitForm()"
+            nzTitle="Sys Menu Form"
+            [nzOkText]="okText"
+        >
+            <ng-container *nzModalContent>
+                <form nz-form>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Main Menu</div>
+                        <nz-form-control>
+                            <nz-select name="deptId" [(ngModel)]="editForm.mainId"  nzPlaceHolder="Please select">
+                                @for (option of mainItem; track option) {
+                                  <nz-option [nzLabel]="option.name" [nzValue]="option._id"></nz-option>
+                                }
+                              </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Name</div>
+                        <nz-form-control>
+                            <input nz-input type="text" id="name" name="name" [(ngModel)]="editForm.name" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Icon</div>
+                        <nz-form-control>
+                            <input nz-input type="text" id="icon" name="icon" [(ngModel)]="editForm.icon" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Path</div>
+                        <nz-form-control>
+                            <input nz-input type="text" id="path" name="path" [(ngModel)]="editForm.path" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Sort</div>
+                        <nz-form-control>
+                            <nz-input-number [style.width.%]="100" name="sort" [(ngModel)]="editForm.sort"></nz-input-number>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Type</div>
+                            <nz-form-control>
+                                <nz-select name="type" [(ngModel)]="editForm.type"  nzPlaceHolder="Please select">
+                                    @for (o of typeOptions; track o) {
+                                      <nz-option [nzLabel]="o.label" [nzValue]="o.value"></nz-option>
+                                    }
+                                </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Excel Function Code</div>
+                        <nz-form-control>
+                            <input nz-input type="text" id="excelFunctionCode" name="excelFunctionCode" [(ngModel)]="editForm.excelFunctionCode" />
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Excel Function Name</div>
+                        <nz-form-control>
+                            <input nz-input type="text" id="excelFunctionName" name="excelFunctionName" [(ngModel)]="editForm.excelFunctionName" />
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

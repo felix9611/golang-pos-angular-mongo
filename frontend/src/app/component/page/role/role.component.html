@@ -1,0 +1,165 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6"   *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name/Code" [(ngModel)]="searchForm.name" />
+            </div>
+            <div (click)="loadSysRoleLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div   *ngIf="userRightInside.write" (click)="showDialog()" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+        </div>
+        <nz-table
+                
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Role Code</th>
+                        <th>Role Name</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.code}}</td>
+                        <td>{{data.name}}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    *ngIf="userRightInside.update"
+                                    (click)="openMenuDialog(data._id)" 
+                                    class="w-[160px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Meun Permission
+                                </div>
+                                <div 
+                                    *ngIf="userRightInside.update"
+                                    (click)="getOneData(data._id)" 
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Edit
+                                </div>
+                                <div 
+                                    *ngIf="userRightInside.delete"
+                                    (click)="handleRomeve(data._id)"
+                                    class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                    Delete
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadSysRoleLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadSysRoleLists()"
+        ></nz-pagination>
+
+        <nz-modal 
+            nzWidth="700px"
+            [(nzVisible)]="editFormDialog" 
+            (nzOnCancel)="closeDialog()"
+            (nzOnOk)="submitForm()"
+            nzTitle="System Role Form"
+            [nzOkText]="okText"
+        >
+            <ng-container *nzModalContent>
+                <form nz-form>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="6" nzFor="email">Type Code</nz-form-label>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input type="text" id="typeCode" name="typeCode" [(ngModel)]="editForm.code" />
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                      <nz-form-label [nzSpan]="6" nzFor="email">Type Name</nz-form-label>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input type="text" id="typeName" name="typeName" [(ngModel)]="editForm.name" />
+                      </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Read</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <label nz-checkbox id="read" name="read" [(ngModel)]="editForm.read"></label>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Write</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <label nz-checkbox id="write" name="write" [(ngModel)]="editForm.write"></label>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Delete</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <label nz-checkbox id="delete" name="delete" [(ngModel)]="editForm.delete"></label>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Update</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <label nz-checkbox id="update" name="update" [(ngModel)]="editForm.update"></label>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Upload</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                            <label nz-checkbox id="upload" name="upload" [(ngModel)]="editForm.upload"></label>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Remark</nz-form-label>
+                        <nz-form-control [nzSpan]="14">
+                          <textarea nz-input id="remark" name="remark" [(ngModel)]="editForm.remark"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
+            </ng-container>
+           
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="removeDialog" 
+            nzTitle="Confirm Delete"
+            (nzOnCancel)="closeRemoveDialog()"
+            (nzOnOk)="handleRemove()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to confirm delete this asset type?
+            </ng-container>
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="menuDialog" 
+            nzTitle="Meun Permission"
+            (nzOnCancel)="closeMenuDialog()"
+            (nzOnOk)="handleMeunPermission()"
+        >
+            <ng-container *nzModalContent>
+                <nz-tree
+                    #nzTreeComponent
+                    [nzData]="menuItems"
+                    nzCheckable
+                    [nzCheckedKeys]="selectedMenusIds"
+                    [nzExpandedKeys]="defaultMenusIds"
+                    [nzSelectedKeys]="menusIdsExpandedKeys"
+                    (nzClick)="menuItemClick($event)"
+                    (nzContextMenu)="menuItemClick($event)"
+                    (nzCheckboxChange)="menuItemCheck($event)"
+                    (nzExpandChange)="menuItemCheck($event)"
+                ></nz-tree>
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

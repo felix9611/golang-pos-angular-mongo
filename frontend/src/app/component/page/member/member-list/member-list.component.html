@@ -1,0 +1,107 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6"  *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+           <!-- <div class="w-[240px]">
+                <nz-range-picker
+                    nzSize="large"
+                    class="h-full"
+                    name="date"
+                    [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                    [(ngModel)]="searchForm.purchaseDates"
+                ></nz-range-picker>
+            </div>-->
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" name="name" placeholder="Name" [(ngModel)]="searchForm.name" />
+            </div>
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" name="contact" placeholder="Contact" [(ngModel)]="searchForm.contact" />
+            </div>
+            
+
+            <div (click)="loadMemberLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div *ngIf="userRightInside.write" (click)="goToCreate()" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+          <!--  <div *ngIf="userRightInside.upload" class="w-[200px] border-1 border-[#D17600] text-center px-1 py-2 rounded-lg">
+                <app-download-excel-template 
+                    class="text-[#D17600] hover:text-[#B06400]" 
+                    buttonLabel="Download Excel Template" 
+                    excelFileName="asset_list_template.xlsx" 
+                    [excelFieldList]="excelFieldList" 
+                />
+            </div>
+            <div *ngIf="userRightInside.upload" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                <app-upload-dialog
+                    uploadButtonLabel="Upload"
+                    uploadApiUrl="/asset/asset-list/batch-create"
+                    [excelFieldList]="excelFieldList"
+                    [dbFieldList]="dbFieldList"
+                />
+            </div>-->
+        </div>
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Member No.</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.memberCode}}</td>
+                        <td>{{data.name}}</td>
+                        <td>{{data.phone}}</td>
+                        <td>{{data.email}}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    (click)="openEdit(data._id)"
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Detail
+                                </div>
+                                <div 
+                                    *ngIf="userRightInside.delete"
+                                    (click)="handleRomeve(data._id)"
+                                    class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                    Remove
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadMemberLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadMemberLists()"
+        ></nz-pagination>
+
+        <nz-modal
+            [(nzVisible)]="removeDialog" 
+            nzTitle="Confirm"
+            (nzOnCancel)="closeRemoveDialog()"
+            (nzOnOk)="goToVoid()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to confirm void this record?
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

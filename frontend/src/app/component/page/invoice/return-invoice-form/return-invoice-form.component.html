@@ -1,0 +1,270 @@
+<div class="bg-white p-[1rem]">
+    <div class="flex py-3 gap-5">
+        <div class="text-[2rem] hover:text-[#ff9200] px-3" (click)="goBackList()">
+            <mat-icon cl aria-hidden="false" fontIcon="chevron_left"></mat-icon>
+        </div>
+        <div class="text-center text-[2rem] font-bold">Return Invoice Form</div>
+    </div>
+    <div class="grid lg:grid-cols-2 gap-2">
+        <div>
+            <form nz-form class="grid lg:grid-cols-2 p-2 gap-2">
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Create Date</div>
+                    <nz-form-control>
+                      <nz-date-picker
+                            class="w-[100%]"
+                            name="createdAt"
+                            nzShowTime
+                            nzFormat="yyyy-MM-dd HH:mm:ss"
+                            [(ngModel)]="invoiceDetail.createdAt"
+                            [disabled]="true" 
+                        ></nz-date-picker>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Location</div>
+                    <nz-form-control>
+                        <nz-select 
+                                name="placeId" 
+                                [(ngModel)]="invoiceDetail.locationId" 
+                                nzAllowClear  
+                                nzShowArrow 
+                                nzPlaceHolder="Please select"
+                                [disabled]="true"
+                            >
+                            @for (option of locationList; track option) {
+                              <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                            }
+                          </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Total Amount</div>
+                    <nz-form-control class="w-full">
+                        <nz-input-number [style.width.%]="100" name="totalAmount" [(ngModel)]="invoiceDetail.totalAmount" [disabled]="true">
+                            <span nzInputPrefix>$</span>
+                        </nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="invoiceDetail.member && invoiceDetail.member.name">
+                    <div class="px-1 w-[105px] flex items-center">Member Name</div>
+                    <nz-form-control class="w-full">
+                        <input nz-input type="text" name="memberName" [(ngModel)]="invoiceDetail.member.name" [disabled]="true" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="invoiceDetail.member && invoiceDetail.member.phone">
+                    <div class="px-1 w-[105px] flex items-center">Phone No.</div>
+                    <nz-form-control class="w-full">
+                        <input nz-input type="text" name="phoneNo" [(ngModel)]="invoiceDetail.member.phone" [disabled]="true" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="invoiceDetail.member && invoiceDetail.member.phone">
+                    <div class="px-1 w-[105px] flex items-center">Email</div>
+                    <nz-form-control class="w-full">
+                        <input nz-input type="text" name="email" [(ngModel)]="invoiceDetail.member.email" [disabled]="true" />
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item *ngIf="invoiceDetail.member && invoiceDetail.member.fax">
+                    <div class="px-1 w-[105px] flex items-center">Fax No.</div>
+                    <nz-form-control class="w-full">
+                        <input nz-input type="text" name="fax" [(ngModel)]="invoiceDetail.member.fax" [disabled]="true" />
+                    </nz-form-control>
+                </nz-form-item>
+    
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Tax Ref No.</div>
+                    <nz-form-control class="w-full">
+                        <input nz-input type="text" name="discount" [(ngModel)]="invoiceDetail.taxRefNo" [disabled]="true" />
+                    </nz-form-control>
+                </nz-form-item>
+    
+                <nz-form-item class="lg:col-span-2">
+                    <div class="px-1 w-[105px] flex items-center">Remark</div>
+                    <nz-form-control >
+                      <textarea nz-input name="remark" [(ngModel)]="invoiceDetail.remark" [disabled]="true"></textarea>
+                    </nz-form-control>
+                </nz-form-item>
+    
+                <div class="py-3 lg:col-span-2">
+                    <div class="text-center text-[1.5rem] font-bold py-2">Invoice Items</div>
+                    <nz-table
+                        [nzData]="invoiceDetail.invoiceItems"
+                        #dataTable
+                        nzFrontPagination="false"
+                    >
+                        <thead>
+                            <tr>
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>Qty</th>
+                                <th>Total Amount</th>
+                                <th>Tax Rate</th>
+                                <th>After Tax</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of invoiceDetail.invoiceItems">
+                                <td>{{data.product.productCode}}</td>
+                                <td>{{data.product.productName}}</td>
+                                <td>{{data.qty}}</td>
+                                <td>${{data.price}}</td>
+                                <td>{{data.taxRate * 100 || 0}}%</td>
+                                <td>${{data.taxAmount || 0}}</td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+            </form>
+        </div>
+        <div>
+            <form nz-form class="grid lg:grid-cols-2 p-2 gap-2">
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Invoice No.</div>
+                      <nz-form-control>
+                        <input nz-input type="text" name="number" [(ngModel)]="returnInvoiceForm.returnInvoiceNo"  (ngModelChange)="returnInvoiceNoChanged($event)" />
+                      </nz-form-control>
+                </nz-form-item>
+                <nz-form-item class="lg:col-span-2">
+                    <div class="px-1 w-[105px] flex items-center">Return Reason</div>
+                    <nz-form-control >
+                      <textarea nz-input name="returnReason" [(ngModel)]="returnInvoiceForm.returnReason"></textarea>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item class="lg:col-span-2">
+                    <div class="px-1 w-[105px] flex items-center">Return Datail</div>
+                    <nz-form-control >
+                      <textarea nz-input name="returnDatail" [(ngModel)]="returnInvoiceForm.returnDatail"></textarea>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Location</div>
+                    <nz-form-control>
+                        <nz-select 
+                                name="returnLocationId" 
+                                [(ngModel)]="returnInvoiceForm.returnLocationId" 
+                                nzAllowClear  
+                                nzShowArrow 
+                                nzPlaceHolder="Please select"
+                            >
+                            @for (option of locationList; track option) {
+                              <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                            }
+                          </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Return Method</div>
+                      <nz-form-control>
+                        <input nz-input type="text" name="returnMethod" [(ngModel)]="returnInvoiceForm.returnMethod" />
+                      </nz-form-control>
+                </nz-form-item>
+                <nz-form-item class="lg:col-span-2">
+                    <div class="px-1 w-[105px] flex items-center">Process Method</div>
+                      <nz-form-control>
+                        <input nz-input type="text" name="processMethod" [(ngModel)]="returnInvoiceForm.processMethod" />
+                      </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Refund Amount</div>
+                    <nz-form-control class="w-full">
+                        <nz-input-number [style.width.%]="100" name="refundAmount" [(ngModel)]="returnInvoiceForm.refundAmount" [disabled]="true">
+                            <span nzInputPrefix>$</span>
+                        </nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Refund Method</div>
+                      <nz-form-control>
+                        <input nz-input type="text" name="refundMethod" [(ngModel)]="returnInvoiceForm.refundMethod"  />
+                      </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Refund</div>
+                    <nz-form-control [nzSpan]="14">
+                        <label nz-checkbox id="refund" name="refund" [(ngModel)]="returnInvoiceForm.refund"></label>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Return To Vendor</div>
+                    <nz-form-control [nzSpan]="14">
+                        <label nz-checkbox id="returnToVendor" name="returnToVendor" [(ngModel)]="returnInvoiceForm.returnToVendor"></label>
+                    </nz-form-control>
+                </nz-form-item>
+                
+                <div class="py-1 lg:col-span-2 text-center text-[1.3rem] font-bold">
+                    Item Submit
+                </div>
+    
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Product Code</div>
+                      <nz-form-control>
+                        <input nz-input type="text" name="productCode" [(ngModel)]="itemSubmitForm.productCode" />
+                    </nz-form-control>
+                </nz-form-item>
+    
+                <div (click)="searchInvoiceItem()" class="rounded-lg border-2 text-[#008dff] border-[#008dff] bg-[#90cdff] hover:bg-[#6bafe7] w-[100px] h-[30px] text-center ">
+                    Search
+                </div>
+    
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Return Qty</div>
+                    <nz-form-control class="w-full">
+                        <nz-input-number [style.width.%]="100" name="qty" [(ngModel)]="itemSubmitForm.qty" (ngModelChange)="qtyChanged($event)"></nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+    
+                <nz-form-item>
+                    <div class="px-1 w-[105px] flex items-center">Return Amount</div>
+                    <nz-form-control class="w-full">
+                        <nz-input-number [style.width.%]="100" name="retailPrice" [(ngModel)]="itemSubmitForm.price">
+                            <span nzInputPrefix>$</span>
+                        </nz-input-number>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <div class="lg:col-span-2 gap-5">
+                    <div (click)="addToList()" class="rounded-lg border-2 text-[#258e8e] border-[#258e8e] bg-[#85e0e0] hover:bg-[#34cbcb] w-[100px] h-[30px] text-center ">
+                        Add to List
+                    </div>
+                </div>
+
+                <div class="py-3 lg:col-span-2">
+                    <div class="text-center text-[1.5rem] font-bold py-2">Return Items</div>
+                    <nz-table
+                        [nzData]="invoiceDetail.invoiceItems"
+                        #dataTable
+                        nzFrontPagination="false"
+                    >
+                        <thead>
+                            <tr>
+                                <th>Product Code</th>
+                                <th>Product Name</th>
+                                <th>Qty</th>
+                                <th>Total Amount</th>
+                                <th>Total After Tax Amount</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of returnInvoiceForm.returnItems; index as i;">
+                                <td>{{data.product.productCode}}</td>
+                                <td>{{data.product.productName}}</td>
+                                <td>{{data.qty}}</td>
+                                <td>${{data.price}}</td>
+                                <td>${{data.taxAmount}}</td>
+                                <td class="text-center"><a (click)="removeItem(i)">X</a></td>
+                            </tr>
+                        </tbody>
+                    </nz-table>
+                </div>
+
+                <div 
+                    (click)="submitForm()" 
+                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                        Submit
+                </div>
+    
+            </form>
+        </div>
+    </div>
+</div>

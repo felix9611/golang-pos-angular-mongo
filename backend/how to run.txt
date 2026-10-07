@@ -1,0 +1,13 @@
+// Init library
+go install 
+
+// Dev Run
+go run main.go
+
+//Build
+go build
+
+go clean -cache
+
+// Make API doc
+swag init

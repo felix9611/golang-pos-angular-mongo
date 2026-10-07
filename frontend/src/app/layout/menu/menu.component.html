@@ -1,0 +1,52 @@
+<ul class="h-screen fixed left-0 bg-gray-900 text-white shadow-lg transition-all duration-300 lg:w-60 md:w-[10rem] sm:w-30 w-14 overflow-y-scroll z-2">
+  <div class="top-0 text-center text-[1.5rem] py-5 font-bold"  [ngClass]="isMenuExpanded ? 'opacity-100' : 'opacity-0 hidden'">
+    POS 
+  </div>
+  <div>
+    <li *ngFor="let item of menuItems">
+      <!-- Parent Menu Item -->
+      <div (click)="toggleMenu(item)"
+           [ngClass]="{'bg-blue-500': activeParent === item, '': activeParent !== item}"
+           class="p-3 rounded-md cursor-pointer hover:bg-gray-600 transition flex justify-between">
+            <a *ngIf="item.childrens && item.childrens.length === 0" [routerLink]="item.path" class="flex items-center px-4 cursor-pointer">
+              <mat-icon aria-hidden="false" [fontIcon]="item.icon"></mat-icon>
+              <span class="ml-3 transition-opacity duration-300 text-white"
+                  [ngClass]="isMenuExpanded ? 'opacity-100' : 'opacity-0 hidden'">
+                  {{ item.name }}
+              </span>
+              
+            </a>
+            <a *ngIf="item.childrens && item.childrens.length > 0" class="flex items-center px-4 cursor-pointer">
+              <mat-icon aria-hidden="false" [fontIcon]="item.icon"></mat-icon>
+              <span class="ml-3 transition-opacity duration-300 text-white"
+                  [ngClass]="isMenuExpanded ? 'opacity-100' : 'opacity-0 hidden'">
+                  {{ item.name }}
+              </span>
+              
+            </a>
+            <span *ngIf="item.childrens && item.childrens.length > 0" class="flex justify-self-end items-center">{{ activeParent === item ? '▲' : '▼' }}</span>
+            
+      </div>
+  
+      <!-- Child Menu Items -->
+      <ul *ngIf="expandedMenus.includes(item) && item.childrens" class="pl-4">
+        <li *ngFor="let child of item.childrens"
+            (click)="setActiveChild(child, item); $event.stopPropagation()"
+            [ngClass]="{'bg-green-500': activeChild === child, '': activeChild !== child}"
+            class="p-2 rounded-md cursor-pointer hover:bg-gray-500 transition">
+            <a [routerLink]="child.path" class="flex items-center lg:px-5">
+              <mat-icon cl aria-hidden="false" [fontIcon]="child.icon"></mat-icon>
+                <span class="ml-3 transition-opacity duration-300 text-white"
+                    [ngClass]="isMenuExpanded ? 'opacity-100' : 'opacity-0 hidden'">
+                {{ child.name }}
+              </span>
+            </a>
+        </li>
+      </ul>
+    </li>
+  </div>
+  <!-- <div class="absolute bottom-0 left-0 p-2 w-full">
+    <div class="border-1 border-white p-2 w-full rounded-lg">
+    </div>
+  </div> still in design -->
+</ul>

@@ -1,0 +1,241 @@
+<div class="bg-white px-[2rem]">
+    <div class="p-1  lg:p-6"  *ngIf="userRightInside.read">
+        <div class="flex gap-2 py-5">
+            <div class="w-[150px]">
+                <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name/Code" [(ngModel)]="searchForm.name" />
+            </div>
+            <div class="w-[245px]">
+                <nz-range-picker
+                    nzSize="large"
+                    class="h-full"
+                    name="date"
+                    [nzShowTime]="{ nzFormat: 'HH:mm' }"
+                    nzFormat="yyyy-MM-dd HH:mm:ss"
+                    [(ngModel)]="searchForm.date"
+                ></nz-range-picker>
+            </div>
+            <div class="w-[200px]">
+                <nz-select 
+                    nzSize="large"
+                    class="h-full"
+                    name="place" 
+                    [(ngModel)]="searchForm.placeId"  
+                    nzPlaceHolder="Lcoation"  
+                    nzMode="multiple"  
+                    nzAllowClear 
+                    [nzShowArrow]="true">
+                    @for (option of placeLists; track option) {
+                        <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                    }
+                </nz-select>
+            </div>
+            <div class="w-[200px]">
+                <nz-select 
+                    nzSize="large"
+                    class="h-full"
+                    name="department" 
+                    [(ngModel)]="searchForm.deptId"  
+                    nzPlaceHolder="Department"  
+                    nzMode="multiple"  
+                    nzAllowClear 
+                    [nzShowArrow]="true">
+                    @for (option of deptLists; track option) {
+                        <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                    }
+                </nz-select>
+            </div>
+            <div (click)="loadBudgetLists()" class="w-[80px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
+                Search
+            </div>
+            <div *ngIf="userRightInside.write" (click)="showDialog()" class="w-[80px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                Create
+            </div>
+            <div *ngIf="userRightInside.upload" class="w-[180px] border-1 border-[#D17600] text-center py-2 rounded-lg">
+                <app-download-excel-template 
+                    class="text-[#D17600] hover:text-[#B06400]" 
+                    buttonLabel="Download Excel Template" 
+                    excelFileName="budget_template.xlsx" 
+                    [excelFieldList]="excelFieldList" 
+                />
+            </div>
+            <div *ngIf="userRightInside.upload" class="w-[100px] bg-[#54A4FF] hover:bg-[#2E7FDB] text-white text-center px-1 py-2 rounded-lg">
+                <app-upload-dialog
+                    uploadButtonLabel="Upload"
+                    uploadApiUrl="/base/budget/batch-create"
+                    [excelFieldList]="excelFieldList"
+                    [dbFieldList]="dbFieldList"
+                />
+            </div>
+        </div>
+        <nz-table
+                [nzData]="dataLists"
+                #dataTable
+                nzFrontPagination="false"
+            >
+                <thead>
+                    <tr>
+                        <th>Budget No</th>
+                        <th>budget Name</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Location</th>
+                        <th>Department</th>
+                        <th>Created At</th>
+                        <th>Updated At</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let data of dataTable.data">
+                        <td>{{data.budgetNo}}</td>
+                        <td>{{data.budgetName}}</td>
+                        <td>{{  dateFormat(data.budgetFrom)  }}</td>
+                        <td>{{  dateFormat(data.budgetTo)  }}</td>
+                        <td>{{data.place && data.place.placeName}}</td>
+                        <td>{{data.department && data.department.deptName}}</td>
+                        <td>{{  dateFormat(data.createdAt)  }}</td>
+                        <td>{{  dateFormat(data.updatedAt)  }}</td>
+                        <td>
+                            <div class="flex gap-3">
+                                <div 
+                                    *ngIf="userRightInside.update"
+                                    (click)="getOneData(data._id)" 
+                                    class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
+                                    Edit
+                                </div>
+                                <div 
+                                    *ngIf="userRightInside.delete"
+                                    (click)="handleRomeve(data._id)"
+                                    class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
+                                    Delete
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+        </nz-table>
+        <nz-pagination 
+            [nzPageIndex]="searchForm.page" 
+            [nzTotal]="totals" 
+            nzShowSizeChanger 
+            [nzPageSize]="searchForm.limit"
+            (nzPageIndexChange)="searchForm.page = $event; loadBudgetLists()"
+            (nzPageSizeChange)="searchForm.limit = $event; loadBudgetLists()"
+        ></nz-pagination>
+
+        <nz-modal 
+            nzWidth="600px"
+            [(nzVisible)]="editFormDialog" 
+            (nzOnCancel)="closeDialog()"
+            (nzOnOk)="submitForm()"
+            nzTitle="Budget Form"
+            [nzOkText]="okText"
+        >
+            <ng-container *nzModalContent>
+                <form nz-form>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Department</div>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-select name="deptId" [nzShowArrow]="true" nzAllowClear [(ngModel)]="editForm.deptId"  nzPlaceHolder="Please select">
+                                @for (option of deptLists; track option) {
+                                  <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                                }
+                              </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Location</div>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-select 
+                                name="place" 
+                                [(ngModel)]="editForm.placeId"  
+                                nzPlaceHolder="Please select"
+                                nzAllowClear 
+                                [nzShowArrow]="true">
+                                @for (option of placeLists; track option) {
+                                    <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                                }
+                            </nz-select>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Name</div>
+                      <nz-form-control [nzSpan]="14">
+                        <input nz-input type="text" id="name" name="name" [(ngModel)]="editForm.budgetName"/>
+                      </nz-form-control>
+                    </nz-form-item>
+                    <div class="grid md:grid-cols-2 gap-1">
+                        <nz-form-item>
+                            <div class="px-1 w-[105px] flex items-center">Year</div>
+                            <nz-form-control>
+                              <input nz-input type="text" id="year" name="year" [(ngModel)]="editForm.year"/>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <div class="px-2 w-[80px] flex items-center">Month</div>
+                            <nz-form-control>
+                              <input nz-input type="text" id="month" name="month" [(ngModel)]="editForm.month"/>
+                            </nz-form-control>
+                        </nz-form-item>
+                    </div>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Date From</div>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-date-picker
+                                name="budgetFrom"
+                                nzShowTime
+                                nzFormat="yyyy-MM-dd HH:mm:ss"
+                                [(ngModel)]="editForm.budgetFrom"
+                            >
+                            </nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Date To</div>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-date-picker
+                                name="budgetTo"
+                                nzShowTime
+                                nzFormat="yyyy-MM-dd HH:mm:ss"
+                                [(ngModel)]="editForm.budgetTo"
+                            >
+                            </nz-date-picker>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Amount</div>
+                        <nz-form-control [nzSpan]="14">
+                            <nz-input-number class="w-[100%]" name="budgetAmount" [(ngModel)]="editForm.budgetAmount">
+                                <span nzInputPrefix>$</span>
+                            </nz-input-number>
+                        </nz-form-control>
+                    </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Status</div>
+                        <nz-form-control [nzSpan]="14">
+                          <input nz-input type="text" id="budgetStatus" name="budgetStatus" [(ngModel)]="editForm.budgetStatus"/>
+                        </nz-form-control>
+                      </nz-form-item>
+                    <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Remark</div>
+                        <nz-form-control [nzSpan]="14">
+                          <textarea nz-input id="remark" name="remark" [(ngModel)]="editForm.remark"></textarea>
+                        </nz-form-control>
+                    </nz-form-item>
+                </form>
+            </ng-container>
+           
+        </nz-modal>
+
+        <nz-modal
+            [(nzVisible)]="removeDialog" 
+            nzTitle="Confirm Delete"
+            (nzOnCancel)="closeRemoveDialog()"
+            (nzOnOk)="handleRemove()"
+        >
+            <ng-container *nzModalContent>
+                Are you sure to confirm invalidate this account?
+            </ng-container>
+        </nz-modal>
+    </div>
+</div>

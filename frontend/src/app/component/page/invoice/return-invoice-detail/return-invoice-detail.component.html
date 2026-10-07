@@ -1,0 +1,164 @@
+<div class="bg-white p-[1rem]">
+    <div class="flex py-3 gap-5">
+        <div class="text-[2rem] hover:text-[#ff9200] px-3" (click)="goBackList()">
+            <mat-icon cl aria-hidden="false" fontIcon="chevron_left"></mat-icon>
+        </div>
+        <div class="text-center text-[2rem] font-bold">Return Invoice Detail (Case No.: {{ returnInvoiceForm.returnCaseNumber }})</div>
+    </div>
+    <form nz-form class="grid lg:grid-cols-4 p-2 gap-2">
+        <nz-form-item>
+            <div class="px-1 w-[105px] flex items-center">Invoice No.</div>
+              <nz-form-control>
+                <input nz-input type="text" name="number" [(ngModel)]="returnInvoiceForm.invoiceNumber"  [disabled]="true" />
+              </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+            <div class="px-1 w-[105px] flex items-center">Case Number</div>
+              <nz-form-control>
+                <input nz-input type="text" name="returnCaseNumber" [(ngModel)]="returnInvoiceForm.returnCaseNumber"  [disabled]="true" />
+              </nz-form-control>
+        </nz-form-item>
+        <nz-form-item class="lg:col-span-2">
+            <div class="px-1 w-[105px] flex items-center">Return Reason</div>
+              <nz-form-control>
+                <input nz-input type="text" name="returnReason" [(ngModel)]="returnInvoiceForm.returnReason"  [disabled]="true" />
+              </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="returnInvoiceForm.member && returnInvoiceForm.member.name">
+          <div class="px-1 w-[105px] flex items-center">Member Name</div>
+          <nz-form-control class="w-full">
+              <input nz-input type="text" name="memberName" [(ngModel)]="returnInvoiceForm.member.name" [disabled]="true" />
+          </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="returnInvoiceForm.member && returnInvoiceForm.member.phone">
+          <div class="px-1 w-[105px] flex items-center">Phone No.</div>
+          <nz-form-control class="w-full">
+              <input nz-input type="text" name="phoneNo" [(ngModel)]="returnInvoiceForm.member.phone" [disabled]="true" />
+          </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="returnInvoiceForm.member && returnInvoiceForm.member.phone">
+          <div class="px-1 w-[105px] flex items-center">Email</div>
+          <nz-form-control class="w-full">
+              <input nz-input type="text" name="email" [(ngModel)]="returnInvoiceForm.member.email" [disabled]="true" />
+          </nz-form-control>
+      </nz-form-item>
+      <nz-form-item *ngIf="returnInvoiceForm.member && returnInvoiceForm.member.fax">
+          <div class="px-1 w-[105px] flex items-center">Fax No.</div>
+          <nz-form-control class="w-full">
+              <input nz-input type="text" name="fax" [(ngModel)]="returnInvoiceForm.member.fax" [disabled]="true" />
+          </nz-form-control>
+      </nz-form-item>
+
+        <nz-form-item class="lg:col-span-4">
+          <div class="px-1 w-[105px] flex items-center">Return Datail</div>
+          <nz-form-control >
+            <textarea nz-input name="returnDatail" [(ngModel)]="returnInvoiceForm.returnDatail" [disabled]="true"></textarea>
+          </nz-form-control>
+      </nz-form-item>
+
+        <nz-form-item>
+          <div class="px-1 w-[105px] flex items-center">Return Date</div>
+          <nz-form-control>
+            <nz-date-picker
+                  class="w-[100%]"
+                  name="createdAt"
+                  nzShowTime
+                  nzFormat="yyyy-MM-dd HH:mm:ss"
+                  [(ngModel)]="returnInvoiceForm.returnDate"
+                  [disabled]="true" 
+              ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+        <nz-form-item>
+          <div class="px-1 w-[105px] flex items-center">Location</div>
+          <nz-form-control>
+              <nz-select 
+                      name="returnLocationId" 
+                      [(ngModel)]="returnInvoiceForm.returnLocationId" 
+                      nzAllowClear  
+                      nzShowArrow 
+                      nzPlaceHolder="Please select"
+                      [disabled]="true"
+                  >
+                  @for (option of locationList; track option) {
+                    <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                  }
+                </nz-select>
+          </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <div class="px-1 w-[105px] flex items-center">Return Method</div>
+          <nz-form-control>
+            <input nz-input type="text" name="returnMethod" [(ngModel)]="returnInvoiceForm.returnMethod"  [disabled]="true" />
+          </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <div class="px-1 w-[105px] flex items-center">Process Method</div>
+          <nz-form-control>
+            <input nz-input type="text" name="processMethod" [(ngModel)]="returnInvoiceForm.processMethod"  [disabled]="true" />
+          </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <div class="px-1 w-[105px] flex items-center">Return Amount</div>
+        <nz-form-control class="w-full">
+            <nz-input-number [style.width.%]="100" name="refundAmount" [(ngModel)]="returnInvoiceForm.refundAmount" [disabled]="true">
+                <span nzInputPrefix>$</span>
+            </nz-input-number>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <div class="px-1 w-[105px] flex items-center">Return Method</div>
+        <nz-form-control class="w-full">
+          <nz-form-control>
+            <input nz-input type="text" name="refundMethod" [(ngModel)]="returnInvoiceForm.refundMethod"  [disabled]="true" />
+          </nz-form-control>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <div class="px-1 w-[105px] flex items-center">Refund</div>
+        <nz-form-control [nzSpan]="14">
+            <label nz-checkbox id="refund" name="refund" [(ngModel)]="returnInvoiceForm.refund" [disabled]="true"></label>
+        </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+        <div class="px-1 w-[105px] flex items-center">Return To Vendor</div>
+        <nz-form-control [nzSpan]="14">
+            <label nz-checkbox id="returnToVendor" name="returnToVendor" [(ngModel)]="returnInvoiceForm.returnToVendor" [disabled]="true"></label>
+        </nz-form-control>
+    </nz-form-item>
+      
+
+
+      <div class="py-3 lg:col-span-4">
+          <div class="text-center text-[1.5rem] font-bold py-2">Return Items</div>
+          <nz-table
+            [nzData]="returnInvoiceForm.returnItems"
+            #dataTable
+            nzFrontPagination="false"
+          >
+            <thead>
+              <tr>
+                <th>Product Code</th>
+                <th>Product Name</th>
+                <th>Return Qty</th>
+                <th>Return Total Amount</th>
+                <th>Tax Rate</th>
+                <th>After Tax</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of returnInvoiceForm.returnItems">
+                <td>{{data.product.productCode}}</td>
+                <td>{{data.product.productName}}</td>
+                <td>{{data.qty}}</td>
+                <td>${{data.price}}</td>
+                <td>{{data.taxRate * 100 || 0}}%</td>
+                <td>${{data.taxAmount || 0}}</td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+    </form>
+</div>
