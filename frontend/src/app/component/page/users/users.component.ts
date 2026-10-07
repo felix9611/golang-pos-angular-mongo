@@ -57,15 +57,15 @@ export class UsersComponent {
 
     ngOnDestroy() {
         if (this.userStoreService.menuRole$) {
-            this.rightSubscription.unsubscribe()
+           this.rightSubscription.unsubscribe()
         }
     }
 
     userRightInside: any = {
-        read: false,
-        write: false,
-        update: false,
-        delete: false
+        read: true,
+        write: true,
+        update: true,
+        delete: true
     }
 
 
@@ -75,7 +75,7 @@ export class UsersComponent {
     }
 
     editForm: UserForm=  {
-        _id: '',
+        id: '',
         username: '',
         avatarBase64: '',
         deptId: 0,
@@ -130,17 +130,19 @@ export class UsersComponent {
     }
 
     async loadRoleLists() {
-        this.roleLists = await getApiWithAuth('/sys/role/getAll')
+        const res = await getApiWithAuth('/sys/role/all')
+        this.roleLists = res.data
     }
 
     async loadDeptLists() {
-        this.deptLists = await getApiWithAuth('/sys/department/getAll')
+        const res = await getApiWithAuth('/sys/department/all')
+        this.deptLists = res.data
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/sys/user/create-user' : `/sys/user/update-uesr`
+        const url = this.editForm.id === '' ? '/sys/user/create' : `/sys/user/update`
 
-        const res = await postApiWithAuth(url, this.editForm._id? {
+        const res = await postApiWithAuth(url, this.editForm.id? {
             avatarBase64: this.avatarUrl ? this.avatarUrl : this.editForm.avatarBase64,
             ...this.editForm
         } : {
@@ -159,7 +161,7 @@ export class UsersComponent {
             this.loadUserLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 username: '',
                 avatarBase64: '',
                 deptId: 0,
@@ -171,8 +173,8 @@ export class UsersComponent {
 
     async loadUserLists() {
         const res = await postApiWithAuth('/sys/user/list', this.searchForm)
-        this.dataLists = res.lists
-        this.totals = res.total
+        this.dataLists = res.data.lists
+        this.totals = res.data.total
     }
 
     showDialog() {
@@ -205,7 +207,7 @@ export class UsersComponent {
 
 
     dateFormat(data: string) {
-        return data ? moment(new Date(data)).format('DD-MM-YYYY HH:MM') : null
+        return data ? moment(data).format('DD-MM-YYYY HH:mm') : null
     }
 
     async getOneData(id:string) {

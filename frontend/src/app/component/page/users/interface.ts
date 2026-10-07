@@ -1,5 +1,5 @@
 export interface UserForm {
-    _id?: string,
+    id?: string,
     username: string
     password?: string
     avatarBase64?: string

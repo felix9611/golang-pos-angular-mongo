@@ -58,13 +58,13 @@
                             <div class="flex gap-3">
                                 <div 
                                     *ngIf="userRightInside.update"
-                                    (click)="getOneData(data._id)" 
+                                    (click)="getOneData(data.id)" 
                                     class="w-[100px] hover:bg-[#90E975] bg-[#B7FFA1] border-1 border-[#3AB713] text-[#3AB713] text-center p-1 rounded-lg">
                                     Edit
                                 </div>
                                 <div 
                                     *ngIf="data.username !== 'admin' && userRightInside.delete"
-                                    (click)="handleRomeve(data._id)"
+                                    (click)="handleRomeve(data.id)"
                                     class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
                                     Delete
                                 </div>
@@ -120,7 +120,7 @@
                         <input nz-input type="text" id="username" name="username" [(ngModel)]="editForm.username"/>
                       </nz-form-control>
                     </nz-form-item>
-                    <nz-form-item *ngIf="!editForm._id">
+                    <nz-form-item *ngIf="!editForm.id">
                         <nz-form-label [nzSpan]="6" nzFor="email">Password</nz-form-label>
                         <nz-form-control [nzSpan]="14">
                           Will preset <span class="font-bold">888888</span>
@@ -137,7 +137,7 @@
                         <nz-form-control [nzSpan]="14">
                             <nz-select name="deptId" [(ngModel)]="editForm.deptId" nzAllowClear  nzShowArrow nzPlaceHolder="Please select">
                                 @for (option of deptLists; track option) {
-                                  <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                                  <nz-option [nzLabel]="option.deptName" [nzValue]="option.id"></nz-option>
                                 }
                               </nz-select>
                         </nz-form-control>
@@ -153,7 +153,7 @@
                                 nzAllowClear  nzShowArrow
                                 [nzShowArrow]="true">
                                 @for (option of roleLists; track option) {
-                                    <nz-option [nzLabel]="option.name" [nzValue]="option._id"></nz-option>
+                                    <nz-option [nzLabel]="option.name" [nzValue]="option.id"></nz-option>
                                 }
                             </nz-select>
                         </nz-form-control>
