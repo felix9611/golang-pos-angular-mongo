@@ -4,9 +4,9 @@ export function buildTreeForUI(data: any[]) {
   
     // Initialize Map with transformed objects
     data.forEach(item => {
-      map.set(String(item._id), { 
+      map.set(String(item.id), { 
         title: item.name, 
-        key: String(item._id), 
+        key: String(item.id), 
         children: [] 
       })
     })
@@ -15,9 +15,9 @@ export function buildTreeForUI(data: any[]) {
     data.forEach(item => {
       const parentId = String(item.mainId)
       if (parentId && map.has(parentId)) {
-        map.get(parentId)!.children.push(map.get(String(item._id)));
+        map.get(parentId)!.children.push(map.get(String(item.id)));
       } else {
-        tree.push(map.get(String(item._id)))
+        tree.push(map.get(String(item.id)))
       }
     })
   
