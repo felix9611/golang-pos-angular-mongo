@@ -1,5 +1,5 @@
 export interface TaxInfomationForm {
-    _id?: string,
+    id?: string,
     nationCode: string
     nationName: string
     countryCode: string
