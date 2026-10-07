@@ -1,5 +1,5 @@
 export interface VendorForm {
-    _id?: string,
+    id?: string,
     vendorCode: string
     vendorName: string
     vendorOtherName?: string

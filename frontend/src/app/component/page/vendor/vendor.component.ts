@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { getApiWithAuth, postApiWithAuth } from '../../../../tool/httpRequest-auth'
+import { deleteApiWithAuth, getApiWithAuth, postApiWithAuth } from '../../../../tool/httpRequest-auth'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'
@@ -90,7 +90,7 @@ export class VendorComponent {
     }
 
     editForm: VendorForm = {
-        _id: '',
+        id: '',
         vendorCode: '',
         vendorName: '',
         vendorOtherName: '',
@@ -125,7 +125,7 @@ export class VendorComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/base/vendor/create' : `/base/vendor/update`
+        const url = this.editForm.id === '' ? '/base/vendor/create' : `/base/vendor/update`
 
         const res = await postApiWithAuth(url, this.editForm)
 
@@ -137,7 +137,7 @@ export class VendorComponent {
             this.loadVendorLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 vendorCode: '',
                 vendorName: '',
                 vendorOtherName: '',
@@ -176,9 +176,9 @@ export class VendorComponent {
     }
 
     async handleRemove() {
-        const url = `/base/vendor/remove/${this.handleRemoveId}`
+        const url = `/base/vendor/void/${this.handleRemoveId}`
 
-        const res: any = await getApiWithAuth(url)
+        const res: any = await deleteApiWithAuth(url)
 
         this.message.info(res.msg)
         this.loadVendorLists()
