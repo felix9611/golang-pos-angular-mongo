@@ -252,24 +252,21 @@ func ListAllMenu(query *dto.SysMenuList) (interface{}, error) {
 
 // BuildSortedTree builds a hierarchical and sorted tree from flat menu list
 func BuildSortedTree(data []dto.SysMenuChildrens) []*dto.SysMenuChildrens {
-	nodeMap := make(map[string]*dto.SysMenuChildrens)
-	tree := []*dto.SysMenuChildrens{}
+	nodeMap := make(map[string]*dto.SysMenuChildrens, len(data))
 
-	// 將資料全部轉成 pointer，初始化 Childrens
 	for i := range data {
-		item := &data[i]
-		if item.Childrens == nil {
-			item.Childrens = []dto.SysMenuChildrens{}
-		}
-		nodeMap[item.ID.Hex()] = item
+		item := data[i]
+		item.Childrens = []*dto.SysMenuChildrens{} // 初始化空 Slice
+		nodeMap[item.ID.Hex()] = &item
 	}
 
-	// Link children
+	var tree []*dto.SysMenuChildrens
+
 	for _, item := range data {
 		current := nodeMap[item.ID.Hex()]
 		if item.MainId != "" {
 			if parent, exists := nodeMap[item.MainId]; exists {
-				parent.Childrens = append(parent.Childrens, *current) // append copy 但已經正確 build
+				parent.Childrens = append(parent.Childrens, current)
 			} else {
 				tree = append(tree, current)
 			}
@@ -278,24 +275,20 @@ func BuildSortedTree(data []dto.SysMenuChildrens) []*dto.SysMenuChildrens {
 		}
 	}
 
-	// Recursive sort
 	var sortTree func(nodes []*dto.SysMenuChildrens)
 	sortTree = func(nodes []*dto.SysMenuChildrens) {
 		sort.Slice(nodes, func(i, j int) bool {
 			return nodes[i].Sort < nodes[j].Sort
 		})
+
 		for _, node := range nodes {
-			// fix: 遞迴時一定要走 pointer
-			childPtrs := make([]*dto.SysMenuChildrens, len(node.Childrens))
-			for i := range node.Childrens {
-				childPtrs[i] = &node.Childrens[i]
+			if len(node.Childrens) > 0 {
+				sortTree(node.Childrens)
 			}
-			sortTree(childPtrs)
 		}
 	}
 
 	sortTree(tree)
-
 	return tree
 }
 
@@ -394,7 +387,7 @@ func GetMenusByIds(query *dto.GetMenusByIds) (interface{}, error) {
 			Status:            v.Status,
 			CreatedAt:         v.CreatedAt,
 			UpdatedAt:         v.UpdatedAt,
-			Childrens:         []dto.SysMenuChildrens{},
+			Childrens:         []*dto.SysMenuChildrens{},
 		})
 	}
 
