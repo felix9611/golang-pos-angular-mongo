@@ -366,7 +366,7 @@ func CreateNewMemberNumber() (string, error) {
 	}
 
 	// format
-	return formatNumber(maxNumber, 6), nil
+	return formatNumberNew(maxNumber, 6), nil
 }
 
 func ListMemberLists(pageDto dto.MemberListsDto) (dto.MemberList, error) {

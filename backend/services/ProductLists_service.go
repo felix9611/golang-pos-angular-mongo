@@ -143,7 +143,7 @@ func CreateNewProductCode() (string, error) {
 	}
 
 	// format
-	return formatNumber(maxNumber, 6), nil
+	return formatNumberNew(maxNumber, 6), nil
 }
 
 func GetOneProductItemByID(id string) (interface{}, error) {
