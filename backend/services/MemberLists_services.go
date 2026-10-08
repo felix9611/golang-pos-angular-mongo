@@ -56,9 +56,24 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 		}
 
 		if len(member.MemberSpecialDays) > 0 {
-			_, err := CreateMemberSpecialDay(memberId.Hex(), member.MemberSpecialDays)
-			if err != nil {
-				return nil, err
+			var newData models.MemberSpecialDays
+
+			for _, item := range member.MemberSpecialDays {
+				newData = models.MemberSpecialDays{
+					MemberId:  memberId.Hex(),
+					Name:      item.Name,
+					Date:      item.Date,
+					Remark:    item.Remark,
+					Status:    1,
+					CreatedAt: time.Now(),
+					UpdatedAt: time.Now(),
+				}
+
+				_, err := CreateMemberSpecialDay(newData)
+
+				if err != nil {
+					return nil, err
+				}
 			}
 		}
 
@@ -71,28 +86,26 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 	}
 }
 
-func CreateMemberSpecialDay(memberId string, data []models.MemberSpecialDays) (interface{}, error) {
+func CreateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) {
 	collection := config.GetCollection("member_special_days")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var itemsData []interface{}
-	now := time.Now()
-
-	for _, item := range data {
-		doc := bson.M{
-			"memberId":  memberId,
-			"name":      item.Name,
-			"date":      item.Date,
-			"remake":    item.Remark,
-			"status":    1,
-			"createdAt": now,
-			"updatedAt": now,
-		}
-		itemsData = append(itemsData, doc)
+	res, err := collection.InsertOne(ctx, data)
+	if err != nil {
+		return nil, err
 	}
 
-	res, err := collection.InsertMany(ctx, itemsData)
+	return res, nil
+}
+
+func UpdateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) {
+	collection := config.GetCollection("member_special_days")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	res, err := collection.UpdateOne(ctx, bson.M{"_id": data.Id}, bson.M{"$set": data})
+
 	if err != nil {
 		return nil, err
 	}
@@ -144,8 +157,6 @@ func GetOneMemberById(id string) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	speacialDayList, err := GetSpecialDayByMemberId(id)
-
 	objectID, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
@@ -163,7 +174,18 @@ func GetOneMemberById(id string) (interface{}, error) {
 	if member.Status == 0 {
 		return "Member is inactive", nil
 	} else {
-		member.MemberSpecialDays = speacialDayList
+		speacialDayList, err := GetSpecialDayByMemberId(id)
+
+		if len(speacialDayList) == 0 {
+			member.MemberSpecialDays = []models.MemberSpecialDays{}
+		} else {
+			member.MemberSpecialDays = speacialDayList
+		}
+
+		if err != nil {
+			return nil, err
+		}
+
 		return &member, nil
 	}
 }
@@ -253,6 +275,35 @@ func UpdateMember(updateDto *models.MemberLists) (interface{}, error) {
 		result, err := collection.UpdateOne(ctx, filter, bson.M{"$set": updateDto})
 		if err != nil {
 			return nil, err
+		}
+
+		if len(updateDto.MemberSpecialDays) > 0 {
+			for _, specialDay := range updateDto.MemberSpecialDays {
+				if specialDay.Id.IsZero() {
+					var newData models.MemberSpecialDays
+					newData = models.MemberSpecialDays{
+						MemberId:  updateDto.Id.Hex(),
+						Name:      specialDay.Name,
+						Date:      specialDay.Date,
+						Remark:    specialDay.Remark,
+						Status:    1,
+						CreatedAt: time.Now(),
+						UpdatedAt: time.Now(),
+					}
+
+					_, err := CreateMemberSpecialDay(newData)
+
+					if err != nil {
+						return nil, err
+					}
+				} else {
+					_, err := UpdateMemberSpecialDay(specialDay)
+
+					if err != nil {
+						return nil, err
+					}
+				}
+			}
 		}
 
 		CreateActionRecord("Member Update", "POST", "Member", updateDto, "Success")
