@@ -100,10 +100,10 @@ func GetOneLocationById(id string) (interface{}, error) {
 }
 
 func UpdateLocationById(updateData *models.Locations) (interface{}, error) {
+	collection := config.GetCollection("locations")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	collection := config.GetCollection("locations")
 	filter := bson.M{"_id": updateData.ID, "status": 1}
 
 	var existingLocation models.Locations
@@ -266,11 +266,10 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 
 func ListAllLocation() (interface{}, error) {
 	collection := config.GetCollection("locations")
-
-	filter := bson.M{"status": 1}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"status": 1}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {

@@ -65,6 +65,7 @@ func main() {
 	controllers.RegisterActionRecordsRoutes(api, authServiceMiddleware)
 	controllers.RegisterSysMenuRoutes(api, authServiceMiddleware)
 	controllers.RegisterExcelFieldMatchRoutes(api, authServiceMiddleware)
+	controllers.RegisterMemberClassRoutes(api, authServiceMiddleware)
 
 	router.Run(":6600")
 }
