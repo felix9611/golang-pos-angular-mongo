@@ -17,7 +17,7 @@ import (
 // @Produce      json
 // @Param        request  body      models.ProductLists  true  "Product List Request Body"
 // @Success      200      {object}  dto.GeneralCreateResponseBody
-// @Router      /product/create [post]
+// @Router      /product/product-list/create [post]
 func CreateProductList(c *gin.Context) {
 	var productList models.ProductLists
 	if err := c.ShouldBindJSON(&productList); err != nil {
@@ -41,7 +41,7 @@ func CreateProductList(c *gin.Context) {
 // @Produce      json
 // @Param        id   path      string  true  "product list ID"
 // @Success      200      {object}  models.ProductLists
-// @Router       /product/one/{id} [get]
+// @Router       /product/product-list/{id} [get]
 func GetOneProductItemByID(c *gin.Context) {
 	id := c.Param("id")
 	assetItem, err := services.GetOneProductItemByID(id)
@@ -59,7 +59,7 @@ func GetOneProductItemByID(c *gin.Context) {
 // @Produce      json
 // @Param        code   path      string  true  "product code"
 // @Success      200      {object}  models.ProductLists
-// @Router       /product/code/{code} [get]
+// @Router       /product/product-list/{code} [get]
 func GetOneProductItemByCode(c *gin.Context) {
 	id := c.Param("code")
 	productItem, err := services.GetOneProductItemByCode(id)
@@ -77,7 +77,7 @@ func GetOneProductItemByCode(c *gin.Context) {
 // @Produce      json
 // @Param        request  body      models.ProductLists true  "Asset List Request Body"
 // @Success      200      {object}  dto.GeneralUpdateResponse
-// @Router       /product/code/update [post]
+// @Router       /product/product-list/update [post]
 func UpdateProductItem(c *gin.Context) {
 	var updateData models.AssetLists
 	if err := c.ShouldBindJSON(&updateData); err != nil {
@@ -120,7 +120,7 @@ func LoadFilesByProductId(c *gin.Context) {
 // @Produce      json
 // @Param        id   path      string  true  "asset file ID"
 // @Success      200      {object}  dto.GeneralUpdateResponse
-// @Router       /product/file-remove/{id} [delete]
+// @Router       /product/product-list/file-remove/{id} [delete]
 func RemoveProductFile(c *gin.Context) {
 	id := c.Param("id")
 	res, err := services.DeleteProductFile(id)
@@ -138,7 +138,7 @@ func RemoveProductFile(c *gin.Context) {
 // @Produce      json
 // @Param        request  body      []dto.ListProductReqDto true  "Asset List Request Body"
 // @Success      200      {object}  []dto.ProductListList
-// @Router       /product/list [post]
+// @Router       /product/product-list/list [post]
 func ListProductItems(c *gin.Context) {
 	var req dto.ListProductReqDto
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -156,6 +156,24 @@ func ListProductItems(c *gin.Context) {
 	c.JSON(http.StatusOK, productItems)
 }
 
+// @Summary      Void one Product Items record by id
+// @Description  Void one Product Items record by id
+// @Tags         Product Items
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Product Items ID"
+// @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
+// @Router      /product/product-list/void/{id} [delete]
+func InactiveProductItems(c *gin.Context) {
+	id := c.Param("id")
+	result, err := services.InactiveProductItemsByID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Asset Type inactivated successfully", "data": result})
+}
+
 func RegisterProductListRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 	productList := rg.Group("/product/product-list", handle.MiddlewareFunc())
 	{
@@ -166,5 +184,6 @@ func RegisterProductListRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware
 		productList.GET("/load-file/:id", LoadFilesByProductId)
 		productList.DELETE("/file-remove/:id", RemoveProductFile)
 		productList.POST("/list", ListProductItems)
+		productList.DELETE("/void/:id", InactiveProductItems)
 	}
 }

@@ -401,3 +401,41 @@ func ListProductItems(req *dto.ListProductReqDto) (interface{}, error) {
 
 	return gin.H{"lists": results, "total": count, "page": req.Page, "limit": req.Limit}, nil
 }
+
+func InactiveProductItemsByID(id string) (interface{}, error) {
+	collection := config.GetCollection("product_lists")
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": objectID, "status": 1}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var existingProduct models.ProductLists
+	err = collection.FindOne(ctx, filter).Decode(&existingProduct)
+	if err != nil {
+		return nil, err
+	}
+
+	if existingProduct.Status == 1 {
+		existingProduct.Status = 0
+		existingProduct.UpdatedAt = time.Now()
+		_, err := collection.UpdateOne(ctx, filter, bson.M{
+			"$set": existingProduct,
+		})
+
+		if err != nil {
+			return nil, err
+		}
+
+		CreateActionRecord("Product Item Inactive", "DELETE", "Product Item", existingProduct, "Success")
+
+		return "Location deactivated successfully", nil
+	} else {
+		CreateActionRecord("Product Item Inactive", "DELETE", "Product Item", existingProduct, "Failed")
+		return "Location is already inactive", nil
+	}
+}
