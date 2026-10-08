@@ -95,22 +95,16 @@ export class ProductListComponent {
         this.loadProductLists()
         this.loadTypeList()
         this.loadDeptList()
-        this.loadLocationList()
     }
 
     typeLists: any[] = []
     async loadTypeList() {
-        this.typeLists = await getApiWithAuth('/product/product-type/getAll')
+        this.typeLists = await getApiWithAuth('/product/product-type/all')
     }
 
     deptLists: any[] = []
     async loadDeptList() {
-        this.deptLists = await getApiWithAuth('/sys/department/getAll')
-    }
-
-    placeLists: any[] = []
-    async loadLocationList() {
-        this.placeLists = await getApiWithAuth('/base/location/getAll')
+        this.deptLists = await getApiWithAuth('/sys/department/all')
     }
 
     async loadProductLists() {
@@ -130,7 +124,7 @@ export class ProductListComponent {
 
 
     dateFormat(data: string) {
-        return data ? moment(new Date(data)).format('DD-MM-YYYY HH:MM') : null
+        return data ? moment(data).format('DD-MM-YYYY HH:MM') : null
     }
 
     openEdit(id: string) {
@@ -180,7 +174,7 @@ export class ProductListComponent {
 
     openRepairRecordDialog(data: any) {
         this.repairRecordDialog = true
-        this.handleId = data._id
+        this.handleId = data.id
     }
 
     excelFileSetting: any = {

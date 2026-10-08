@@ -57,7 +57,7 @@
               <nz-form-control>
                   <nz-select name="vendorId" [(ngModel)]="editForm.vendorId" nzAllowClear  nzShowArrow nzPlaceHolder="Please select">
                       @for (option of vendorLists; track option) {
-                        <nz-option [nzLabel]="option.vendorName" [nzValue]="option._id"></nz-option>
+                        <nz-option [nzLabel]="option.vendorName" [nzValue]="option.id"></nz-option>
                       }
                     </nz-select>
               </nz-form-control>
@@ -79,7 +79,7 @@
                 <nz-form-control>
                     <nz-select name="typeId" [(ngModel)]="editForm.typeId" nzAllowClear  nzShowArrow nzPlaceHolder="Please select">
                         @for (option of typeLists; track option) {
-                          <nz-option [nzLabel]="option.typeName" [nzValue]="option._id"></nz-option>
+                          <nz-option [nzLabel]="option.typeName" [nzValue]="option.id"></nz-option>
                         }
                     </nz-select>
                 </nz-form-control>
@@ -89,7 +89,7 @@
                 <nz-form-control>
                     <nz-select name="deptId" [(ngModel)]="editForm.deptId" nzAllowClear  nzShowArrow nzPlaceHolder="Please select">
                         @for (option of deptLists; track option) {
-                          <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                          <nz-option [nzLabel]="option.deptName" [nzValue]="option.id"></nz-option>
                         }
                       </nz-select>
                 </nz-form-control>
@@ -147,7 +147,7 @@
               Reset
             </div>
             <div *ngIf="userRightInside.write || userRightInside.update" (click)="submitForm()" class="rounded-lg border-2 text-[#32c244] border-[#32c244] bg-[#a2ff80] hover:bg-[#91e274] p-1 w-[100px] text-center ">
-              {{ editForm._id ? 'Update' : 'Create' }}
+              {{ editForm.id ? 'Update' : 'Create' }}
             </div>
           </div>
 

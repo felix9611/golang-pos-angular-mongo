@@ -23,6 +23,6 @@ export interface CreateProduct {
 }
 
 export interface ProductFormDto extends CreateProduct {
-    _id?: string
+    id?: string
     productCode?: string
 }
