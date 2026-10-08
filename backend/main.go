@@ -61,7 +61,7 @@ func main() {
 	controllers.RegisterTaxInformationRoutes(api, authServiceMiddleware)
 	controllers.RegisterProductTypeRoutes(api, authServiceMiddleware)
 	controllers.RegisterInvRecordRoutes(api, authServiceMiddleware)
-	controllers.RegisterAssetListRoutes(api, authServiceMiddleware)
+	controllers.RegisterProductListRoutes(api, authServiceMiddleware)
 	controllers.RegisterStockTakeRoutes(api, authServiceMiddleware)
 	controllers.RegisterActionRecordsRoutes(api, authServiceMiddleware)
 	controllers.RegisterSysMenuRoutes(api, authServiceMiddleware)

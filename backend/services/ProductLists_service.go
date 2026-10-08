@@ -15,11 +15,11 @@ import (
 )
 
 func CreateProductItem(productItem *models.ProductLists) (interface{}, error) {
-	collection := config.GetCollection("asset_lists")
+	collection := config.GetCollection("product_lists")
 
 	filter := bson.M{"productName": productItem.ProductName, "status": 1}
 
-	var existingAsset models.AssetLists
+	var existingAsset models.ProductLists
 	err := collection.FindOne(context.Background(), filter).Decode(&existingAsset)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -148,7 +148,6 @@ func CreateNewProductCode() (string, error) {
 
 func GetOneProductItemByID(id string) (interface{}, error) {
 	collection := config.GetCollection("product_lists")
-
 	var productItem models.ProductLists
 
 	objectID, err := primitive.ObjectIDFromHex(id)
@@ -160,10 +159,10 @@ func GetOneProductItemByID(id string) (interface{}, error) {
 	if err2 != nil {
 		return nil, err2
 	}
-
 	if productItem.Status == 0 {
 		return "This Product item was write off", nil
 	} else {
+
 		return &productItem, nil
 	}
 }

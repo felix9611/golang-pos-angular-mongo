@@ -7,24 +7,24 @@ import (
 )
 
 type ProductLists struct {
-	ID                     primitive.ObjectID `bson:"_id,omitempty"`
-	ProductCode            string             `bson:"productCode"`
-	ProductName            string             `bson:"productName"`
-	ItemCode               string             `bson:"itemCode"`
-	BrandCode              string             `bson:"brandCode"`
-	BrandName              string             `bson:"brandName"`
-	TypeID                 string             `bson:"typeId"`
-	DeptID                 string             `bson:"deptId"`
-	Unit                   string             `bson:"unit"`
-	CostPrice              float64            `bson:"costPrice"`
-	RetailPrice            float64            `bson:"retailPrice"`
-	Description            string             `bson:"description"`
-	TaxType                string             `bson:"taxType"`
-	Remark                 string             `bson:"remark"`
-	CreatedAt              time.Time          `bson:"created_at"`
-	UpdatedAt              time.Time          `bson:"updated_at"`
-	Status                 int                `bson:"status"`
-	UploadProductListFiles []ProductListFiles `bson:"uploadProductListFiles"`
+	ID                     primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	ProductCode            string             `bson:"productCode" json:"productCode"`
+	ProductName            string             `bson:"productName" json:"productName"`
+	ItemCode               string             `bson:"itemCode" json:"itemCode"`
+	BrandCode              string             `bson:"brandCode" json:"brandCode"`
+	BrandName              string             `bson:"brandName" json:"brandName"`
+	TypeID                 string             `bson:"typeId" json:"typeId"`
+	DeptID                 string             `bson:"deptId" json:"deptId"`
+	Unit                   string             `bson:"unit" json:"unit"`
+	CostPrice              float64            `bson:"costPrice" json:"costPrice"`
+	RetailPrice            float64            `bson:"retailPrice" json:"retailPrice"`
+	Description            string             `bson:"description" json:"description"`
+	TaxType                string             `bson:"taxType" json:"taxType"`
+	Remark                 string             `bson:"remark" json:"remark"`
+	CreatedAt              time.Time          `bson:"created_at" json:"createdAt"`
+	UpdatedAt              time.Time          `bson:"updated_at" json:"updatedAt"`
+	Status                 int                `bson:"status" json:"status"`
+	UploadProductListFiles []ProductListFiles `bson:"uploadProductListFiles" json:"uploadProductListFiles"`
 }
 
 type ProductListFiles struct {
