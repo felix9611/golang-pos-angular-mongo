@@ -33,6 +33,30 @@ func StockIn(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      Stock In
+// @Description  Stock In
+// @Tags         Inventory
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.StockMoveProductLocationDto  true  "Request Body"
+// @Success      200      {object}  dto.GeneralCreateResponseBody
+// @Router      /inventory/stock-move [post]
+func StockMove(c *gin.Context) {
+	var data dto.StockMoveProductLocationDto
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := services.StockMove(data)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
 // @Summary      List Product Locations
 // @Description  List Product Locations
 // @Tags         Inventory
@@ -61,6 +85,7 @@ func RegisterInventoryRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) 
 	productLocation := rg.Group("/inventory", handle.MiddlewareFunc())
 	{
 		productLocation.POST("/stock-in", StockIn)
+		productLocation.POST("/stock-move", StockMove)
 		productLocation.POST("/product-location-list", ListProductLocations)
 	}
 }
