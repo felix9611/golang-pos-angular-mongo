@@ -46,17 +46,17 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 			member.UpdatedAt = time.Now()
 		}
 
-		specialDay := member.MemberSpecialDay
-		member.MemberSpecialDay = nil
-
-		final, err := collection.InsertOne(ctxNew, member)
+		res, err := collection.InsertOne(ctxNew, member)
 		if err != nil {
 			return nil, err
 		}
-		member.Id = final.InsertedID.(primitive.ObjectID)
+		memberId, ok := res.InsertedID.(primitive.ObjectID)
+		if !ok {
+			return nil, mongo.ErrNilDocument
+		}
 
-		if len(specialDay) > 0 {
-			_, err := CreateMemberSpecialDay(member.Id.Hex(), specialDay)
+		if len(member.MemberSpecialDays) > 0 {
+			_, err := CreateMemberSpecialDay(memberId.Hex(), member.MemberSpecialDays)
 			if err != nil {
 				return nil, err
 			}
@@ -64,14 +64,14 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 
 		CreateActionRecord("Member Create", "POST", "Member", member, "Success")
 
-		return member, nil
+		return res, nil
 	} else {
 		CreateActionRecord("Member Create", "POST", "Member", member, "Failed")
-		return "This member with the same data already exists", nil
+		return gin.H{"message": "Member already exists"}, nil
 	}
 }
 
-func CreateMemberSpecialDay(memberId string, data []models.MemberSpecialDay) (interface{}, error) {
+func CreateMemberSpecialDay(memberId string, data []models.MemberSpecialDays) (interface{}, error) {
 	collection := config.GetCollection("member_special_days")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -111,7 +111,7 @@ func VoidMemberSpecialDay(id string) (interface{}, error) {
 	}
 
 	filter := bson.M{"_id": objectID}
-	var specialDay models.MemberSpecialDay
+	var specialDay models.MemberSpecialDays
 
 	err = collection.FindOne(ctx, filter).Decode(&specialDay)
 	if err != nil {
@@ -163,19 +163,19 @@ func GetOneMemberById(id string) (interface{}, error) {
 	if member.Status == 0 {
 		return "Member is inactive", nil
 	} else {
-		member.MemberSpecialDay = speacialDayList
+		member.MemberSpecialDays = speacialDayList
 		return &member, nil
 	}
 }
 
-func GetSpecialDayByMemberId(id string) ([]models.MemberSpecialDay, error) {
+func GetSpecialDayByMemberId(id string) ([]models.MemberSpecialDays, error) {
 	collection := config.GetCollection("member_special_days")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	filter := bson.M{"memberId": id}
 
-	var specialDay []models.MemberSpecialDay
+	var specialDay []models.MemberSpecialDays
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -183,7 +183,7 @@ func GetSpecialDayByMemberId(id string) ([]models.MemberSpecialDay, error) {
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-		var special models.MemberSpecialDay
+		var special models.MemberSpecialDays
 		if err := cursor.Decode(&special); err != nil {
 			return nil, err
 		}

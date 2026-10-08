@@ -7,7 +7,7 @@ import (
 )
 
 type MemberClass struct {
-	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	ID        primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	ClassCode string             `bson:"classCode" json:"classCode"`
 	ClassName string             `bson:"className" json:"className"`
 	Remark    string             `bson:"remark" json:"remark"`
