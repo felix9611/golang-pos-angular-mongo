@@ -43,3 +43,11 @@ type InvRecordListDto struct {
 	Limit int64 `json:"limit"`
 	Page  int64 `json:"page"`
 }
+
+type InsertInvRecordDto struct {
+	ProductId string `bson:"ProductId,omitempty" json:"ProductId"`
+	LocFrom   string `bson:"locFrom,omitempty" json:"locFrom"`
+	LocTo     string `bson:"locTo,omitempty" json:"locTo"`
+	Qty       int64  `bson:"qty" json:"qty"`
+	Cost      int64  `bson:"cost" json:"cost"`
+}

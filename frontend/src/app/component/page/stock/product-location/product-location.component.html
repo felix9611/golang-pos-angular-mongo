@@ -16,7 +16,7 @@
                     nzPlaceHolder="Location"
                 >
                     @for (option of locationList; track option) {
-                        <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                        <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
                     }
                 </nz-select>
             </div>

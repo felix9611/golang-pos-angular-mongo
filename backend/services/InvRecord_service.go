@@ -271,3 +271,26 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 	return gin.H{"lists": results, "total": count, "page": dtoData.Page, "limit": dtoData.Limit}, nil
 
 }
+
+func InsertInventoryRecord(dto dto.InsertInvRecordDto) (interface{}, error) {
+
+	collection := config.GetCollection("inventory_records")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	finalData := models.InventoryRecords{
+		ProductId: dto.ProductId,
+		LocFrom:   dto.LocFrom,
+		LocTo:     dto.LocTo,
+		Qty:       dto.Qty,
+		Cost:      dto.Cost,
+		CreatedAt: time.Now(),
+	}
+
+	_, err := collection.InsertOne(ctx, finalData)
+	if err != nil {
+		return nil, err
+	}
+
+	return finalData, nil
+}

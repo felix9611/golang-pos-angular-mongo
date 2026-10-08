@@ -70,15 +70,15 @@ export class ProductLocationListComponent {
     dataLists: any[] = []
 
     async loadProductLocationLists() {
-        const res = await postApiWithAuth('/product/product-list/location-list', this.searchForm)
+        const res = await postApiWithAuth('/inventory/product-location-list', this.searchForm)
         this.dataLists = res.lists
         this.totals = res.total
     }
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/getAll')
-        this.locationList = data
+        const data = await getApiWithAuth('/base/location/all')
+        this.locationList = data.data
     }
 
     dbFieldList: string[] = []

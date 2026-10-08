@@ -56,7 +56,7 @@ func CreateProductItem(productItem *models.ProductLists) (interface{}, error) {
 			return nil, err
 		}
 	}
-	return "This product name already exists! Please check again!", nil
+	return gin.H{"error": "Product name already exists!"}, nil
 }
 
 func UploadProductFile(files []models.ProductListFiles, id string) (interface{}, error) {
