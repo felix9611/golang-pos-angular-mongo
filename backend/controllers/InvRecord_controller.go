@@ -35,7 +35,7 @@ func ListInvRecord(c *gin.Context) {
 }
 
 func RegisterInvRecordRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
-	InvRecordGroup := rg.Group("/sys/inv-record", handle.MiddlewareFunc())
+	InvRecordGroup := rg.Group("/inventory-record", handle.MiddlewareFunc())
 	{
 		InvRecordGroup.POST("/list", ListInvRecord)
 	}

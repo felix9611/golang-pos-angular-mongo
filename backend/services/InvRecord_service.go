@@ -26,16 +26,6 @@ func ListInvRecords(dtoData *dto.InvRecordListDto) (interface{}, error) {
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: filters}},
 
-		// lookup asset item data
-		{{
-			Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "asset_lists"},
-				{Key: "localField", Value: "assetCode"},
-				{Key: "foreignField", Value: "assetCode"},
-				{Key: "as", Value: "assetlist"},
-			},
-		}},
-
 		// $lookup place from
 		{{
 			Key: "$lookup", Value: bson.D{
@@ -93,7 +83,7 @@ func ListInvRecords(dtoData *dto.InvRecordListDto) (interface{}, error) {
 				{Key: "let", Value: bson.D{
 					{Key: "productToStr", Value: bson.D{
 						{Key: "$convert", Value: bson.D{
-							{Key: "input", Value: "$productId"},
+							{Key: "input", Value: "$ProductId"},
 							{Key: "to", Value: "objectId"},
 							{Key: "onError", Value: nil},
 							{Key: "onNull", Value: nil},
