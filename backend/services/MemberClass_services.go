@@ -7,6 +7,7 @@ import (
 	"golang-fixedasset-mongo-backend/backend/models"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -66,7 +67,7 @@ func GetOneMemberClassById(id string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	filter := bson.M{"_id": objectID, "status": 1}
+	filter := bson.M{"_id": objectID}
 
 	var memberClass models.MemberClass
 	err = collection.FindOne(ctx, filter).Decode(&memberClass)
@@ -92,7 +93,7 @@ func VoidOneMemberClass(id string) (interface{}, error) {
 		return nil, err
 	}
 
-	filter := bson.M{"_id": objectID, "status": 1}
+	filter := bson.M{"_id": objectID}
 
 	var memberClass models.MemberClass
 	err = collection.FindOne(ctx, filter).Decode(&memberClass)
@@ -111,11 +112,11 @@ func VoidOneMemberClass(id string) (interface{}, error) {
 			return nil, err
 		}
 
-		CreateActionRecord("MemberClass Inactive", "DELETE", "MemberClass", memberClass, "Success")
-		return "Location deactivated successfully", nil
+		CreateActionRecord("Member Inactive", "DELETE", "Member Class", memberClass, "Success")
+		return gin.H{"message": "Member deactivated successfully"}, nil
 	} else {
-		CreateActionRecord("MemberClass Inactive", "DELETE", "MemberClass", memberClass, "Failed")
-		return "Member Class is inactive", nil
+		CreateActionRecord("Member Inactive", "DELETE", "Member Class", memberClass, "Failed")
+		return gin.H{"message": "Member is already inactive"}, nil
 	}
 }
 
@@ -206,7 +207,7 @@ func UpdateMemberClass(updateDto *models.MemberClass) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{"_id": updateDto.ID, "status": 1}
+	filter := bson.M{"_id": updateDto.ID}
 
 	var existingMemberClass models.MemberClass
 	err := collection.FindOne(ctx, filter).Decode(&existingMemberClass)
@@ -227,7 +228,7 @@ func UpdateMemberClass(updateDto *models.MemberClass) (interface{}, error) {
 		return result, nil
 	} else {
 		CreateActionRecord("MemberClass Update", "POST", "MemberClass", updateDto, "Failed")
-		return "Member Class is inactive", nil
+		return gin.H{"message": "Member Class is already inactive"}, nil
 	}
 
 }

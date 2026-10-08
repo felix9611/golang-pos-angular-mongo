@@ -409,7 +409,7 @@ func InactiveProductItemsByID(id string) (interface{}, error) {
 		return nil, err
 	}
 
-	filter := bson.M{"_id": objectID, "status": 1}
+	filter := bson.M{"_id": objectID}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -433,9 +433,9 @@ func InactiveProductItemsByID(id string) (interface{}, error) {
 
 		CreateActionRecord("Product Item Inactive", "DELETE", "Product Item", existingProduct, "Success")
 
-		return "Location deactivated successfully", nil
+		return gin.H{"message": "This product deleted successfully"}, nil
 	} else {
 		CreateActionRecord("Product Item Inactive", "DELETE", "Product Item", existingProduct, "Failed")
-		return "Location is already inactive", nil
+		return gin.H{"message": "This product is already inactive"}, nil
 	}
 }
