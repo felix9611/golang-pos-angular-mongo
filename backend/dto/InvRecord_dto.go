@@ -18,7 +18,7 @@ type InvRecordPureList struct {
 	CreatedAt     time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
 	PlaceFromData models.Locations   `bson:"placeFromData,omitempty" json:"placeFromData"`
 	PlaceToData   models.Locations   `bson:"placeToData,omitempty" json:"placeToData"`
-	AssetList     models.AssetLists  `bson:"assetList,omitempty" json:"assetList"`
+	//	AssetList     models.AssetLists  `bson:"assetList,omitempty" json:"assetList"`
 }
 
 type InvRecordList struct {
@@ -29,7 +29,7 @@ type InvRecordList struct {
 	CreatedAt     time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
 	PlaceFromData models.Locations   `bson:"placeFromData,omitempty" json:"placeFromData"`
 	PlaceToData   models.Locations   `bson:"placeToData,omitempty" json:"placeToData"`
-	AssetList     models.AssetLists  `bson:"assetList,omitempty" json:"assetList"`
+	//	AssetList     models.AssetLists  `bson:"assetList,omitempty" json:"assetList"`
 }
 
 type InvRecordListResponse struct {

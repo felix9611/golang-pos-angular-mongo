@@ -44,7 +44,7 @@ type GetStockTakeItemResponse struct {
 	CheckTime   time.Time          `bson:"checkTime,omitempty" json:"checkTime"`
 	Remark      string             `bson:"remark" json:"remark"`
 	Location    models.Locations   `bson:"location" json:"location"`
-	Assetlist   AssetListsDetails  `bson:"assetlist" json:"assetlist"`
+	// Assetlist   AssetListsDetails  `bson:"assetlist" json:"assetlist"`
 }
 
 type GetStockTakeFormWithItemsResponse struct {

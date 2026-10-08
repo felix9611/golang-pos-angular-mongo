@@ -79,14 +79,14 @@ func GetOneProductItemByCode(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router       /product/product-list/update [post]
 func UpdateProductItem(c *gin.Context) {
-	var updateData models.AssetLists
+	var updateData models.ProductLists
 	if err := c.ShouldBindJSON(&updateData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Call the service to update the asset item
-	updatedAsset, err := services.UpdateAssetItem(&updateData)
+	updatedAsset, err := services.UpdateProductItem(&updateData)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
