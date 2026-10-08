@@ -50,7 +50,6 @@ func main() {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := router.Group("/")
-	controllers.RegisterTongsRoutes(api)
 	controllers.RegisterDepartmentRoutes(api, authServiceMiddleware)
 	controllers.RegisterSysUserRoutes(api, authServiceMiddleware)
 	controllers.RegisterAuthRoute(api, authServiceMiddleware)
@@ -65,9 +64,7 @@ func main() {
 	controllers.RegisterStockTakeRoutes(api, authServiceMiddleware)
 	controllers.RegisterActionRecordsRoutes(api, authServiceMiddleware)
 	controllers.RegisterSysMenuRoutes(api, authServiceMiddleware)
-	controllers.RegisterRepairRecordRoutes(api, authServiceMiddleware)
 	controllers.RegisterExcelFieldMatchRoutes(api, authServiceMiddleware)
-	controllers.RegisterWriteOffsRoutes(api, authServiceMiddleware)
 
 	router.Run(":6600")
 }
