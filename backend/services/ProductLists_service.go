@@ -371,6 +371,10 @@ func ListProductItems(req *dto.ListProductReqDto) (interface{}, error) {
 			},
 		}},
 
+		// unwind
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$department"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$producttype"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+
 		// sort
 		{{Key: "$sort", Value: bson.D{{Key: "productCodeInt", Value: 1}}}},
 
