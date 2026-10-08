@@ -30,7 +30,7 @@ func BatchCreateLocation(locations []models.Locations) (interface{}, error) {
 func CreateLocation(location *models.Locations) (interface{}, error) {
 	collection := config.GetCollection("locations")
 
-	filter := bson.M{"status": 1, "vendorName": location.PlaceCode, "placeCode": location.PlaceName}
+	filter := bson.M{"status": 1, "placeName": location.PlaceCode, "placeCode": location.PlaceName}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -167,7 +167,7 @@ func InactiveLocationByID(id string) (interface{}, error) {
 	}
 }
 
-func LocationListWithFilter(pageDto *dto.LocationPageDto) (interface{}, error) {
+func LocationListWithFilter(pageDto *dto.LocationPageDto) ([]models.Locations, error) {
 	collection := config.GetCollection("locations")
 	filter := bson.M{
 		"status": 1,
@@ -181,7 +181,7 @@ func LocationListWithFilter(pageDto *dto.LocationPageDto) (interface{}, error) {
 	defer cancel()
 
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{"created_at", -1}})
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
 	cursor, err := collection.Find(ctx, filter, findOptions)
 
 	if err != nil {
@@ -207,6 +207,10 @@ func LocationListWithFilter(pageDto *dto.LocationPageDto) (interface{}, error) {
 }
 
 func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
+	collection := config.GetCollection("locations")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
 	}
@@ -217,7 +221,6 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 	skip := (pageDto.Page - 1) * pageDto.Limit
 	limit := pageDto.Limit
 
-	collection := config.GetCollection("locations")
 	filter := bson.M{
 		"status": 1,
 		"$or": []bson.M{
@@ -228,9 +231,6 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 			{"zipCode": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 		},
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	count, errCount := collection.CountDocuments(ctx, filter)
 
@@ -261,7 +261,7 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 		return nil, err
 	}
 
-	return gin.H{"lists": locations, "total": count, "page": pageDto.Page, "limit": pageDto.Limit}, nil
+	return dto.LocationList{Lists: locations, Total: count, Page: pageDto.Page, Limit: pageDto.Limit}, nil
 }
 
 func ListAllLocation() (interface{}, error) {
