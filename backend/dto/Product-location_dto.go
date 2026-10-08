@@ -7,13 +7,25 @@ import (
 )
 
 type StockInOutProductLocationDto struct {
-	ProductCode string `bson:"productCode" json:"productCode"`
-	ProductId   string `bson:"productId" json:"productId"`
-	PlaceCode   string `bson:"placeCode" json:"placeCode"`
-	LocationId  string `bson:"locationId" json:"locationId"`
-	Qty         int64  `bson:"qty" json:"qty"`
-	TotalPrice  int64  `bson:"totalPrice" json:"totalPrice"`
-	TotalCost   int64  `bson:"totalCost" json:"totalCost"`
+	ProductCode string  `bson:"productCode" json:"productCode"`
+	ProductId   string  `bson:"productId" json:"productId"`
+	PlaceCode   string  `bson:"placeCode" json:"placeCode"`
+	LocationId  string  `bson:"locationId" json:"locationId"`
+	Qty         float64 `bson:"qty" json:"qty"`
+	TotalPrice  float64 `bson:"totalPrice" json:"totalPrice"`
+	TotalCost   float64 `bson:"totalCost" json:"totalCost"`
+}
+
+type StockMoveProductLocationDto struct {
+	ProductCode    string  `bson:"productCode" json:"productCode"`
+	ProductId      string  `bson:"productId" json:"productId"`
+	FromPlaceCode  string  `bson:"fromPlaceCode" json:"fromPlaceCode"`
+	FromLocationId string  `bson:"fromLocationId" json:"fromLocationId"`
+	ToPlaceCode    string  `bson:"toPlaceCode" json:"toPlaceCode"`
+	ToLocationId   string  `bson:"toLocationId" json:"toLocationId"`
+	Qty            float64 `bson:"qty" json:"qty"`
+	TotalPrice     float64 `bson:"totalPrice" json:"totalPrice"`
+	TotalCost      float64 `bson:"totalCost" json:"totalCost"`
 }
 
 type ListProductLocationtRequestDto struct {
@@ -27,9 +39,9 @@ type ProductLocationLists struct {
 	ID         primitive.ObjectID  `bson:"_id,omitempty" json:"id,omitempty"`
 	ProductId  string              `bson:"productId" json:"productId"`
 	LocationId string              `bson:"locationId" json:"locationId"`
-	Qty        int64               `bson:"qty" json:"qty"`
-	TotalPrice int64               `bson:"totalPrice" json:"totalPrice"`
-	TotalCost  int64               `bson:"totalCost" json:"totalCost"`
+	Qty        float64             `bson:"qty" json:"qty"`
+	TotalPrice float64             `bson:"totalPrice" json:"totalPrice"`
+	TotalCost  float64             `bson:"totalCost" json:"totalCost"`
 	Location   models.Locations    `bson:"location" json:"location"`
 	Product    models.ProductLists `bson:"product" json:"product"`
 }

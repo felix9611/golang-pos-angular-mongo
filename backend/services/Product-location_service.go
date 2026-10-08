@@ -108,42 +108,40 @@ func ProductLocationList(req dto.ListProductLocationtRequestDto) (interface{}, e
 }
 
 func StockIn(entryData dto.StockInOutProductLocationDto) (interface{}, error) {
-
 	productInfo, err := GetOneProductItemByID(entryData.ProductId)
-	if err != nil {
-		return nil, err
+	if err != nil || productInfo == nil {
+		return gin.H{"error": "Product not found!"}, err
 	}
 
 	locationInfo, err := GetOneLocationById(entryData.LocationId)
-	if err != nil {
-		return nil, err
-	}
-
-	if productInfo == nil || locationInfo == nil {
-		return gin.H{"error": "Product or Location not found!"}, err
+	if err != nil || locationInfo == nil {
+		return gin.H{"error": "Location not found!"}, err
 	}
 
 	collection := config.GetCollection("product_location")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{"productId": entryData.ProductId, "locationId": entryData.LocationId, "status": 1}
+	filter := bson.M{
+		"productId":  entryData.ProductId,
+		"locationId": entryData.LocationId,
+	}
 
 	var existingProductLocation models.ProductLocations
 	err = collection.FindOne(ctx, filter).Decode(&existingProductLocation)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			var productLocation models.ProductLocations
+			// 新增紀錄（必須補上 Status: 1）
+			productLocation := models.ProductLocations{
+				ProductId:  entryData.ProductId,
+				LocationId: entryData.LocationId,
+				Qty:        entryData.Qty,
+				TotalPrice: entryData.TotalPrice,
+				TotalCost:  entryData.TotalCost,
+			}
 
-			productLocation.ProductId = entryData.ProductId
-			productLocation.LocationId = entryData.LocationId
-			productLocation.Qty = entryData.Qty
-			productLocation.TotalPrice = entryData.TotalPrice
-			productLocation.TotalCost = entryData.TotalCost
-
-			_, err := collection.InsertOne(ctx, productLocation)
-			if err != nil {
+			if _, err := collection.InsertOne(ctx, productLocation); err != nil {
 				return gin.H{"error": "Failed to create new product location record!"}, err
 			}
 
@@ -155,45 +153,123 @@ func StockIn(entryData dto.StockInOutProductLocationDto) (interface{}, error) {
 				Cost:      entryData.TotalCost,
 			}
 
-			_, err = InsertInventoryRecord(insertRecord)
-			if err != nil {
+			if _, err = InsertInventoryRecord(insertRecord); err != nil {
 				return gin.H{"error": "Failed to create new inventory record!"}, err
 			}
 
 			CreateActionRecord("Product Location Record Create", "POST", "Product Location", productLocation, "Success")
-
 			return gin.H{"message": "Product location record created successfully!"}, nil
-		} else {
+		}
 
+		return gin.H{"error": "Database query failed!"}, err
+	}
+
+	newQty := existingProductLocation.Qty + entryData.Qty
+	newTotalPrice := existingProductLocation.TotalPrice + entryData.TotalPrice
+	newTotalCost := existingProductLocation.TotalCost + entryData.TotalCost
+
+	updateData := bson.M{
+		"$set": bson.M{
+			"qty":        newQty,
+			"totalPrice": newTotalPrice,
+			"totalCost":  newTotalCost,
+		},
+	}
+
+	if _, err = collection.UpdateOne(ctx, filter, updateData); err != nil {
+		return gin.H{"error": "Failed to update product location record!"}, err
+	}
+
+	insertRecord := dto.InsertInvRecordDto{
+		ProductId: entryData.ProductId,
+		LocFrom:   entryData.LocationId,
+		LocTo:     entryData.LocationId,
+		Qty:       entryData.Qty,
+		Cost:      entryData.TotalCost,
+	}
+
+	if _, err = InsertInventoryRecord(insertRecord); err != nil {
+		return gin.H{"error": "Failed to create new inventory record!"}, err
+	}
+
+	CreateActionRecord("Product Location Record Update", "PUT", "Product Location", existingProductLocation, "Success")
+
+	return gin.H{"message": "Product location record updated successfully!", "status": true}, nil
+}
+
+func StockMove(entryData dto.StockMoveProductLocationDto) (interface{}, error) {
+	productInfo, err := GetOneProductItemByID(entryData.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	locationFromInfo, err := GetOneLocationById(entryData.FromLocationId)
+	if err != nil {
+		return nil, err
+	}
+
+	locationFToInfo, err := GetOneLocationById(entryData.ToLocationId)
+	if err != nil {
+		return nil, err
+	}
+
+	if productInfo == nil || locationFromInfo == nil || locationFToInfo == nil {
+		return gin.H{"error": "Product or Location not found!"}, err
+	}
+
+	collection := config.GetCollection("product_location")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	fromFilter := bson.M{"productId": entryData.ProductId, "locationId": entryData.ToLocationId, "status": 1}
+	toFilter := bson.M{"productId": entryData.ProductId, "locationId": entryData.ToLocationId, "status": 1}
+
+	var fromProductLocation models.ProductLocations
+	var toProductLocation models.ProductLocations
+
+	err = collection.FindOne(ctx, fromFilter).Decode(&fromProductLocation)
+	if err != nil {
+		return gin.H{"error": "Product location not found!"}, err
+	}
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return gin.H{"error": "Oooops! No any data matched", "status": false}, err
+		} else {
 			updateData := bson.M{
 				"$set": bson.M{
-					"qty":        entryData.Qty + existingProductLocation.Qty,
-					"totalPrice": entryData.TotalPrice + existingProductLocation.TotalPrice,
-					"totalCost":  entryData.TotalCost + existingProductLocation.TotalCost,
+					"qty":        fromProductLocation.Qty - entryData.Qty,
+					"totalPrice": fromProductLocation.TotalPrice - entryData.TotalPrice,
+					"totalCost":  fromProductLocation.TotalCost - entryData.TotalCost,
 				},
 			}
 
-			_, err := collection.UpdateOne(ctx, filter, updateData)
+			_, err := collection.UpdateOne(ctx, fromFilter, updateData)
 			if err != nil {
 				return gin.H{"error": "Failed to update product location record!"}, err
 			}
 
-			insertRecord := dto.InsertInvRecordDto{
-				ProductId: entryData.ProductId,
-				LocFrom:   entryData.LocationId,
-				LocTo:     entryData.LocationId,
-				Qty:       entryData.Qty,
-				Cost:      entryData.TotalCost,
+			toErr := collection.FindOne(ctx, toFilter).Decode(&toProductLocation)
+			if toErr != nil {
+				if toErr == mongo.ErrNoDocuments {
+					var productLocation models.ProductLocations
+					productLocation.ProductId = entryData.ProductId
+					productLocation.LocationId = entryData.ToLocationId
+					productLocation.Qty = entryData.Qty
+					productLocation.TotalPrice = entryData.TotalPrice
+					productLocation.TotalCost = entryData.TotalCost
+
+					_, err = collection.InsertOne(ctx, productLocation)
+
+					if err != nil {
+						return gin.H{"error": "Failed to create new product location record!"}, err
+					}
+
+					CreateActionRecord("Product Location Record Create", "POST", "Product Location", productLocation, "Success")
+
+					return gin.H{"message": "Product location record created successfully!", "status": true}, nil
+				}
 			}
-
-			_, err = InsertInventoryRecord(insertRecord)
-			if err != nil {
-				return gin.H{"error": "Failed to create new inventory record!"}, err
-			}
-
-			CreateActionRecord("Product Location Record Create", "POST", "Product Location", existingProductLocation, "Success")
-
-			return gin.H{"message": "Product location record updated successfully!", "status": true}, nil
 
 		}
 	}

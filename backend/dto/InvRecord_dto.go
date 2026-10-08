@@ -15,8 +15,8 @@ type InvRecordList struct {
 	ProductId   string              `bson:"ProductId,omitempty" json:"ProductId"`
 	LocFrom     string              `bson:"locFrom,omitempty" json:"locFrom"`
 	LocTo       string              `bson:"locTo,omitempty" json:"locTo"`
-	Qty         int64               `bson:"qty" json:"qty"`
-	Cost        int64               `bson:"cost" json:"cost"`
+	Qty         float64             `bson:"qty" json:"qty"`
+	Cost        float64             `bson:"cost" json:"cost"`
 	CreatedAt   time.Time           `bson:"createdAt,omitempty" json:"createdAt"`
 	Product     models.ProductLists `bson:"product" json:"product"`
 	LocFromData models.Locations    `bson:"locFromData" json:"locFromData"`
@@ -37,9 +37,9 @@ type InvRecordListDto struct {
 }
 
 type InsertInvRecordDto struct {
-	ProductId string `bson:"ProductId,omitempty" json:"ProductId"`
-	LocFrom   string `bson:"locFrom,omitempty" json:"locFrom"`
-	LocTo     string `bson:"locTo,omitempty" json:"locTo"`
-	Qty       int64  `bson:"qty" json:"qty"`
-	Cost      int64  `bson:"cost" json:"cost"`
+	ProductId string  `bson:"ProductId,omitempty" json:"ProductId"`
+	LocFrom   string  `bson:"locFrom,omitempty" json:"locFrom"`
+	LocTo     string  `bson:"locTo,omitempty" json:"locTo"`
+	Qty       float64 `bson:"qty" json:"qty"`
+	Cost      float64 `bson:"cost" json:"cost"`
 }
