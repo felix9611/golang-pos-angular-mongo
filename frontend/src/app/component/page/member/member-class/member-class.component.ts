@@ -80,7 +80,7 @@ export class MemberClassesComponent {
     }
 
     editForm: MemberClassFrom = {
-        _id: '',
+        id: '',
         classCode: '',
         className: '',
         remark:  ''
@@ -99,12 +99,12 @@ export class MemberClassesComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/member/member-class/create' : `/member/member-class/update`
+        const url = this.editForm.id === '' ? '/member/member-class/create' : `/member/member-class/update`
 
         const res = await postApiWithAuth(url, {
             
             ...this.editForm,
-            ...this.editForm._id ? { _id: this.editForm._id} : {},
+            ...this.editForm.id ? { _id: this.editForm.id} : {},
         })
 
         if (res.msg) {
@@ -115,7 +115,7 @@ export class MemberClassesComponent {
             this.loadMemberClassesLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 classCode: '',
                 className: '',
                 remark:  ''
@@ -147,9 +147,9 @@ export class MemberClassesComponent {
     }
 
     async handleRemove() {
-        const url = `/member/member-class/remove/${this.handleRemoveId}`
+        const url = `/member/member-class/void/${this.handleRemoveId}`
 
-        const res: any = await getApiWithAuth(url)
+        const res: any = await deleteApiWithAuth(url)
 
         this.message.info(res.msg)
 
