@@ -61,7 +61,7 @@ export class StockOutComponent implements OnInit {
     }
 
     productForm: ProductFormDto = {
-        _id: '',
+        id: '',
         productCode: '',
         productName: '',
         itemCode: '',
@@ -79,8 +79,8 @@ export class StockOutComponent implements OnInit {
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/getAll')
-        this.locationList = data
+        const data = await getApiWithAuth('/base/location/all')
+        this.locationList = data.data
     }
 
     async productCodeChanged(event: any) {
@@ -88,7 +88,7 @@ export class StockOutComponent implements OnInit {
         if (event) {
             
             const data = await getApiWithAuth(`/product/product-list/code/${event}`)
-            this.stockInForm.productId = data._id
+            this.stockInForm.productId = data.id
             this.productForm = data
         }
     }
@@ -110,7 +110,7 @@ export class StockOutComponent implements OnInit {
         }
 
         this.productForm = {
-            _id: '',
+            id: '',
             productCode: '',
             productName: '',
             itemCode: '',
@@ -129,7 +129,7 @@ export class StockOutComponent implements OnInit {
 
     async submitForm() {
         this.reloadProductLocation = false
-        const res = await postApiWithAuth('/product/product-list/stock-out', this.stockInForm)
+        const res = await postApiWithAuth('/inventory/stock-out', this.stockInForm)
         if (res) {
             this.message.success('Stock out success!')
             this.reloadProductLocation = true

@@ -63,7 +63,7 @@ export class StockMoveComponent implements OnInit {
     }
 
     productForm: ProductFormDto = {
-        _id: '',
+        id: '',
         productCode: '',
         productName: '',
         itemCode: '',
@@ -114,7 +114,7 @@ export class StockMoveComponent implements OnInit {
         }
 
         this.productForm = {
-            _id: '',
+            id: '',
             productCode: '',
             productName: '',
             itemCode: '',
