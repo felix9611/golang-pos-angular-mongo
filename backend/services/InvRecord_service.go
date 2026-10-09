@@ -33,7 +33,7 @@ func ListInvRecords(dtoData *dto.InvRecordListDto) (interface{}, error) {
 				{Key: "let", Value: bson.D{
 					{Key: "placeFromStr", Value: bson.D{
 						{Key: "$convert", Value: bson.D{
-							{Key: "input", Value: "$LocFrom"},
+							{Key: "input", Value: "$locFrom"},
 							{Key: "to", Value: "objectId"},
 							{Key: "onError", Value: nil},
 							{Key: "onNull", Value: nil},
