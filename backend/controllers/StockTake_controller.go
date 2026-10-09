@@ -32,8 +32,8 @@ func CreateStockTakeApi(c *gin.Context) {
 	c.JSON(http.StatusCreated, data)
 }
 
-// @Summary      Create one stock take form
-// @Description  Create one stock take form
+// @Summary      Update one stock take form
+// @Description  Update one stock take form
 // @Tags         Stock Take
 // @Accept       json
 // @Produce      json
