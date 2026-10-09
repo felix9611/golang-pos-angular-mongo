@@ -10,8 +10,8 @@ import (
 type ListStockTakeDto struct {
 	PlaceIds []string `json:"placeIds"`
 	Name     string   `json:"name"`
-	Page     int64    `json:"page"`
-	Limit    int64    `json:"limit"`
+	Page     float64  `json:"page"`
+	Limit    float64  `json:"limit"`
 }
 
 type GetStockTakeResponse struct {
@@ -29,9 +29,9 @@ type GetStockTakeResponse struct {
 
 type StockTakeResponseList struct {
 	Lists []GetStockTakeResponse `json:"lists"`
-	Total int64                  `json:"total"`
-	Page  int                    `json:"page"`
-	Limit int                    `json:"limit"`
+	Total float64                `json:"total"`
+	Page  float64                `json:"page"`
+	Limit float64                `json:"limit"`
 }
 
 type GetStockTakeItemResponse struct {
@@ -60,17 +60,9 @@ type GetStockTakeFormWithItemsResponse struct {
 	StockTakeItems []GetStockTakeItemResponse `bson:"stockTakeItems" json:"stockTakeItems"`
 }
 
-/*
-return gin.H{
-		"id":             stockTakeForm.ID,
-		"actionName":     stockTakeForm.ActionName,
-		"actionPlaceId":  stockTakeForm.ActionPlaceId,
-		"remark":         stockTakeForm.Remark,
-		"createdTime":    stockTakeForm.CreatedTime,
-		"status":         stockTakeForm.Status,
-		"createdBy":      stockTakeForm.CreatedBy,
-		"finishTime":     stockTakeForm.FinishTime,
-		"finishBy":       stockTakeForm.FinishBy,
-		"stockTakeItems": stockTakeItems,
-	}, nil
-*/
+type CreateStockTakeForm struct {
+	ActionName    string `bson:"actionName" json:"actionName"`
+	ActionPlaceId string `bson:"actionPlaceId" json:"actionPlaceId"`
+	Remark        string `bson:"remark" json:"remark"`
+	CreatedBy     string `bson:"createdBy" json:"createdBy"`
+}
