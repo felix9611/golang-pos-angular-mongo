@@ -105,6 +105,30 @@ func ListProductLocations(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      List Product Locations
+// @Description  List Product Locations
+// @Tags         Inventory
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.CheckProductAndLocationDto  true  "List Location Request Body"
+// @Success      200      {object}  dto.CheckProductAndLocationResponse
+// @Router       /inventory/check [post]
+func CheckProductAndLocation(c *gin.Context) {
+	var req dto.CheckProductAndLocationDto
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := services.CheckProductAndLocation(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
 func RegisterInventoryRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 	productLocation := rg.Group("/inventory", handle.MiddlewareFunc())
 	{
@@ -112,5 +136,6 @@ func RegisterInventoryRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) 
 		productLocation.POST("/stock-move", StockMove)
 		productLocation.POST("/stock-out", StockOut)
 		productLocation.POST("/product-location-list", ListProductLocations)
+		productLocation.POST("/check", CheckProductAndLocation)
 	}
 }

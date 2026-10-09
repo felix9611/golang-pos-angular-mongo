@@ -64,6 +64,10 @@ func GetOneStockTakeFormByID(id string) (interface{}, error) {
 		return nil, err
 	}
 
+	if stockTakeItems == nil {
+		stockTakeItems = []interface{}{}
+	}
+
 	return gin.H{
 		"id":             stockTakeForm.ID,
 		"actionName":     stockTakeForm.ActionName,

@@ -413,3 +413,25 @@ func StockOut(entryData dto.StockInOutProductLocationDto) (interface{}, error) {
 	return gin.H{"message": "Product location record updated successfully!", "status": true}, nil
 
 }
+
+func CheckProductAndLocation(req dto.CheckProductAndLocationDto) (dto.CheckProductAndLocationResponse, error) {
+	collection := config.GetCollection("product_location")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"productId": req.ProductId, "locationId": req.LocationId}
+
+	var toProductLocation models.ProductLocations
+	err := collection.FindOne(ctx, filter).Decode(&toProductLocation)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return dto.CheckProductAndLocationResponse{Status: false, Data: models.ProductLocations{}}, err
+		}
+
+		return dto.CheckProductAndLocationResponse{Status: false, Data: models.ProductLocations{}}, err
+	}
+
+	return dto.CheckProductAndLocationResponse{Status: true, Data: toProductLocation}, nil
+
+}

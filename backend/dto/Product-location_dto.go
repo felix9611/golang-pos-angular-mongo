@@ -52,3 +52,13 @@ type ListProductLocationts struct {
 	Page  int                    `bson:"page" json:"page"`
 	Limit int                    `bson:"limit" json:"limit"`
 }
+
+type CheckProductAndLocationDto struct {
+	ProductId  string `bson:"productId" json:"productId"`
+	LocationId string `bson:"locationId" json:"locationId"`
+}
+
+type CheckProductAndLocationResponse struct {
+	Status bool                    `bson:"status" json:"status"`
+	Data   models.ProductLocations `bson:"data" json:"data"`
+}
