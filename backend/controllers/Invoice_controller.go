@@ -75,11 +75,30 @@ func GetInvoiceById(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      Void one Invoice record by id
+// @Description  Void one Invoice record by id
+// @Tags         Invoice
+// @Accept       json
+// @Produce      json
+// @Param        id   path      string  true  "Invoicen ID"
+// @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
+// @Router       /base/location/void/{id} [delete]
+func VoidInvoiceByID(c *gin.Context) {
+	id := c.Param("id")
+	result, err := services.VoidOneInvoice(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Void Invoice successfully", "id": id, "data": result})
+}
+
 func RegisterInvoiceRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 	invoiceGroup := rg.Group("/invoice", handle.MiddlewareFunc())
 	{
 		invoiceGroup.POST("/create", CreateInvoice)
 		invoiceGroup.POST("/list", ListInvoice)
 		invoiceGroup.GET("/one/:id", GetInvoiceById)
+		invoiceGroup.DELETE("/void/:id", VoidInvoiceByID)
 	}
 }

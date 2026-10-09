@@ -368,3 +368,18 @@ func ListInvoices(req dto.ListInvoiceRequestDto) (dto.ListInvoices, error) {
 
 	return dto.ListInvoices{Lists: invoices, Total: count, Page: req.Page, Limit: req.Limit}, nil
 }
+
+func VoidOneInvoice(invoiceId string) (interface{}, error) {
+	collection := config.GetCollection("invoices")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	_, err := collection.UpdateOne(ctx, bson.M{"_id": invoiceId}, bson.M{"$set": bson.M{"status": 0}})
+	if err != nil {
+		return nil, err
+	}
+
+	CreateActionRecord("Void Invoice", "POST", "Invoice", bson.M{"invoiceId": invoiceId}, "Success")
+
+	return gin.H{"status": "Void Invoice success"}, nil
+}

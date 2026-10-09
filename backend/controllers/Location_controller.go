@@ -91,7 +91,7 @@ func InactiveLocationByID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Role deactivated successfully", "id": id, "data": result})
+	c.JSON(http.StatusOK, gin.H{"message": "Location deactivated successfully", "id": id, "data": result})
 }
 
 // @Summary      Update one Location record
