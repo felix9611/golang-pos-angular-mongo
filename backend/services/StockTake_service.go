@@ -31,7 +31,7 @@ func CreateStockTakeForm(stockTakeForm dto.CreateStockTakeForm) (interface{}, er
 				Remark:        stockTakeForm.Remark,
 				CreatedBy:     stockTakeForm.CreatedBy,
 				Status:        1, // 1 means "in progress"
-				CreatedTime:   time.Now(),
+				CreatedTime:   time.Now().Format("2006-01-02 15:04:05"),
 			}
 
 			result, err := collection.InsertOne(context.Background(), newForm)
@@ -332,7 +332,7 @@ func StockTakeItemSubmit(stockTakeItem *models.StockTakeItems) (interface{}, err
 
 	collection := config.GetCollection("stock_take_items")
 
-	stockTakeItem.CheckTime = time.Now()
+	stockTakeItem.CheckTime = time.Now().Format("2006-01-02 15:04:05")
 
 	res, errInsert := collection.InsertOne(context.Background(), stockTakeItem)
 
@@ -370,7 +370,7 @@ func FinishOrVoidStockTakeForm(_id string, status int, username string) (interfa
 	default:
 		finalData := bson.M{
 			"finishBy":   username,
-			"finishTime": time.Now(),
+			"finishTime": time.Now().Format("2006-01-02 15:04:05"),
 			"status":     status,
 		}
 

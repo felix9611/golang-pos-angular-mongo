@@ -2,7 +2,6 @@ package dto
 
 import (
 	"golang-fixedasset-mongo-backend/backend/models"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -20,8 +19,8 @@ type GetStockTakeResponse struct {
 	ActionPlaceId string             `bson:"actionPlaceId" json:"actionPlaceId"`
 	Remark        string             `bson:"remark" json:"remark"`
 	Status        int                `bson:"status" json:"status"`
-	CreatedTime   time.Time          `bson:"createdTime" json:"createdTime"`
-	FinishTime    *time.Time         `bson:"finishTime" json:"finishTime"`
+	CreatedTime   string             `bson:"createdTime" json:"createdTime"`
+	FinishTime    string             `bson:"finishTime" json:"finishTime"`
 	CreatedBy     string             `bson:"createdBy" json:"createdBy"`
 	FinishBy      string             `bson:"finishBy" json:"finishBy"`
 	Location      models.Locations   `bson:"location" json:"location"`
@@ -41,7 +40,7 @@ type GetStockTakeItemResponse struct {
 	AssetCode   string             `bson:"assetCode" json:"assetCode"`
 	PlaceId     string             `bson:"placeId" json:"placeId"`
 	Status      string             `bson:"status" json:"status"`
-	CheckTime   time.Time          `bson:"checkTime,omitempty" json:"checkTime"`
+	CheckTime   string             `bson:"checkTime,omitempty" json:"checkTime"`
 	Remark      string             `bson:"remark" json:"remark"`
 	Location    models.Locations   `bson:"location" json:"location"`
 	// Assetlist   AssetListsDetails  `bson:"assetlist" json:"assetlist"`
@@ -53,8 +52,8 @@ type GetStockTakeFormWithItemsResponse struct {
 	ActionPlaceId  string                     `bson:"actionPlaceId" json:"actionPlaceId"`
 	Remark         string                     `bson:"remark" json:"remark"`
 	Status         int                        `bson:"status" json:"status"`
-	CreatedTime    time.Time                  `bson:"createdTime" json:"createdTime"`
-	FinishTime     time.Time                  `bson:"finishTime" json:"finishTime"`
+	CreatedTime    string                     `bson:"createdTime" json:"createdTime"`
+	FinishTime     string                     `bson:"finishTime" json:"finishTime"`
 	CreatedBy      string                     `bson:"createdBy" json:"createdBy"`
 	FinishBy       string                     `bson:"finishBy" json:"finishBy"`
 	StockTakeItems []GetStockTakeItemResponse `bson:"stockTakeItems" json:"stockTakeItems"`
