@@ -35,7 +35,7 @@
                         nzAllowClear nzShowArrow
                         nzPlaceHolder="Please Select">
                         @for (option of placeLists; track option) {
-                        <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                        <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
                         }
                     </nz-select>
                 </nz-form-control>
@@ -136,9 +136,7 @@
                             <th>Product Code</th>
                             <th>Product Name</th>
                             <th>Qtys</th>
-                            <th>Qty Check</th>
                             <th>Status</th>
-                            <th>Final Status</th>
                             <th>Check Time</th>
                             <th>Remark</th>
                         </tr>
@@ -149,7 +147,6 @@
                             <td>{{data.product.productName}}</td>
                             <td>{{data.qty}}</td>
                             <td>{{data.status}}</td>
-                            <td>{{data.finalStatus}}</td>
                             <td>{{ dateFormat(data.checkTime) }}</td>
                             <td>{{ data.remark }}</td>
                         </tr>

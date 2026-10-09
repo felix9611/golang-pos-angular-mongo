@@ -103,18 +103,19 @@ export class StockTakeListComponent implements OnInit {
     }
 
     async loadStockTakeLists() {
-        const res = await postApiWithAuth('/product/stock-take/list', this.searchForm)
+        const res = await postApiWithAuth('/stock-take/list', this.searchForm)
         this.dataLists = res.lists
         this.totals = res.total
     }
 
     placeLists: any[] = []
     async loadLocationList() {
-        this.placeLists = await getApiWithAuth('/base/location/getAll')
+        const res = await getApiWithAuth('/base/location/all')
+        this.placeLists = res.data
     }
 
     async submitForm() {
-        const res = await postApiWithAuth('/product/stock-take/create-form', this.editForm)
+        const res = await postApiWithAuth('/stock-take/create-form', this.editForm)
         if (res.msg) {
             this.message.error(res.msg)
         } else {
@@ -159,25 +160,25 @@ export class StockTakeListComponent implements OnInit {
     }
 
     async finshForm() {
-        const res = await getApiWithAuth(`/product/stock-take/finish/${this.handleId}`)
+        const res = await getApiWithAuth(`/stock-take/finish/${this.handleId}`)
         if (res.finished) {
-            this.message.success(res.msg)
+            this.message.success(res.message)
             this.loadStockTakeLists()
             this.closeFinishDialog()
         } else {
-            this.message.error(res.msg)
+            this.message.error(res.message)
             this.closeFinishDialog()
         }
     }
 
     async cancelForm() {
-        const res = await getApiWithAuth(`/product/stock-take/void/${this.handleId}`)
+        const res = await getApiWithAuth(`/stock-take/void/${this.handleId}`)
         if (res.finished) {
-            this.message.success(res.msg)
+            this.message.success(res.message)
             this.loadStockTakeLists()
             this.closeFinishDialog()
         } else {
-            this.message.error(res.msg)
+            this.message.error(res.message)
             this.closeFinishDialog()
         }
     }

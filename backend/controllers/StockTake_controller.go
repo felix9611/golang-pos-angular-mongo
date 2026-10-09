@@ -32,6 +32,28 @@ func CreateStockTakeApi(c *gin.Context) {
 	c.JSON(http.StatusCreated, data)
 }
 
+// @Summary      Create one stock take form
+// @Description  Create one stock take form
+// @Tags         Stock Take
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.StockTakes  true  "List Action Record Request Body"
+// @Success      200      {object}  dto.GeneralUpdateResponse
+// @Router       /stock-take/update [post]
+func UpdateStockTakeApi(c *gin.Context) {
+	var stockTake models.StockTakes
+	if err := c.ShouldBindJSON(&stockTake); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	data, err := services.UpdateStockTakeForm(&stockTake)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Update failed"})
+		return
+	}
+	c.JSON(http.StatusCreated, data)
+}
+
 // @Summary      List stock take forms with pagination
 // @Description  List stock take forms with pagination
 // @Tags         Stock Take
@@ -140,5 +162,6 @@ func RegisterStockTakeRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) 
 		stockTakeGroup.POST("/item-submit", StockTakeItemSubmit)
 		stockTakeGroup.DELETE("/finish/:id", FinishStockTake)
 		stockTakeGroup.DELETE("/void/:id", VoidStockTake)
+		stockTakeGroup.POST("/update", UpdateStockTakeApi)
 	}
 }
