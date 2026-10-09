@@ -68,6 +68,7 @@ func main() {
 	controllers.RegisterMemberClassRoutes(api, authServiceMiddleware)
 	controllers.RegisterMemberListRoutes(api, authServiceMiddleware)
 	controllers.RegisterInventoryRoutes(api, authServiceMiddleware)
+	controllers.RegisterInvoiceRoutes(api, authServiceMiddleware)
 
 	router.Run(":6600")
 }
