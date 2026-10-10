@@ -59,7 +59,10 @@ type ReturnInvoiceDetail struct {
 	RefundMethod     string             `json:"refundMethod" bson:"refundMethod"`
 	ReturnToVendor   bool               `json:"returnToVendor" bson:"returnToVendor"`
 	Invoice          models.Invoice     `json:"invoice" bson:"invoice"`
-	Member           models.MemberLists `json:"member" bson:"member"`
+	//	Member           models.MemberLists `json:"member" bson:"member"`
+	Location  models.Locations `json:"location" bson:"location"`
+	CreatedAt string           `json:"createdAt" bson:"createdAt"`
+	UpdatedAt string           `json:"updatedAt" bson:"updatedAt"`
 }
 
 type ReturnInvoiceDetailResponse struct {

@@ -199,8 +199,8 @@ func GetReturnInvoiceById(id string) (interface{}, error) {
 		RefundMethod:     results[0].RefundMethod,
 		ReturnToVendor:   results[0].ReturnToVendor,
 		Invoice:          results[0].Invoice,
-		Member:           results[0].Member,
-		ReturnItems:      returnItemList,
+		// Member:           results[0].Member,
+		ReturnItems: returnItemList,
 	}, err
 }
 
@@ -258,7 +258,7 @@ func GetReturnItemList(id string) ([]dto.ReturnInvoiceItemDetail, error) {
 }
 
 func ListReturnInvoice(req dto.InvoiceListRequestDto) (dto.ReturnInvoiceList, error) {
-	collection := config.GetCollection("return_invoice")
+	collection := config.GetCollection("return_invoices")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -285,43 +285,45 @@ func ListReturnInvoice(req dto.InvoiceListRequestDto) (dto.ReturnInvoiceList, er
 		{{Key: "$match", Value: filters}},
 
 		// $lookup invoices
-		bson.D{
-			{Key: "$lookup", Value: bson.D{
+		{{
+			Key: "$lookup", Value: bson.D{
 				{Key: "from", Value: "invoices"},
-				{Key: "let", Value: bson.D{{Key: "locationIdStr", Value: "$invoiceNumber"}}},
+				{Key: "let", Value: bson.D{{Key: "invoiceIdStr", Value: "$invoiceNumber"}}},
 				{Key: "pipeline", Value: bson.A{
 					bson.D{{Key: "$match", Value: bson.D{
 						{Key: "$expr", Value: bson.D{
-							{Key: "$eq", Value: bson.A{"$number", "$$locationIdStr"}},
+							{Key: "$eq", Value: bson.A{"$number", "$$invoiceIdStr"}},
 						}},
 					}}},
 				}},
 				{Key: "as", Value: "invoice"},
-			}},
-		},
-
-		// $lookup member
-		bson.D{{Key: "$lookup", Value: bson.D{
-			{Key: "from", Value: "members"},
-			{Key: "let", Value: bson.D{
-				{Key: "memberIdStr", Value: bson.D{{Key: "$toObjectId", Value: "$invoice.memberId"}}},
-			}},
-			{Key: "pipeline", Value: bson.A{
-				bson.D{{Key: "$match", Value: bson.D{
-					{Key: "$expr", Value: bson.D{
-						{Key: "$and", Value: bson.A{
-							bson.D{{Key: "$eq", Value: bson.A{"$_id", "$$memberIdStr"}}},
-							bson.D{{Key: "$ne", Value: bson.A{"$$memberIdStr", nil}}},
+			},
+		}},
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "locations"},
+				{Key: "let", Value: bson.D{
+					{Key: "locationIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$returnLocationId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
 						}},
 					}},
-				}}},
-			}},
-			{Key: "as", Value: "member"},
-		}}},
-
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$locationIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "location"},
+			}}},
 		//$unwind
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$invoice"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$member"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$location"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
 		// pagination
 		{{Key: "$skip", Value: skip}},
 		{{Key: "$limit", Value: limit}},
