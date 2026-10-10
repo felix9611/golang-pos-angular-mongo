@@ -195,6 +195,104 @@ func CreateNewInvoiceNumber() (string, error) {
 	return formatNumberNew(maxNumber, 6), nil
 }
 
+func GetOneInvoiceDetailByInvNo(invoiceNumber string) (interface{}, error) {
+	collection := config.GetCollection("invoices")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"number": invoiceNumber}
+
+	var invoice models.Invoice
+
+	err := collection.FindOne(ctx, filter).Decode(&invoice)
+	if err != nil {
+		return nil, err
+	}
+
+	InvoiceDataId := invoice.ID.Hex()
+
+	var invoiceItems []dto.InvoiceItemListBody
+	invoiceItemCollection := config.GetCollection("invoice_items")
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: bson.M{"invoiceId": InvoiceDataId}}},
+		// lookup
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "product_lists"},
+				{Key: "let", Value: bson.D{
+					{Key: "productIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$productId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$productIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "product"},
+			},
+		}},
+
+		// unwind
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$product"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+	}
+
+	cursor, err := invoiceItemCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	if err := cursor.All(ctx, &invoiceItems); err != nil {
+		return nil, err
+	}
+
+	var invoicePayments []models.InvoicePayment
+	invoicePaymentCollection := config.GetCollection("invoice_payments")
+
+	pipeline = mongo.Pipeline{
+		{{Key: "$match", Value: bson.M{"invoiceId": InvoiceDataId}}},
+	}
+
+	cursor, err = invoicePaymentCollection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	if err := cursor.All(ctx, &invoicePayments); err != nil {
+		return nil, err
+	}
+
+	finalItem := dto.InvoiceBody{
+		ID:              invoice.ID,
+		Number:          invoice.Number,
+		MemberId:        invoice.MemberId,
+		LocationId:      invoice.LocationId,
+		TotalAmount:     invoice.TotalAmount,
+		Discount:        invoice.Discount,
+		DiscountType:    invoice.DiscountType,
+		TaxTotal:        invoice.TaxTotal,
+		TaxRefNo:        invoice.TaxRefNo,
+		Remark:          invoice.Remark,
+		CreatedAt:       invoice.CreatedAt,
+		UpdatedAt:       invoice.UpdatedAt,
+		Status:          invoice.Status,
+		InvoiceItems:    invoiceItems,
+		InvoicePayments: invoicePayments,
+	}
+
+	return finalItem, nil
+}
+
 func GetOneInvoiceDetailById(id string) (interface{}, error) {
 	collection := config.GetCollection("invoices")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -292,7 +390,7 @@ func GetOneInvoiceDetailById(id string) (interface{}, error) {
 		InvoicePayments: invoicePayments,
 	}
 
-	return finalItem, nil
+	return &finalItem, nil
 }
 
 func ListInvoices(req dto.ListInvoiceRequestDto) (dto.ListInvoices, error) {

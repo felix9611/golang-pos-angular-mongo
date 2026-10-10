@@ -18,11 +18,11 @@ func BatchCreateProductTypes(productTypes []models.ProductTypes) (interface{}, e
 		result, _ := CreateProductType(&productType)
 
 		if result == nil {
-			return "failed to create product type", nil
+			return gin.H{"error": "failed to create product type"}, nil
 		}
 	}
 
-	return "batch insert completed", nil
+	return gin.H{"message": "batch insert completed"}, nil
 }
 
 func CreateProductType(productType *models.ProductTypes) (interface{}, error) {
@@ -57,7 +57,7 @@ func CreateProductType(productType *models.ProductTypes) (interface{}, error) {
 
 		return result.InsertedID, nil
 	} else {
-		return "This product type Record with the same details already exists", nil
+		return gin.H{"error": "This product type Record with the same details already exists"}, nil
 	}
 }
 
@@ -82,7 +82,7 @@ func GetOneProductType(id string) (interface{}, error) {
 	}
 
 	if productType.Status == 0 {
-		return "This Product Type Record is inactive", nil
+		return gin.H{"error": "This Product Type Record is inactive"}, nil
 	} else {
 		return &productType, nil
 	}
@@ -109,7 +109,7 @@ func VoidOneProductType(id string) (interface{}, error) {
 
 	if productType.Status == 0 {
 		CreateActionRecord("Product Type Void", "DELETE", "Product Type", productType, "Failed")
-		return "This Product Type Record is inactive", nil
+		return gin.H{"error": "This Product Type Record is inactive"}, nil
 	} else {
 		productType.Status = 0
 		productType.UpdatedAt = time.Now()
@@ -120,7 +120,7 @@ func VoidOneProductType(id string) (interface{}, error) {
 		}
 
 		CreateActionRecord("Product Type Void", "DELETE", "Product Type", productType, "Success")
-		return "Product Type Record Voided", nil
+		return gin.H{"message": "Product Type Record Voided Successfully"}, nil
 	}
 }
 
@@ -140,7 +140,7 @@ func UpdateProductType(updateData *models.ProductTypes) (interface{}, error) {
 
 	if productType.Status == 0 {
 		CreateActionRecord("Product Type Update", "POST", "Product Type", updateData, "Failed")
-		return "This Product Type Record is inactive", nil
+		return gin.H{"error": "This Product Type Record is inactive"}, nil
 	} else {
 		updateData.UpdatedAt = time.Now()
 

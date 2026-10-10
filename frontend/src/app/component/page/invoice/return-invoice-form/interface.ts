@@ -25,5 +25,5 @@ export interface CreateReturnInvoiceDto {
 }
 
 export interface UpdateReturnInvoiceDto extends CreateReturnInvoiceDto {
-    _id: string
+    id: string
 }

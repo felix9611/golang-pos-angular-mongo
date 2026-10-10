@@ -75,6 +75,24 @@ func GetInvoiceById(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      Get one Invoice record by number
+// @Description  Get one Invoice record by number
+// @Tags         Invoice
+// @Accept       json
+// @Produce      json
+// @Param        number   path      string  true  "Invoice Number"
+// @Success      200      {object}  dto.InvoiceBody
+// @Router       /invoice/number/{number} [get]
+func GetInvoiceByNo(c *gin.Context) {
+	id := c.Param("number")
+	result, err := services.GetOneInvoiceDetailByInvNo(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
 // @Summary      Void one Invoice record by id
 // @Description  Void one Invoice record by id
 // @Tags         Invoice
@@ -100,5 +118,6 @@ func RegisterInvoiceRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 		invoiceGroup.POST("/list", ListInvoice)
 		invoiceGroup.GET("/one/:id", GetInvoiceById)
 		invoiceGroup.DELETE("/void/:id", VoidInvoiceByID)
+		invoiceGroup.GET("/number/:number", GetInvoiceByNo)
 	}
 }
