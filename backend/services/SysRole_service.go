@@ -51,7 +51,7 @@ func CreateSysRole(role *models.SysRoles) (interface{}, error) {
 
 		return role, nil
 	} else {
-		return "Role with the same name already exists", nil
+		return gin.H{"error": "Role with the same name already exists"}, nil
 	}
 }
 
@@ -98,7 +98,7 @@ func GetOneSysRoleById(id string) (interface{}, error) {
 	}
 
 	if role.Status == 0 {
-		return "Role is inactive", nil
+		return gin.H{"error": "Role is already voided"}, nil
 	} else {
 		return &role, nil
 	}
@@ -130,7 +130,7 @@ func UpdateRoleById(updateData *models.SysRoles) (interface{}, error) {
 
 		return result.ModifiedCount, nil
 	} else {
-		return "Role is already voided", nil
+		return gin.H{"error": "Role is already voided"}, nil
 	}
 }
 
@@ -169,7 +169,7 @@ func VoidRoleById(id string) (interface{}, error) {
 		}
 		return result.ModifiedCount, nil
 	} else {
-		return "Role is already voided", nil
+		return gin.H{"error": "Role is already voided"}, nil
 	}
 }
 
@@ -293,7 +293,7 @@ func HandleMenuPermission(data *dto.MenuItemPermissionBody) (interface{}, error)
 	} else {
 
 		CreateActionRecord("Menu Update", "UPDATE", "System Role", checkSysRole, "Failed")
-		return "Role is already voided", nil
+		return gin.H{"error": "Role is already voided"}, nil
 	}
 
 }
