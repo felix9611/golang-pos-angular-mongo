@@ -32,9 +32,20 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:4200"},
+		AllowOriginFunc: func(origin string) bool {
+			// if local development will be allowed
+			if gin.Mode() == gin.DebugMode {
+				return true
+			}
+			// Producted will be allowed for the following origins
+			allowedOrigins := map[string]bool{
+				"http://localhost:7780": true,
+			}
+			return allowedOrigins[origin]
+		},
+		AllowOrigins:     []string{"http://localhost:7780", "http://localhost:4200"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With", "Cache-Control"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
