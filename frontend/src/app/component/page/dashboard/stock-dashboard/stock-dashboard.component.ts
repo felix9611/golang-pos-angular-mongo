@@ -76,17 +76,19 @@ export class StockDashboardComponent implements OnInit {
 
     typeLists: any[] = []
     async loadTypeList() {
-        this.typeLists = await getApiWithAuth('/product/product-type/getAll')
+        this.typeLists = await getApiWithAuth('/product/product-type/all')
     }
 
     deptLists: any[] = []
     async loadDeptList() {
-        this.deptLists = await getApiWithAuth('/sys/department/getAll')
+        const res = await getApiWithAuth('/sys/department/all')
+        this.deptLists = res.data
     }
 
     placeLists: any[] = []
     async loadLocationList() {
-        this.placeLists = await getApiWithAuth('/base/location/getAll')
+        const data = await getApiWithAuth('/base/location/all')
+        this.placeLists = data.data
     }
 
     async runSearch() {
@@ -113,7 +115,7 @@ export class StockDashboardComponent implements OnInit {
 
         const res = await this.runQueryData(dataQuery)
 
-        const qtys = transformDataNoDate(res, 'column', false, 'typeName', 'totalCost')
+        const qtys = transformDataNoDate(res, 'column', false, 'typeName', 'qtys')
         const qtysDataSet = qtys[0].dataPoints
 
         this.byTypeAndQtys = {
@@ -147,10 +149,10 @@ export class StockDashboardComponent implements OnInit {
 
         const res = await this.runQueryData(dataQuery)
 
-        const cost = transformDataNoDate(res, 'column', false, 'typeName', 'totalCost')
+        const cost = transformDataNoDate(res, 'column', false, 'typeName', 'costs')
         const costDataSet = cost[0].dataPoints
 
-        const retail = transformDataNoDate(res, 'column', false, 'typeName', 'totalPrice')
+        const retail = transformDataNoDate(res, 'column', false, 'typeName', 'price')
         const retailDataSet = retail[0].dataPoints
 
         this.byTypeAndPrice = {
@@ -189,7 +191,7 @@ export class StockDashboardComponent implements OnInit {
         }
 
         const res = await this.runQueryData(dataQuery)
-        const qtys = transformDataNoDate(res, 'column', false, 'deptName', 'totalQty')
+        const qtys = transformDataNoDate(res, 'column', false, 'deptName', 'qtys')
         const qtysDataSet = qtys[0].dataPoints
 
         this.byDeptAndQtys = {
@@ -224,10 +226,10 @@ export class StockDashboardComponent implements OnInit {
         }
 
         const res = await this.runQueryData(dataQuery)
-        const cost = transformDataNoDate(res, 'column', false, 'deptName', 'totalCost')
+        const cost = transformDataNoDate(res, 'column', false, 'deptName', 'costs')
         const costDataSet = cost[0].dataPoints
 
-        const retail = transformDataNoDate(res, 'column', false, 'deptName', 'totalPrice')
+        const retail = transformDataNoDate(res, 'column', false, 'deptName', 'price')
         const retailDataSet = retail[0].dataPoints
 
         this.byDeptAndPrice = {
@@ -266,7 +268,7 @@ export class StockDashboardComponent implements OnInit {
         }
 
         const res = await this.runQueryData(dataQuery)
-        const qtys = transformDataNoDate(res, 'column', false, 'placeName', 'totalQty')
+        const qtys = transformDataNoDate(res, 'column', false, 'placeName', 'qtys')
         const qtysDataSet = qtys[0].dataPoints
 
         this.byLocationAndQtys = {
@@ -299,10 +301,10 @@ export class StockDashboardComponent implements OnInit {
         }
 
         const res = await this.runQueryData(dataQuery)
-        const cost = transformDataNoDate(res, 'column', false, 'placeName', 'totalCost')
+        const cost = transformDataNoDate(res, 'column', false, 'placeName', 'costs')
         const costDataSet = cost[0].dataPoints
 
-        const retail = transformDataNoDate(res, 'column', false, 'placeName', 'totalPrice')
+        const retail = transformDataNoDate(res, 'column', false, 'placeName', 'price')
         const retailDataSet = retail[0].dataPoints
 
         this.byLocationAndPrice = {
@@ -438,7 +440,7 @@ export class StockDashboardComponent implements OnInit {
             filter: this.globalFilter
         }
 
-        return await postApiWithAuth('/product/product-list/query/data-group-by', finalQuery)
+        return await postApiWithAuth('/query/product-location', finalQuery)
     }
 
     async runInvintoryRecordQueryData(dataQuery: DashboardReqDto) {

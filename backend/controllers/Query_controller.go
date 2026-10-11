@@ -33,9 +33,34 @@ func IvoivceItemQuery(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result)
 }
 
+// @Summary      Create one Budget record
+// @Description  Create one Budget record
+// @Tags         Budget
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.Budgets  true  "Budget Request Body"
+// @Success      200      {object}  dto.GeneralCreateResponseBody
+// @Router      /query/product-location [post]
+func ProductLocationQuery(ctx *gin.Context) {
+	var req dto.InvoiceDashboardReqDto
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := services.ProductLocationGetByDataType(ctx.Request.Context(), req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, result)
+}
+
 func RegisterQueryRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 	QueryGroup := rg.Group("/query", handle.MiddlewareFunc())
 	{
 		QueryGroup.POST("/invoice", IvoivceItemQuery)
+		QueryGroup.POST("/product-location", ProductLocationQuery)
 	}
 }
