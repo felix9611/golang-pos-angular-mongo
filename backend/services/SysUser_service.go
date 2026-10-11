@@ -59,7 +59,7 @@ func CreateSysUser(user *models.SysUsers) (interface{}, error) {
 
 		return result, nil
 	} else {
-		return "User with the same username already exists", nil
+		return gin.H{"error": "User with the same username already exists"}, nil
 	}
 }
 
@@ -87,7 +87,7 @@ func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "User not found or inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	}
 }
 
@@ -123,7 +123,7 @@ func InactiveUserByID(id string) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "User is already inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	}
 }
 
@@ -145,7 +145,7 @@ func GetOneSysUserById(id string) (interface{}, error) {
 	}
 
 	if user.Status == 0 {
-		return "User is inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	} else {
 		return &user, nil
 	}
@@ -232,7 +232,7 @@ func UpdateUserPassword(Username string, NewPassword string) (interface{}, error
 		}
 		return result, nil
 	} else {
-		return "User not found or inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	}
 }
 
@@ -316,6 +316,6 @@ func UserUpdateAvatar(Username string, PhotoBase string) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "This user has been invalidated! Please contact admin!", nil
+		return gin.H{"error": "This user has been invalidated! Please contact admin!"}, nil
 	}
 }
