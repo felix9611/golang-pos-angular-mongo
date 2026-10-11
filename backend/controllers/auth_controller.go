@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"golang-fixedasset-mongo-backend/backend/auth"
-	"golang-fixedasset-mongo-backend/backend/services"
+	"golang-pos-mongo-backend/backend/auth"
+	"golang-pos-mongo-backend/backend/services"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"

@@ -1,14 +1,14 @@
 package controllers
 
 import (
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/services"
-	"golang-fixedasset-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/services"
 	"net/http"
-//	"time"
+
+	//	"time"
 
 	"github.com/gin-gonic/gin"
-
 )
 
 // var tongsCollection = config.GetCollection("tongs")
@@ -24,7 +24,7 @@ func GetTongs(c *gin.Context) {
 }
 
 func CreateTongs(c *gin.Context) {
-	
+
 	var tong models.Tongs
 	if err := c.ShouldBindJSON(&tong); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -46,7 +46,7 @@ func GetOneTongsRun(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get tongs"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": tongs })
+	c.JSON(http.StatusOK, gin.H{"data": tongs})
 }
 
 func UpdateTongsByID(c *gin.Context) {
@@ -60,7 +60,6 @@ func UpdateTongsByID(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Update Tongs by ID", "id": id, "data": result})
 }
-
 
 func VoidTongs(c *gin.Context) {
 	id := c.Param("id")
@@ -84,7 +83,7 @@ func ListPageTongs(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"data": tongs})
-	
+
 }
 
 func RegisterTongsRoutes(rg *gin.RouterGroup) {
@@ -94,10 +93,9 @@ func RegisterTongsRoutes(rg *gin.RouterGroup) {
 		tongs.GET("/one/:id", GetOneTongsRun)
 		tongs.POST("/create", CreateTongs)
 		tongs.POST("/update/:id", UpdateTongsByID) // Uncomment when implemented
-		tongs.DELETE("/void/:id", VoidTongs) // Uncomment when implemented
-		tongs.POST("/list", ListPageTongs) // Uncomment when implemented
+		tongs.DELETE("/void/:id", VoidTongs)       // Uncomment when implemented
+		tongs.POST("/list", ListPageTongs)         // Uncomment when implemented
 		// tongs.DELETE("/delete/:id", DeleteTongsByID) // Uncomment
-		
+
 	}
 }
-

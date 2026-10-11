@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -82,4 +82,28 @@ type ListInvoices struct {
 	Total int64             `bson:"total" json:"total"`
 	Page  int               `bson:"page" json:"page"`
 	Limit int               `bson:"limit" json:"limit"`
+}
+
+type DashboardReqFilterDto struct {
+	ProductCode    string   `json:"productCode"`
+	ProductName    string   `json:"productName"`
+	TypeIds        []string `json:"typeIds"`
+	PlaceIds       []string `json:"placeIds"`
+	DeptIds        []string `json:"deptIds"`
+	SalesDateRange []string `json:"salesDateRange"`
+}
+
+type InvoiceDashboardReqDto struct {
+	DataTypeValue string                `json:"dataTypeValue"`
+	DateTypeValue string                `json:"dateTypeValue"`
+	ValueField    string                `json:"valueField"`
+	Filter        DashboardReqFilterDto `json:"filter"`
+}
+
+type InvRecordYearMonthResult struct {
+	Year     int     `bson:"year" json:"year"`
+	Month    string  `bson:"month" json:"month"`
+	MonthNum int     `bson:"monthNum" json:"monthNum"`
+	Qtys     float64 `bson:"qtys" json:"qtys"`
+	Costs    float64 `bson:"costs" json:"costs"`
 }

@@ -19,7 +19,7 @@
                 nzMode="multiple" nzAllowClear  nzShowArrow
                  nzPlaceHolder="Asset Type">
                 @for (option of typeLists; track option) {
-                  <nz-option [nzLabel]="option.typeName" [nzValue]="option._id"></nz-option>
+                  <nz-option [nzLabel]="option.typeName" [nzValue]="option.id"></nz-option>
                 }
             </nz-select>
         </div>
@@ -32,7 +32,7 @@
                 nzMode="multiple" nzAllowClear   nzShowArrow
                  nzPlaceHolder="Location">
                 @for (option of placeLists; track option) {
-                  <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                  <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
                 }
             </nz-select>
         </div>
@@ -45,7 +45,7 @@
                 nzMode="multiple" nzAllowClear  nzShowArrow
                  nzPlaceHolder="Location">
                 @for (option of deptLists; track option) {
-                  <nz-option [nzLabel]="option.deptName" [nzValue]="option._id"></nz-option>
+                  <nz-option [nzLabel]="option.deptName" [nzValue]="option.id"></nz-option>
                 }
             </nz-select>
         </div>

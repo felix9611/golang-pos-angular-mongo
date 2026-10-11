@@ -1,7 +1,7 @@
 package dto
 
 import (
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

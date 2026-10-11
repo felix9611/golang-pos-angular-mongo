@@ -1,32 +1,32 @@
 package services
 
 import (
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/models"
 	"context"
-	"go.mongodb.org/mongo-driver/bson"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func AddLoginRecord(username string, ip string, loginStatus string) (interface{}, error) {
 	collection := config.GetCollection("login_records")
 
 	saveData := bson.M{
-		"username":  username,
-		"ipAddress": ip,
+		"username":    username,
+		"ipAddress":   ip,
 		"loginStatus": loginStatus,
-		"loginTime":  time.Now(),
+		"loginTime":   time.Now(),
 	}
 
 	res, err := collection.InsertOne(context.Background(), saveData)
 
-
-	if err != nil {		
+	if err != nil {
 		return nil, err
 	} else {
 		return res, nil
 	}
-	
+
 }
 
 func GetLoginRecords(username string) ([]models.LoginRecords, error) {

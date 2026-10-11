@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"

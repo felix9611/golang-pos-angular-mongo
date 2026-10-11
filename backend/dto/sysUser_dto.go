@@ -1,6 +1,6 @@
 package dto
 
-import "golang-fixedasset-mongo-backend/backend/models"
+import "golang-pos-mongo-backend/backend/models"
 
 type SysUserPageDto struct {
 	RoleIds []string `json:"roleIds"`
