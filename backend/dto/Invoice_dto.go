@@ -83,3 +83,21 @@ type ListInvoices struct {
 	Page  int               `bson:"page" json:"page"`
 	Limit int               `bson:"limit" json:"limit"`
 }
+
+type DashboardReqFilterDto struct {
+	ProductCode    string   `json:"productCode"`
+	ProductName    string   `json:"productName"`
+	TypeIds        []string `json:"typeIds"`
+	PlaceIds       []string `json:"placeIds"`
+	DeptIds        []string `json:"deptIds"`
+	SalesDateRange []string `json:"salesDateRange"`
+}
+
+type InvoiceDashboardReqDto struct {
+	DataType      bool                  `json:"dataType"`
+	DataTypeValue string                `json:"dataTypeValue"`
+	DateType      bool                  `json:"dateType"`
+	DateTypeValue string                `json:"dateTypeValue"`
+	ValueField    string                `json:"valueField"`
+	Filter        DashboardReqFilterDto `json:"filter"`
+}
