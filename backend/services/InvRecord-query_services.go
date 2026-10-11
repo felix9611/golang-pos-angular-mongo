@@ -103,10 +103,28 @@ func GetInvRecordYearMonth() AggregationSet {
 	}
 }
 
+func GetInvRecordQueryGroupBy() bson.M {
+	return bson.M{
+		"qtys": bson.M{
+			"$sum": "$qty",
+		},
+		"costs": bson.M{
+			"$sum": "$cost",
+		},
+	}
+}
+
+func GetInvRecordQueryProject() bson.M {
+	return bson.M{
+		"qtys":  1,
+		"costs": 1,
+	}
+}
+
 func GetInvRecordByDataType(
 	ctx context.Context,
 	query dto.InvoiceDashboardReqDto,
-) (interface{}, error) {
+) ([]dto.InvRecordYearMonthResult, error) {
 	InventoryRecordsCollection := config.GetCollection("inventory_records")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
@@ -156,25 +174,14 @@ func GetInvRecordByDataType(
 	yearMonthObj := GetInvRecordYearMonth()
 
 	// Group
-	groupObj := bson.M{
-		"qtys": bson.M{
-			"$sum": "$qty",
-		},
-		"costs": bson.M{
-			"$sum": "$cost",
-		},
-	}
+	groupObj := GetInvRecordQueryGroupBy()
 
 	for key, value := range yearMonthObj.Group {
 		groupObj[key] = value
 	}
 
 	// Project
-	projectObj := bson.M{
-		"_id":   0,
-		"qtys":  1,
-		"costs": 1,
-	}
+	projectObj := GetInvRecordQueryProject()
 
 	for key, value := range yearMonthObj.Project {
 		projectObj[key] = value
