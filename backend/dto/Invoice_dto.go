@@ -94,10 +94,16 @@ type DashboardReqFilterDto struct {
 }
 
 type InvoiceDashboardReqDto struct {
-	DataType      bool                  `json:"dataType"`
 	DataTypeValue string                `json:"dataTypeValue"`
-	DateType      bool                  `json:"dateType"`
 	DateTypeValue string                `json:"dateTypeValue"`
 	ValueField    string                `json:"valueField"`
 	Filter        DashboardReqFilterDto `json:"filter"`
+}
+
+type InvRecordYearMonthResult struct {
+	Year     int     `bson:"year" json:"year"`
+	Month    string  `bson:"month" json:"month"`
+	MonthNum int     `bson:"monthNum" json:"monthNum"`
+	Qtys     float64 `bson:"qtys" json:"qtys"`
+	Costs    float64 `bson:"costs" json:"costs"`
 }

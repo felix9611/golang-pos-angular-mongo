@@ -445,13 +445,13 @@ export class StockDashboardComponent implements OnInit {
 
     async runInvintoryRecordQueryData(dataQuery: DashboardReqDto) {
         const finalQuery = {
-            dataType: dataQuery.dataTypeValue,
+            dataTypeValue: dataQuery.dataTypeValue,
             filter: {
                 ...this.globalFilter.placeIds && this.globalFilter.placeIds.length > 0 ? { placeIds: this.globalFilter.placeIds } : {}
             }
         }
 
-        return await postApiWithAuth('/inventory-record/query', finalQuery)
+        return await postApiWithAuth('/query/inventory_records', finalQuery)
     }
 
 }
