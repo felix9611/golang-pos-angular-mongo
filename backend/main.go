@@ -1,12 +1,12 @@
 package main
 
 import (
-	"golang-fixedasset-mongo-backend/backend/auth"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/controllers"
+	"golang-pos-mongo-backend/backend/auth"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/controllers"
 	"time"
 
-	_ "golang-fixedasset-mongo-backend/backend/docs"
+	_ "golang-pos-mongo-backend/backend/docs"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-contrib/cors"
