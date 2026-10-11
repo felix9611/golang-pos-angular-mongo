@@ -9,6 +9,7 @@ import (
 	"sort"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -52,7 +53,7 @@ func CreateSysMenu(data *models.SysMenus) (interface{}, error) {
 		return result.InsertedID, nil
 	} else {
 		CreateActionRecord("Menu Item Create", "POST", "System Menu", data, "Failed")
-		return "Menu with the same name already exists", nil
+		return gin.H{"msg": "Menu with the same name already exists"}, nil
 	}
 
 }
@@ -76,7 +77,7 @@ func GetOneMenuItemById(id string) (interface{}, error) {
 	}
 
 	if menuItem.Status == 0 {
-		return "Menu item inactive", nil
+		return gin.H{"error": "Menu item already voided"}, nil
 	} else {
 		return menuItem, nil
 	}
@@ -106,7 +107,7 @@ func VoidMenuItemById(id string) (interface{}, error) {
 
 	if menuItem.Status == 0 {
 		CreateActionRecord("Menu Item Void", "DELETE", "System Menu", menuItem, "Failed")
-		return "Menu item already voided", nil
+		return gin.H{"error": "Menu item already voided"}, nil
 	} else {
 
 		menuItem.Status = 0
