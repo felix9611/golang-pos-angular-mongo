@@ -2,8 +2,6 @@ package services
 
 import (
 	"context"
-	"errors"
-	"fmt"
 	"golang-pos-mongo-backend/backend/config"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
@@ -11,34 +9,35 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // CreateReturnInvoice creates a return invoice along with its items atomically.
-func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (*models.ReturnInvoice, error) {
+func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (interface{}, error) {
 
 	invoiceResult, err := GetOneInvoiceDetailByInvNo(req.ReturnInvoiceNo)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch invoice: %w", err)
+		return gin.H{"error": "failed to fetch location: %w"}, err
 	}
 	if invoiceResult == nil {
-		return nil, errors.New("invoice not found")
+		return gin.H{"error": "invoice not found"}, err
 	}
 
-	// 2. 驗證 Location 存在性
+	// verify Location exists
 	locationResult, err := GetOneLocationById(req.ReturnLocationId)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch location: %w", err)
+		return gin.H{"error": "failed to fetch location: %w"}, err
 	}
 	if locationResult == nil {
-		return nil, errors.New("location not found")
+		return gin.H{"error": "invoice not found"}, err
 	}
 
 	returnCaseNumber := GetReturnCaseNumber()
 	if err != nil {
-		return nil, fmt.Errorf("failed to generate return case number: %w", err)
+		return gin.H{"error": "failed to generate return case number: %w"}, err
 	}
 
 	now := time.Now().Format("2006-01-02 15:04:05")
@@ -68,7 +67,7 @@ func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (*models.ReturnInvoice,
 	_, err = collection.InsertOne(ctx, returnInvoice)
 	if err != nil {
 		CreateActionRecord("Create Return Invoice", "POST", "Return Invoice", returnInvoice, "Failed")
-		return nil, fmt.Errorf("failed to insert return invoice: %w", err)
+		return gin.H{"error": "failed to insert return invoice: %w"}, err
 	}
 
 	// 5. 批次寫入退貨項目 (InsertMany 提升效能)
@@ -95,7 +94,7 @@ func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (*models.ReturnInvoice,
 		_, err = itemCollection.InsertMany(ctx, itemsToInsert)
 		if err != nil {
 			CreateActionRecord("Create Return Invoice", "POST", "Return Invoice", returnInvoice, "Failed")
-			return nil, fmt.Errorf("failed to insert return invoice items: %w", err)
+			return gin.H{"error": "failed to insert return invoice items: %w"}, err
 		}
 	}
 
