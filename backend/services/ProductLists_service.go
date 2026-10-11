@@ -217,7 +217,7 @@ func UpdateProductItem(updateData *models.ProductLists) (interface{}, error) {
 
 		return res, nil
 	} else {
-		return "This Product item was write off", nil
+		return gin.H{"error": "This Product item was voided"}, nil
 	}
 }
 
@@ -274,7 +274,7 @@ func DeleteProductFile(fileId string) (interface{}, error) {
 
 		return updateRes, nil
 	} else {
-		return "File not found", nil
+		return gin.H{"error": "File not found"}, nil
 	}
 }
 
