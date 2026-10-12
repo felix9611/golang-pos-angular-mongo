@@ -39,7 +39,7 @@ func CreateTaxInformation(taxInfo *models.TaxInformations) (interface{}, error) 
 
 	count, err := collection.CountDocuments(context.Background(), filter)
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Failed to create tax information"}, err
 	}
 
 	if count == 0 {
@@ -57,7 +57,7 @@ func CreateTaxInformation(taxInfo *models.TaxInformations) (interface{}, error) 
 
 		result, err := collection.InsertOne(context.Background(), taxInfo)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Failed to create tax information"}, err
 		}
 
 		return result, nil

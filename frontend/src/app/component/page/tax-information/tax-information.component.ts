@@ -153,9 +153,9 @@ export class TaxInformationComponent {
             importRate: this.editForm.importRate ? this.editForm.importRate / 100 : 0
         })
 
-        if (res.msg) {
-            this.message.error(res.msg)
-        } else if (res.matchedCount === 1 || !res.msg) {
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
             this.message.success('Save successful!')
             this.closeDialog()
             this.loadTaxInfoLists()
