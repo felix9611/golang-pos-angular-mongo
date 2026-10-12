@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"golang-pos-mongo-backend/backend/config"
 	"golang-pos-mongo-backend/backend/dto"
@@ -10,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -124,13 +124,13 @@ func GetInvRecordQueryProject() bson.M {
 func GetInvRecordByDataType(
 	ctx context.Context,
 	query dto.InvoiceDashboardReqDto,
-) ([]dto.InvRecordYearMonthResult, error) {
+) (interface{}, error) {
 	InventoryRecordsCollection := config.GetCollection("inventory_records")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	if query.DataTypeValue == "" {
-		return nil, errors.New("dataType is required")
+		return gin.H{"error": "dataType is required"}, nil
 	}
 
 	// Data Type Filter
