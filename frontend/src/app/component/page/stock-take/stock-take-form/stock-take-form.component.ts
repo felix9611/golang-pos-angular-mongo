@@ -129,10 +129,10 @@ await: any
 
     async updateForm() {
         const res = await postApiWithAuth('/stock-take/update', this.editForm)
-        if (res.finished) {
-            this.message.success(res.msg)
+        if (res.error) {
+            this.message.error(res.error)
         } else {
-            this.message.error(res.msg)
+            this.message.success('Update success!')
         }
     }
 
@@ -170,11 +170,11 @@ await: any
 
         const res = await postApiWithAuth('/stock-take/item-submit', finalData)
 
-        if (res.InsertedID) {
-            this.message.success('Added!')
+        if (res.error) {
+            this.message.error(res.error)
             this.getOne()
         } else {
-            this.message.error('Ooops! something wrong! Please try again!')
+            this.message.success('Added!')
         }
 
     }

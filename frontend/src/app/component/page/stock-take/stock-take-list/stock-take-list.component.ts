@@ -116,8 +116,8 @@ export class StockTakeListComponent implements OnInit {
 
     async submitForm() {
         const res = await postApiWithAuth('/stock-take/create-form', this.editForm)
-        if (res.msg) {
-            this.message.error(res.msg)
+        if (res.error) {
+            this.message.error(res.error)
         } else {
             this.message.success('Save successful!')
             this.closeDialog()
