@@ -128,7 +128,7 @@ export class ReturnInvoiceFormComponent implements OnInit {
         this.itemSubmitForm.product = data.product   
         this.itemSubmitForm.price = data.price
         this.itemSubmitForm.taxRate = data.taxRate      
-        this.itemSubmitForm.taxAmount = data.taxAmount
+        this.itemSubmitForm.taxAmount = Number(data.taxAmount)
         this.itemSubmitForm.taxType = data.taxType
         this.itemSubmitForm.taxCode = data.taxCode
         this.itemSubmitForm.qty = data.qty  
@@ -154,7 +154,7 @@ export class ReturnInvoiceFormComponent implements OnInit {
             taxRate,
             taxCode, 
             taxType,
-            taxAmount,
+            taxAmount: taxAmount ? Number(taxAmount) : Number(0),
             product,
             returnInvoiceId: this.invoiceDetail.id // Assuming returnInvoiceId is the _id of the Invoice DETAIL
         }
@@ -202,3 +202,4 @@ export class ReturnInvoiceFormComponent implements OnInit {
     }
 
 }
+
