@@ -61,7 +61,7 @@ export class StockInComponent implements OnInit {
     }
 
     productForm: ProductFormDto = {
-        _id: '',
+        id: '',
         productCode: '',
         productName: '',
         itemCode: '',
@@ -79,8 +79,8 @@ export class StockInComponent implements OnInit {
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/getAll')
-        this.locationList = data
+        const data = await getApiWithAuth('/base/location/all')
+        this.locationList = data.data
     }
 
     async productCodeChanged(event: any) {
@@ -88,7 +88,7 @@ export class StockInComponent implements OnInit {
         if (event) {
             
             const data = await getApiWithAuth(`/product/product-list/code/${event}`)
-            this.stockInForm.productId = data._id
+            this.stockInForm.productId = data.id
             this.productForm = data
         }
     }
@@ -110,7 +110,7 @@ export class StockInComponent implements OnInit {
         }
 
         this.productForm = {
-            _id: '',
+            id: '',
             productCode: '',
             productName: '',
             itemCode: '',
@@ -129,13 +129,12 @@ export class StockInComponent implements OnInit {
 
     async submitForm() {
         this.reloadProductLocation = false
-        const res = await postApiWithAuth('/product/product-list/stock-in', this.stockInForm)
-        if (res) {
-            this.message.success('Insert success!')
+        const res = await postApiWithAuth('/inventory/stock-in', this.stockInForm)
+        if (res.status === true) {
+            this.message.success(res.message)
             this.reloadProductLocation = true
         } else {
-            this.message.error('Something error! Please try again!')
-            this.reloadProductLocation = true
+            this.message.error(res.message)
         }
     }
 }

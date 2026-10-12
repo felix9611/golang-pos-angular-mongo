@@ -114,7 +114,7 @@
                       <td>{{data.remark}}</td>
                       <td>
                         <div 
-                          (click)="removeRowSpecialDay(i, data._id)"
+                          (click)="removeRowSpecialDay(i, data.id)"
                             class="w-[100px] bg-[#FFA8A8] hover:bg-[#EC7272] border-1 border-[#CB0000] text-[#CB0000] text-center p-1 rounded-lg">
                             Delete
                         </div>
@@ -130,7 +130,7 @@
             Reset
           </div>
           <div (click)="submitForm()" class="rounded-lg border-2 text-[#32c244] border-[#32c244] bg-[#a2ff80] hover:bg-[#91e274] p-1 w-[100px] text-center ">
-            {{ editForm._id ? 'Update' : 'Create' }}
+            {{ editForm.id ? 'Update' : 'Create' }}
           </div>
         </div>
     </div>

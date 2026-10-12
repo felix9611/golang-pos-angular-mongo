@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/services"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/services"
 	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -15,18 +15,40 @@ import (
 // @Tags         Stock Take
 // @Accept       json
 // @Produce      json
-// @Param        request  body      models.StockTakes  true  "List Action Record Request Body"
+// @Param        request  body      dto.CreateStockTakeForm  true  "List Action Record Request Body"
 // @Success      200      {object}  dto.GeneralCreateResponseBody
-// @Router       /asset/stock-take/create [post]
+// @Router       /stock-take/create-form [post]
 func CreateStockTakeApi(c *gin.Context) {
+	var stockTake dto.CreateStockTakeForm
+	if err := c.ShouldBindJSON(&stockTake); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	data, err := services.CreateStockTakeForm(stockTake)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
+		return
+	}
+	c.JSON(http.StatusCreated, data)
+}
+
+// @Summary      Update one stock take form
+// @Description  Update one stock take form
+// @Tags         Stock Take
+// @Accept       json
+// @Produce      json
+// @Param        request  body      models.StockTakes  true  "List Action Record Request Body"
+// @Success      200      {object}  dto.GeneralUpdateResponse
+// @Router       /stock-take/update [post]
+func UpdateStockTakeApi(c *gin.Context) {
 	var stockTake models.StockTakes
 	if err := c.ShouldBindJSON(&stockTake); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	data, err := services.CreateStockTakeForm(&stockTake)
+	data, err := services.UpdateStockTakeForm(&stockTake)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Update failed"})
 		return
 	}
 	c.JSON(http.StatusCreated, data)
@@ -39,7 +61,7 @@ func CreateStockTakeApi(c *gin.Context) {
 // @Produce      json
 // @Param        request  body      dto.ListStockTakeDto  true  "List Action Record Request Body"
 // @Success      200      {object}  dto.StockTakeResponseList
-// @Router       /asset/stock-take/list [post]
+// @Router       /stock-take/list [post]
 func ListPageStockTake(c *gin.Context) {
 	var query dto.ListStockTakeDto
 	if err := c.ShouldBindJSON(&query); err != nil {
@@ -62,7 +84,7 @@ func ListPageStockTake(c *gin.Context) {
 // @Produce      json
 // @Param        id   path      string  true  "Stock Take Form ID"
 // @Success      200      {object}  dto.GetStockTakeFormWithItemsResponse
-// @Router       /asset/stock-take/one/{id} [get]
+// @Router       /stock-take/one/{id} [get]
 func GetStockTakeById(c *gin.Context) {
 	id := c.Param("id")
 	data, err := services.GetOneStockTakeFormByID(id)
@@ -80,7 +102,7 @@ func GetStockTakeById(c *gin.Context) {
 // @Produce      json
 // @Param        request  body      models.StockTakeItems  true  "Stock Take Item Request Body"
 // @Success      200      {object}  dto.GeneralCreateResponseBody
-// @Router       /asset/stock-take/item-submit [post]
+// @Router       /stock-take/item-submit [post]
 func StockTakeItemSubmit(c *gin.Context) {
 	var stockTakeItem models.StockTakeItems
 	if err := c.ShouldBindJSON(&stockTakeItem); err != nil {
@@ -102,7 +124,7 @@ func StockTakeItemSubmit(c *gin.Context) {
 // @Produce      json
 // @Param        id   path      string  true  "Stock Take Form ID"
 // @Success      200      {object}  dto.GeneralUpdateResponse
-// @Router       /asset/stock-take/finish/{id} [delete]
+// @Router       /stock-take/finish/{id} [delete]
 func FinishStockTake(c *gin.Context) {
 	id := c.Param("id")
 	data, err := services.FinishOrVoidStockTakeForm(id, 2, "")
@@ -120,7 +142,7 @@ func FinishStockTake(c *gin.Context) {
 // @Produce      json
 // @Param        id   path      string  true  "Stock Take Form ID"
 // @Success      200      {object}  dto.GeneralCreateResponseBody
-// @Router       /asset/stock-take/void/{id} [delete]
+// @Router       /stock-take/void/{id} [delete]
 func VoidStockTake(c *gin.Context) {
 	id := c.Param("id")
 	data, err := services.FinishOrVoidStockTakeForm(id, 0, "")
@@ -132,13 +154,14 @@ func VoidStockTake(c *gin.Context) {
 }
 
 func RegisterStockTakeRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
-	stockTakeGroup := rg.Group("/asset/stock-take", handle.MiddlewareFunc())
+	stockTakeGroup := rg.Group("/stock-take", handle.MiddlewareFunc())
 	{
-		stockTakeGroup.POST("/create", CreateStockTakeApi)
+		stockTakeGroup.POST("/create-form", CreateStockTakeApi)
 		stockTakeGroup.POST("/list", ListPageStockTake)
 		stockTakeGroup.GET("/one/:id", GetStockTakeById)
 		stockTakeGroup.POST("/item-submit", StockTakeItemSubmit)
 		stockTakeGroup.DELETE("/finish/:id", FinishStockTake)
 		stockTakeGroup.DELETE("/void/:id", VoidStockTake)
+		stockTakeGroup.POST("/update", UpdateStockTakeApi)
 	}
 }

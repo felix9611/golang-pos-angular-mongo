@@ -2,13 +2,14 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
+
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"github.com/gin-gonic/gin"
 )
 
 func CreateActionRecord(
@@ -20,12 +21,12 @@ func CreateActionRecord(
 ) (interface{}, error) {
 	collection := config.GetCollection("action_records")
 	result, err := collection.InsertOne(context.Background(), models.ActionRecords{
-		ActionName:   actionName,
-		ActionMethod: actionMethod,
-		ActionFrom:   actionFrom,
-		ActionData:   actionData,
+		ActionName:    actionName,
+		ActionMethod:  actionMethod,
+		ActionFrom:    actionFrom,
+		ActionData:    actionData,
 		ActionSuccess: actionSuccess,
-		CreatedAt:   time.Now(),
+		CreatedAt:     time.Now(),
 	})
 	if err != nil {
 		return nil, err

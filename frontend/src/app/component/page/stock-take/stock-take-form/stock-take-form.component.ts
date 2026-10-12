@@ -91,7 +91,7 @@ await: any
         createdTime: '',
         finishTime: '',
         createBy: '',
-        _id: '',
+        id: '',
         status: 0
       }
 
@@ -118,16 +118,17 @@ await: any
     }
 
     async getOne() {
-        this.editForm = await getApiWithAuth(`/product/stock-take/one/${ this.theId}`)    
+        this.editForm = await getApiWithAuth(`/stock-take/one/${ this.theId}`)    
     }
 
     placeLists: any[] = []
     async loadLocationList() {
-        this.placeLists = await getApiWithAuth('/base/location/getAll')
+        const res = await getApiWithAuth('/base/location/all')
+        this.placeLists = res.data
     }
 
     async updateForm() {
-        const res = await postApiWithAuth('/product/stock-take/update-form', this.editForm)
+        const res = await postApiWithAuth('/stock-take/update', this.editForm)
         if (res.finished) {
             this.message.success(res.msg)
         } else {
@@ -138,16 +139,16 @@ await: any
     async assetCodeChanged(event: any) {
         if (event) {
             const data = await getApiWithAuth(`/product/product-list/code/${event}`)
-            this.itemForm.productId = data._id
+            this.itemForm.productId = data.id
           //  this.itemForm.productCode = data.productCode
             this.itemForm.productName = data.productName
-            this.placeCheckStatus(data._id)
+            this.placeCheckStatus(data.id)
         }
     }
 
 
     async placeCheckStatus(productId: string) {
-        const res = await postApiWithAuth('/product/product-list/location/check', { productId, locationId: this.editForm.actionPlaceId })
+        const res = await postApiWithAuth('/inventory/check', { productId, locationId: this.editForm.actionPlaceId })
         if (res.status === true) {
             this.itemForm.status = 'Exist'
             this.itemForm.orgQty = res.data.qty
@@ -158,7 +159,7 @@ await: any
 
     async submitItem() {
         const finalData = {
-            stockTakeId: this.editForm._id,
+            stockTakeId: this.editForm.id,
             productId: this.itemForm.productId,
             productCode: this.itemForm.productCode,
             placeId: this.editForm.actionPlaceId,
@@ -167,9 +168,9 @@ await: any
             qty: this.itemForm.checkQty
         }
 
-        const res = await postApiWithAuth('/product/stock-take/item-submit', finalData)
+        const res = await postApiWithAuth('/stock-take/item-submit', finalData)
 
-        if (res._id) {
+        if (res.InsertedID) {
             this.message.success('Added!')
             this.getOne()
         } else {

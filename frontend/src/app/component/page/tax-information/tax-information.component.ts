@@ -1,7 +1,7 @@
 import { Component, OnChanges } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { getApiWithAuth, postApiWithAuth } from '../../../../tool/httpRequest-auth'
+import { deleteApiWithAuth, getApiWithAuth, postApiWithAuth } from '../../../../tool/httpRequest-auth'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'
@@ -89,7 +89,7 @@ export class TaxInformationComponent {
     }
 
     editForm: TaxInfomationForm =  {
-        _id: '',
+        id: '',
         nationCode: '',
         nationName: '',
         countryCode: '',
@@ -144,7 +144,7 @@ export class TaxInformationComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/base/tax-information/create' : `/base/tax-information/update`
+        const url = this.editForm.id === '' ? '/base/tax-information/create' : `/base/tax-information/update`
 
         console.log(this.editForm)
         const res = await postApiWithAuth(url, {
@@ -161,7 +161,7 @@ export class TaxInformationComponent {
             this.loadTaxInfoLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 nationCode: '',
                 nationName: '',
                 countryCode: '',
@@ -188,7 +188,7 @@ export class TaxInformationComponent {
 
     closeDialog() {
         this.editForm = {
-            _id: '',
+            id: '',
             nationCode: '',
             nationName: '',
             countryCode: '',
@@ -213,9 +213,9 @@ export class TaxInformationComponent {
     }
 
     async handleRemove() {
-        const url = `/base/tax-information/remove/${this.handleRemoveId}`
+        const url = `/base/tax-information/void/${this.handleRemoveId}`
 
-        const res: any = await getApiWithAuth(url)
+        const res: any = await deleteApiWithAuth(url)
 
         this.message.info(res.msg)
         this.loadTaxInfoLists()

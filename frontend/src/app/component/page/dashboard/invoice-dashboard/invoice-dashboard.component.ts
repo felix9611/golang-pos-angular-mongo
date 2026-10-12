@@ -76,17 +76,19 @@ export class InvoiceDashboardComponent implements OnInit {
 
     typeLists: any[] = []
     async loadTypeList() {
-        this.typeLists = await getApiWithAuth('/product/product-type/getAll')
+        this.typeLists = await getApiWithAuth('/product/product-type/all')
     }
 
     deptLists: any[] = []
     async loadDeptList() {
-        this.deptLists = await getApiWithAuth('/sys/department/getAll')
+        const res = await getApiWithAuth('/sys/department/all')
+        this.deptLists = res.data
     }
 
     placeLists: any[] = []
     async loadLocationList() {
-        this.placeLists = await getApiWithAuth('/base/location/getAll')
+        const res = await getApiWithAuth('/base/location/all')
+        this.placeLists = res.data
     }
 
     async runSearch() {
@@ -392,7 +394,7 @@ export class InvoiceDashboardComponent implements OnInit {
             filter: this.globalFilter
         }
 
-        return await postApiWithAuth('/invoice/query/data-group-by', finalQuery)
+        return await postApiWithAuth('/query/invoice', finalQuery)
     }
 
 }

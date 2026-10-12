@@ -1,5 +1,5 @@
 export interface LocationForm {
-    _id?: string,
+    id?: string,
     typeCode: string
     typeName: string
     typeOtherName: string

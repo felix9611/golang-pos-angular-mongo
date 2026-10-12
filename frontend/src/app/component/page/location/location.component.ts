@@ -85,7 +85,7 @@ export class LocationComponent {
     }
 
     editForm: LocationForm = {
-        _id: '',
+        id: '',
         placeCode: '',
         placeName: '',
         placeOtherName: '',
@@ -111,12 +111,12 @@ export class LocationComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/base/location/create' : `/base/location/update`
+        const url = this.editForm.id === '' ? '/base/location/create' : `/base/location/update`
 
         const res = await postApiWithAuth(url, {
             
             ...this.editForm,
-            ...this.editForm._id ? { _id: this.editForm._id} : {},
+            ...this.editForm.id ? { _id: this.editForm.id} : {},
         })
 
         if (res.msg) {
@@ -127,7 +127,7 @@ export class LocationComponent {
             this.loadLocationLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 placeCode: '',
                 placeName: '',
                 placeOtherName: '',
@@ -166,9 +166,9 @@ export class LocationComponent {
     }
 
     async handleRemove() {
-        const url = `/base/location/remove/${this.handleRemoveId}`
+        const url = `/base/location/void/${this.handleRemoveId}`
 
-        const res: any = await getApiWithAuth(url)
+        const res: any = await deleteApiWithAuth(url)
 
         this.message.info(res.msg)
 

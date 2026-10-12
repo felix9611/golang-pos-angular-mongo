@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -22,11 +22,11 @@ func BatchCreateDepartment(departments []models.Department) (interface{}, error)
 		result, _ := CreateDepartment(&department)
 
 		if result == nil {
-			return "failed to create vendor", nil
+			return gin.H{"message": "failed to create department"}, nil
 		}
 	}
 
-	return "batch insert completed", nil
+	return gin.H{"message": "batch insert completed"}, nil
 }
 
 func CreateDepartment(department *models.Department) (interface{}, error) {
@@ -69,7 +69,7 @@ func CreateDepartment(department *models.Department) (interface{}, error) {
 		return result, nil
 	} else {
 		CreateActionRecord("Department Create", "POST", "Department", department, "Failed")
-		return "Department with the same name already exists", nil
+		return gin.H{"message": "Department already exists or not found"}, nil
 	}
 }
 
@@ -120,7 +120,7 @@ func GetOneDepartment(id string) (interface{}, error) {
 	}
 
 	if department.Status == 0 {
-		return "Department is inactive", nil
+		return gin.H{"message": "Department not found"}, nil
 	} else {
 		return &department, nil
 	}
@@ -165,7 +165,7 @@ func VoidDepartmentById(id string) (interface{}, error) {
 		return result.ModifiedCount, nil
 	} else {
 		CreateActionRecord("Department Void", "DELETE", "Department", dept, "Failed")
-		return "Department is already voided", nil
+		return gin.H{"message": "Department is already voided"}, nil
 	}
 }
 
@@ -203,7 +203,7 @@ func UpdateDeptById(id string, updateData *models.Department) (interface{}, erro
 		return result, nil
 	} else {
 		CreateActionRecord("Department Update", "POST", "Department", updateData, "Failed")
-		return "Department is already voided", nil
+		return gin.H{"message": "Department is already voided"}, nil
 	}
 }
 
@@ -315,11 +315,11 @@ func BatchCreateDepartments(departments []models.Department) (interface{}, error
 	for _, department := range departments {
 		result, _ := CreateDepartment(&department)
 		if result == nil {
-			return "failed to create department", nil
+			return gin.H{"message": "failed to create department"}, nil
 		}
 	}
 
-	return "batch insert completed", nil
+	return gin.H{"message": "batch insert completed"}, nil
 }
 
 func DepartmentDataFinder(deptCode string, deptName string) (models.Department, error) {

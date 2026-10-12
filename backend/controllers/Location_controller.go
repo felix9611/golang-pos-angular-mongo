@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/services"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/services"
 	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -91,7 +91,7 @@ func InactiveLocationByID(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Role deactivated successfully", "id": id, "data": result})
+	c.JSON(http.StatusOK, gin.H{"message": "Location deactivated successfully", "id": id, "data": result})
 }
 
 // @Summary      Update one Location record

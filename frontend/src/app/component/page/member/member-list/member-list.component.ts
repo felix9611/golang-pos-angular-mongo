@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { getApiWithAuth, postApiWithAuth } from '../../../../../tool/httpRequest-auth'
+import { deleteApiWithAuth, getApiWithAuth, postApiWithAuth } from '../../../../../tool/httpRequest-auth'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal'
@@ -117,11 +117,11 @@ export class MemberListComponent {
     }
 
     async goToVoid() {
-        const res = await await getApiWithAuth(`/member/member-list/remove/${this.handleId}`)
+        const res = await await deleteApiWithAuth(`/member/member-list/void/${this.handleId}`)
         if (res) {
-            this.message.info(res.msg)
+            this.message.info(res.message)
             this.loadMemberLists()
-            this.removeDialog = true
+            this.removeDialog = false
         }
     }
 

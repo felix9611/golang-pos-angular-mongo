@@ -2,7 +2,7 @@ export interface MemberClassFrom {
     classCode: string
     className: string
     remark: string
-    _id?: string
+    id?: string
 }
 
 export interface ListMemberClassRequestDto {

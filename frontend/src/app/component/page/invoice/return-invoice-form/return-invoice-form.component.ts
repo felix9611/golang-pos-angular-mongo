@@ -84,7 +84,7 @@ export class ReturnInvoiceFormComponent implements OnInit {
         returnToVendor: false,
         returnItems: [],
 
-        _id: ''
+        id: ''
     }
 
     itemSubmitForm: any = {
@@ -96,7 +96,8 @@ export class ReturnInvoiceFormComponent implements OnInit {
         taxCode: '',
         taxRate: 0,
         taxAmount: 0,
-        product: {}
+        product: {},
+        returnInvoiceId: ''
     }
 
     oldQtys: number = 0
@@ -116,14 +117,14 @@ export class ReturnInvoiceFormComponent implements OnInit {
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/getAll')
-        this.locationList = data
+        const data = await getApiWithAuth('/base/location/all')
+        this.locationList = data.data
     }
 
     searchInvoiceItem() {
         const data = this.invoiceDetail.invoiceItems.find((x: any) => x.product.productCode === this.itemSubmitForm.productCode)
 
-        this.itemSubmitForm.productId = data.product._id
+        this.itemSubmitForm.productId = data.product.id
         this.itemSubmitForm.product = data.product   
         this.itemSubmitForm.price = data.price
         this.itemSubmitForm.taxRate = data.taxRate      
@@ -155,7 +156,7 @@ export class ReturnInvoiceFormComponent implements OnInit {
             taxType,
             taxAmount,
             product,
-            returnInvoiceId: this.invoiceDetail._id // Assuming returnInvoiceId is the _id of the Invoice DETAIL
+            returnInvoiceId: this.invoiceDetail.id // Assuming returnInvoiceId is the _id of the Invoice DETAIL
         }
 
         this.returnInvoiceForm.refundAmount = this.returnInvoiceForm.refundAmount +Number(this.itemSubmitForm.price)
@@ -172,7 +173,7 @@ export class ReturnInvoiceFormComponent implements OnInit {
 
     async submitForm() {
         const data = await postApiWithAuth('/return-invoice/create', this.returnInvoiceForm)
-        if (data._id) {
+        if (data.id) {
             this.returnInvoiceForm = {
                 returnInvoiceNo: '',
                 returnReason: '',
@@ -186,13 +187,13 @@ export class ReturnInvoiceFormComponent implements OnInit {
                 returnToVendor: false,
                 returnItems: [],
         
-                _id: ''
+                id: ''
             }
 
             this.message.info('Data save successfully!')
 
             timer(2500).subscribe(() => {
-                this.routeTo.navigate([`/return-invoice-detail`], { queryParams: { id: data._id } })
+                this.routeTo.navigate([`/return-invoice-detail`], { queryParams: { id: data.id } })
              //   this.routeTo.navigate([`/return-invoice-list`])
             })
         }

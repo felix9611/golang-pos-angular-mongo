@@ -1,4 +1,4 @@
-module golang-fixedasset-mongo-backend/backend
+module golang-pos-mongo-backend/backend
 
 go 1.24.5
 

@@ -1,5 +1,5 @@
 export interface CodeTypeForm {
-    _id?: string,
+    id?: string,
     valueCode: string,
     valueName: string
     type: string

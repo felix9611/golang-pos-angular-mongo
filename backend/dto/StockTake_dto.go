@@ -1,8 +1,7 @@
 package dto
 
 import (
-	"golang-fixedasset-mongo-backend/backend/models"
-	"time"
+	"golang-pos-mongo-backend/backend/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -10,8 +9,8 @@ import (
 type ListStockTakeDto struct {
 	PlaceIds []string `json:"placeIds"`
 	Name     string   `json:"name"`
-	Page     int64    `json:"page"`
-	Limit    int64    `json:"limit"`
+	Page     float64  `json:"page"`
+	Limit    float64  `json:"limit"`
 }
 
 type GetStockTakeResponse struct {
@@ -20,8 +19,8 @@ type GetStockTakeResponse struct {
 	ActionPlaceId string             `bson:"actionPlaceId" json:"actionPlaceId"`
 	Remark        string             `bson:"remark" json:"remark"`
 	Status        int                `bson:"status" json:"status"`
-	CreatedTime   time.Time          `bson:"createdTime" json:"createdTime"`
-	FinishTime    *time.Time         `bson:"finishTime" json:"finishTime"`
+	CreatedTime   string             `bson:"createdTime" json:"createdTime"`
+	FinishTime    string             `bson:"finishTime" json:"finishTime"`
 	CreatedBy     string             `bson:"createdBy" json:"createdBy"`
 	FinishBy      string             `bson:"finishBy" json:"finishBy"`
 	Location      models.Locations   `bson:"location" json:"location"`
@@ -29,9 +28,9 @@ type GetStockTakeResponse struct {
 
 type StockTakeResponseList struct {
 	Lists []GetStockTakeResponse `json:"lists"`
-	Total int64                  `json:"total"`
-	Page  int                    `json:"page"`
-	Limit int                    `json:"limit"`
+	Total float64                `json:"total"`
+	Page  float64                `json:"page"`
+	Limit float64                `json:"limit"`
 }
 
 type GetStockTakeItemResponse struct {
@@ -41,10 +40,10 @@ type GetStockTakeItemResponse struct {
 	AssetCode   string             `bson:"assetCode" json:"assetCode"`
 	PlaceId     string             `bson:"placeId" json:"placeId"`
 	Status      string             `bson:"status" json:"status"`
-	CheckTime   time.Time          `bson:"checkTime,omitempty" json:"checkTime"`
+	CheckTime   string             `bson:"checkTime,omitempty" json:"checkTime"`
 	Remark      string             `bson:"remark" json:"remark"`
 	Location    models.Locations   `bson:"location" json:"location"`
-	Assetlist   AssetListsDetails  `bson:"assetlist" json:"assetlist"`
+	// Assetlist   AssetListsDetails  `bson:"assetlist" json:"assetlist"`
 }
 
 type GetStockTakeFormWithItemsResponse struct {
@@ -53,24 +52,16 @@ type GetStockTakeFormWithItemsResponse struct {
 	ActionPlaceId  string                     `bson:"actionPlaceId" json:"actionPlaceId"`
 	Remark         string                     `bson:"remark" json:"remark"`
 	Status         int                        `bson:"status" json:"status"`
-	CreatedTime    time.Time                  `bson:"createdTime" json:"createdTime"`
-	FinishTime     time.Time                  `bson:"finishTime" json:"finishTime"`
+	CreatedTime    string                     `bson:"createdTime" json:"createdTime"`
+	FinishTime     string                     `bson:"finishTime" json:"finishTime"`
 	CreatedBy      string                     `bson:"createdBy" json:"createdBy"`
 	FinishBy       string                     `bson:"finishBy" json:"finishBy"`
 	StockTakeItems []GetStockTakeItemResponse `bson:"stockTakeItems" json:"stockTakeItems"`
 }
 
-/*
-return gin.H{
-		"id":             stockTakeForm.ID,
-		"actionName":     stockTakeForm.ActionName,
-		"actionPlaceId":  stockTakeForm.ActionPlaceId,
-		"remark":         stockTakeForm.Remark,
-		"createdTime":    stockTakeForm.CreatedTime,
-		"status":         stockTakeForm.Status,
-		"createdBy":      stockTakeForm.CreatedBy,
-		"finishTime":     stockTakeForm.FinishTime,
-		"finishBy":       stockTakeForm.FinishBy,
-		"stockTakeItems": stockTakeItems,
-	}, nil
-*/
+type CreateStockTakeForm struct {
+	ActionName    string `bson:"actionName" json:"actionName"`
+	ActionPlaceId string `bson:"actionPlaceId" json:"actionPlaceId"`
+	Remark        string `bson:"remark" json:"remark"`
+	CreatedBy     string `bson:"createdBy" json:"createdBy"`
+}

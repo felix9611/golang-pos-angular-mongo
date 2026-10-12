@@ -33,7 +33,7 @@
                                 [disabled]="true"
                             >
                             @for (option of locationList; track option) {
-                              <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                              <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
                             }
                           </nz-select>
                     </nz-form-control>
@@ -147,7 +147,7 @@
                                 nzPlaceHolder="Please select"
                             >
                             @for (option of locationList; track option) {
-                              <nz-option [nzLabel]="option.placeName" [nzValue]="option._id"></nz-option>
+                              <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
                             }
                           </nz-select>
                     </nz-form-control>

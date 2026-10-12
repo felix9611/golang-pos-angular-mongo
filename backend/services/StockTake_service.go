@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CreateStockTakeForm(stockTakeForm *models.StockTakes) (interface{}, error) {
+func CreateStockTakeForm(stockTakeForm dto.CreateStockTakeForm) (interface{}, error) {
 
 	collection := config.GetCollection("stock_takes")
 
@@ -24,9 +24,17 @@ func CreateStockTakeForm(stockTakeForm *models.StockTakes) (interface{}, error) 
 	err := collection.FindOne(context.Background(), filter).Decode(&existingStockTakeForm)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			stockTakeForm.CreatedTime = time.Now()
-			stockTakeForm.Status = 1 // 1 means "in progress"
-			result, err := collection.InsertOne(context.Background(), stockTakeForm)
+
+			newForm := models.StockTakes{
+				ActionName:    stockTakeForm.ActionName,
+				ActionPlaceId: stockTakeForm.ActionPlaceId,
+				Remark:        stockTakeForm.Remark,
+				CreatedBy:     stockTakeForm.CreatedBy,
+				Status:        1, // 1 means "in progress"
+				CreatedTime:   time.Now().Format("2006-01-02 15:04:05"),
+			}
+
+			result, err := collection.InsertOne(context.Background(), newForm)
 			if err != nil {
 				return nil, err
 			}
@@ -34,7 +42,7 @@ func CreateStockTakeForm(stockTakeForm *models.StockTakes) (interface{}, error) 
 		}
 		return nil, err
 	}
-	return "A Stock Take form already exists", nil
+	return gin.H{"message": "Stock take form already exists"}, nil
 }
 
 func GetOneStockTakeFormByID(id string) (interface{}, error) {
@@ -54,6 +62,10 @@ func GetOneStockTakeFormByID(id string) (interface{}, error) {
 	stockTakeItems, err := GetStockTakeItem(id)
 	if err != nil {
 		return nil, err
+	}
+
+	if stockTakeItems == nil {
+		stockTakeItems = []interface{}{}
 	}
 
 	return gin.H{
@@ -120,7 +132,7 @@ func ListStockTakeForms(pageDto *dto.ListStockTakeDto) (interface{}, error) {
 			},
 		}},
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$location"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-		{{Key: "$sort", Value: bson.D{{"createdTime", -1}}}},
+		{{Key: "$sort", Value: bson.D{{Key: "createdTime", Value: -1}}}},
 		{{Key: "$skip", Value: skip}},
 		{{Key: "$limit", Value: limit}},
 	}
@@ -134,7 +146,7 @@ func ListStockTakeForms(pageDto *dto.ListStockTakeDto) (interface{}, error) {
 	}
 	defer cursor.Close(ctx)
 
-	var results []bson.M
+	var results []dto.GetStockTakeResponse
 	if err := cursor.All(ctx, &results); err != nil {
 		return nil, err
 	}
@@ -144,7 +156,7 @@ func ListStockTakeForms(pageDto *dto.ListStockTakeDto) (interface{}, error) {
 		return nil, errCount
 	}
 
-	return gin.H{"lists": results, "total": count, "page": pageDto.Page, "limit": pageDto.Limit}, nil
+	return dto.StockTakeResponseList{Lists: results, Total: float64(count), Page: pageDto.Page, Limit: pageDto.Limit}, nil
 }
 
 func UpdateStockTakeForm(updateData *models.StockTakes) (interface{}, error) {
@@ -162,11 +174,12 @@ func UpdateStockTakeForm(updateData *models.StockTakes) (interface{}, error) {
 		return nil, err
 	}
 
-	if existingStockTake.Status == 0 {
+	switch existingStockTake.Status {
+	case 0:
 		return "Ooooops! This stock take form no longer active! Please create a new form!", nil
-	} else if existingStockTake.Status == 2 {
+	case 2:
 		return "Ooooops! This stock take form has been completed! Please create a new form!", nil
-	} else {
+	default:
 		res, err2 := collection.UpdateOne(context.Background(), bson.M{"_id": updateData.ID}, bson.M{"$set": updateData})
 		if err2 != nil {
 			return nil, err2
@@ -194,11 +207,11 @@ func GetStockTakeItem(stockTakeId string) (interface{}, error) {
 		{{Key: "$match", Value: filter}},
 		{{
 			Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "asset_lists"},
+				{Key: "from", Value: "product_lists"},
 				{Key: "let", Value: bson.D{
-					{Key: "assetIdStr", Value: bson.D{
+					{Key: "productIdStr", Value: bson.D{
 						{Key: "$convert", Value: bson.D{
-							{Key: "input", Value: "$assetId"},
+							{Key: "input", Value: "$productId"},
 							{Key: "to", Value: "objectId"},
 							{Key: "onError", Value: nil},
 							{Key: "onNull", Value: nil},
@@ -208,32 +221,9 @@ func GetStockTakeItem(stockTakeId string) (interface{}, error) {
 				{Key: "pipeline", Value: mongo.Pipeline{
 					{{Key: "$match", Value: bson.D{
 						{Key: "$expr", Value: bson.D{
-							{Key: "$eq", Value: bson.A{"$_id", "$$assetIdStr"}},
+							{Key: "$eq", Value: bson.A{"$_id", "$$productIdStr"}},
 						}},
 					}}},
-					{{
-						Key: "$lookup", Value: bson.D{
-							{Key: "from", Value: "locations"},
-							{Key: "let", Value: bson.D{
-								{Key: "placeIdStr", Value: bson.D{
-									{Key: "$convert", Value: bson.D{
-										{Key: "input", Value: "$placeId"},
-										{Key: "to", Value: "objectId"},
-										{Key: "onError", Value: nil},
-										{Key: "onNull", Value: nil},
-									}},
-								}},
-							}},
-							{Key: "pipeline", Value: mongo.Pipeline{
-								{{Key: "$match", Value: bson.D{
-									{Key: "$expr", Value: bson.D{
-										{Key: "$eq", Value: bson.A{"$_id", "$$placeIdStr"}},
-									}},
-								}}},
-							}},
-							{Key: "as", Value: "location"},
-						},
-					}},
 					{{
 						Key: "$lookup", Value: bson.D{
 							{Key: "from", Value: "departments"},
@@ -259,7 +249,7 @@ func GetStockTakeItem(stockTakeId string) (interface{}, error) {
 					}},
 					{{
 						Key: "$lookup", Value: bson.D{
-							{Key: "from", Value: "asset_types"},
+							{Key: "from", Value: "product_types"},
 							{Key: "let", Value: bson.D{
 								{Key: "typeIdStr", Value: bson.D{
 									{Key: "$convert", Value: bson.D{
@@ -277,14 +267,13 @@ func GetStockTakeItem(stockTakeId string) (interface{}, error) {
 									}},
 								}}},
 							}},
-							{Key: "as", Value: "assetType"},
+							{Key: "as", Value: "productType"},
 						},
 					}},
-					{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$location"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
 					{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$department"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-					{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$assetType"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+					{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$productType"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
 				}},
-				{Key: "as", Value: "assetlist"},
+				{Key: "as", Value: "product"},
 			},
 		}},
 		{{
@@ -312,7 +301,7 @@ func GetStockTakeItem(stockTakeId string) (interface{}, error) {
 			},
 		}},
 		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$location"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$assetlist"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$product"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
 	}
 
 	collectionItems := config.GetCollection("stock_take_items")
@@ -343,7 +332,7 @@ func StockTakeItemSubmit(stockTakeItem *models.StockTakeItems) (interface{}, err
 
 	collection := config.GetCollection("stock_take_items")
 
-	stockTakeItem.CheckTime = time.Now()
+	stockTakeItem.CheckTime = time.Now().Format("2006-01-02 15:04:05")
 
 	res, errInsert := collection.InsertOne(context.Background(), stockTakeItem)
 
@@ -373,14 +362,15 @@ func FinishOrVoidStockTakeForm(_id string, status int, username string) (interfa
 		return nil, err
 	}
 
-	if existingStockTake.Status == 0 {
+	switch existingStockTake.Status {
+	case 0:
 		return "Ooooops! This stock take form no longer active! Please create a new form!", nil
-	} else if existingStockTake.Status == 2 {
+	case 2:
 		return "Ooooops! This stock take form has been completed! Please create a new form!", nil
-	} else {
+	default:
 		finalData := bson.M{
 			"finishBy":   username,
-			"finishTime": time.Now(),
+			"finishTime": time.Now().Format("2006-01-02 15:04:05"),
 			"status":     status,
 		}
 

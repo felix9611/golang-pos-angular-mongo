@@ -47,7 +47,7 @@ export class MemberFormComponent implements OnInit {
     }
 
     editForm: MemberForm = {
-        _id: '',
+        id: '',
         memberCode: '',
         name: '',
         address: '',
@@ -69,13 +69,13 @@ export class MemberFormComponent implements OnInit {
 
     memberClassList: any[] = []
     async loadMemberClassList() {
-        this.memberClassList = await getApiWithAuth('/member/member-class/getAll')
+        this.memberClassList = await getApiWithAuth('/member/member-class/all')
     }
 
 
     resetForm() {
         this.editForm = {
-            _id: '',
+            id: '',
             memberCode: '',
             name: '',
             address: '',
@@ -124,12 +124,12 @@ export class MemberFormComponent implements OnInit {
 
     async submitForm() {
         const res = await postApiWithAuth(
-            this.editForm._id ? '/member/member-list/update' : '/member/member-list/create', 
+            this.editForm.id ? '/member/member-list/update' : '/member/member-list/create', 
             this.editForm
         )
 
         if (res) {
-            this.message.info(res.msg)
+            this.message.info(res.message)
         }
     }
 

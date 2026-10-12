@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/services"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/services"
 	"net/http"
 
 	//	"time"

@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -22,7 +22,7 @@ func BatchCreateTaxInformation(TaxInfos []models.TaxInformations) (interface{}, 
 		}
 	}
 
-	return "batch insert completed", nil
+	return gin.H{"message": "batch insert completed"}, nil
 }
 
 func CreateTaxInformation(taxInfo *models.TaxInformations) (interface{}, error) {
@@ -62,7 +62,7 @@ func CreateTaxInformation(taxInfo *models.TaxInformations) (interface{}, error) 
 
 		return result, nil
 	} else {
-		return "Tax Information with the same name already exists", nil
+		return gin.H{"error": "Tax Information with the same name already exists"}, nil
 	}
 }
 
@@ -87,7 +87,7 @@ func GetOneTaxInformation(id string) (interface{}, error) {
 	}
 
 	if taxInfo.Status == 0 {
-		return "This Tax Information is inactive", nil
+		return gin.H{"error": "Tax Information is already voided!"}, nil
 	} else {
 		return &taxInfo, nil
 	}
@@ -128,7 +128,7 @@ func VoidOneTaxInformation(id string) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "This Tax Information is already voided", nil
+		return gin.H{"error": "Tax Information is already voided!"}, nil
 	}
 }
 
@@ -158,7 +158,7 @@ func UpdateTaxInformation(updateData *models.TaxInformations) (interface{}, erro
 
 		return result, nil
 	} else {
-		return "This Tax Information is already voided", nil
+		return gin.H{"error": "Tax Information is already voided!"}, nil
 	}
 }
 

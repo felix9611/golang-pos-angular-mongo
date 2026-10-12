@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -18,11 +18,11 @@ func BatchCreateVendors(Vendors []models.Vendors) (interface{}, error) {
 		result, _ := CreateVendor(&vendor)
 
 		if result == nil {
-			return "failed to create vendor", nil
+			return gin.H{"error": "Failed to create vendor"}, nil
 		}
 	}
 
-	return "batch insert completed", nil
+	return gin.H{"message": "batch insert completed"}, nil
 }
 
 func CreateVendor(vendor *models.Vendors) (interface{}, error) {
@@ -65,7 +65,7 @@ func CreateVendor(vendor *models.Vendors) (interface{}, error) {
 		return vendor, nil
 	} else {
 		CreateActionRecord("Vendor Create", "POST", "Vendor", vendor, "Failed")
-		return "Vendor with the same name already exists", nil
+		return gin.H{"error": "Vendor with the same name already exists"}, nil
 	}
 
 }
@@ -91,7 +91,7 @@ func GetOneVendorById(id string) (interface{}, error) {
 	}
 
 	if vendor.Status == 0 {
-		return "Vendor is inactive", nil
+		return gin.H{"error": "Vendor is inactive"}, nil
 	} else {
 		return &vendor, nil
 	}
@@ -125,7 +125,7 @@ func UpdateVendorById(updateData *models.Vendors) (interface{}, error) {
 		return result, nil
 	} else {
 		CreateActionRecord("Vendor Update", "POST", "Vendor", updateData, "Failed")
-		return "Vendor is inactive", nil
+		return gin.H{"error": "Vendor is inactive"}, nil
 	}
 }
 
@@ -161,7 +161,7 @@ func InactiveVendorByID(id string) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "Vendor is already inactive", nil
+		return gin.H{"error": "Vendor is inactive"}, nil
 	}
 }
 
@@ -263,7 +263,7 @@ func VendorList(pageDto *dto.VendorPageDto) (interface{}, error) {
 	findOptions := options.Find()
 	findOptions.SetSkip(int64(skip))
 	findOptions.SetLimit(int64(limit))
-	findOptions.SetSort(bson.D{{"created_at", -1}})
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
 	cursor, err := collection.Find(ctx, filter, findOptions)
 
 	if err != nil {

@@ -2,9 +2,9 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,17 +20,17 @@ func BatchCreateLocation(locations []models.Locations) (interface{}, error) {
 		result, _ := CreateLocation(&location)
 
 		if result == nil {
-			return "failed to create vendor", nil
+			return gin.H{"error": "batch insert failed"}, nil
 		}
 	}
 
-	return "batch insert completed", nil
+	return gin.H{"message": "batch insert completed"}, nil
 }
 
 func CreateLocation(location *models.Locations) (interface{}, error) {
 	collection := config.GetCollection("locations")
 
-	filter := bson.M{"status": 1, "vendorName": location.PlaceCode, "placeCode": location.PlaceName}
+	filter := bson.M{"status": 1, "placeName": location.PlaceCode, "placeCode": location.PlaceName}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -69,7 +69,7 @@ func CreateLocation(location *models.Locations) (interface{}, error) {
 
 	} else {
 		CreateActionRecord("Location Create", "POST", "Location", location, "Failed")
-		return "Location with the same name already exists", nil
+		return gin.H{"error": "Location already exists"}, nil
 	}
 }
 
@@ -93,17 +93,17 @@ func GetOneLocationById(id string) (interface{}, error) {
 	}
 
 	if location.Status == 0 {
-		return "Location is inactive", nil
+		return gin.H{"error": "Location not found or already voided"}, nil
 	} else {
 		return &location, nil
 	}
 }
 
 func UpdateLocationById(updateData *models.Locations) (interface{}, error) {
+	collection := config.GetCollection("locations")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	collection := config.GetCollection("locations")
 	filter := bson.M{"_id": updateData.ID, "status": 1}
 
 	var existingLocation models.Locations
@@ -125,7 +125,7 @@ func UpdateLocationById(updateData *models.Locations) (interface{}, error) {
 		return result, nil
 	} else {
 		CreateActionRecord("Location Update", "POST", "Location", updateData, "Failed")
-		return "Location is inactive", nil
+		return gin.H{"error": "Location not found or already voided"}, nil
 	}
 }
 
@@ -160,14 +160,14 @@ func InactiveLocationByID(id string) (interface{}, error) {
 
 		CreateActionRecord("Location Inactive", "DELETE", "Location", existingLocation, "Success")
 
-		return "Location deactivated successfully", nil
+		return gin.H{"message": "Location voided successfully"}, nil
 	} else {
 		CreateActionRecord("Location Inactive", "DELETE", "Location", existingLocation, "Failed")
-		return "Location is already inactive", nil
+		return gin.H{"error": "Location not found or already voided"}, nil
 	}
 }
 
-func LocationListWithFilter(pageDto *dto.LocationPageDto) (interface{}, error) {
+func LocationListWithFilter(pageDto *dto.LocationPageDto) ([]models.Locations, error) {
 	collection := config.GetCollection("locations")
 	filter := bson.M{
 		"status": 1,
@@ -181,7 +181,7 @@ func LocationListWithFilter(pageDto *dto.LocationPageDto) (interface{}, error) {
 	defer cancel()
 
 	findOptions := options.Find()
-	findOptions.SetSort(bson.D{{"created_at", -1}})
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
 	cursor, err := collection.Find(ctx, filter, findOptions)
 
 	if err != nil {
@@ -207,6 +207,10 @@ func LocationListWithFilter(pageDto *dto.LocationPageDto) (interface{}, error) {
 }
 
 func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
+	collection := config.GetCollection("locations")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
 	}
@@ -217,17 +221,16 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 	skip := (pageDto.Page - 1) * pageDto.Limit
 	limit := pageDto.Limit
 
-	collection := config.GetCollection("locations")
 	filter := bson.M{
 		"status": 1,
 		"$or": []bson.M{
 			{"placeCode": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 			{"placeName": bson.M{"$regex": pageDto.Name, "$options": "i"}},
+			{"country": bson.M{"$regex": pageDto.Name, "$options": "i"}},
+			{"address": bson.M{"$regex": pageDto.Name, "$options": "i"}},
+			{"zipCode": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 		},
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	count, errCount := collection.CountDocuments(ctx, filter)
 
@@ -258,16 +261,15 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 		return nil, err
 	}
 
-	return gin.H{"lists": locations, "total": count, "page": pageDto.Page, "limit": pageDto.Limit}, nil
+	return dto.LocationList{Lists: locations, Total: count, Page: pageDto.Page, Limit: pageDto.Limit}, nil
 }
 
 func ListAllLocation() (interface{}, error) {
 	collection := config.GetCollection("locations")
-
-	filter := bson.M{"status": 1}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"status": 1}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {

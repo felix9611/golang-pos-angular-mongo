@@ -1,5 +1,5 @@
 export interface MemberSpecialDay {
-    _id?: string
+    id?: string
     memberId?: string
     name: string
     date: string
@@ -15,6 +15,6 @@ export interface MemberForm {
     classId: string
     remark: string
     memberSpecialDays: MemberSpecialDay[]
-    _id?: string
+    id?: string
     memberCode?: string
 }

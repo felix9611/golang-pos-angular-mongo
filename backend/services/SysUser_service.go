@@ -1,23 +1,24 @@
 package services
 
 import (
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/tools"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 	"context"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/tools"
+	"log"
+	"time"
+
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"github.com/gin-gonic/gin"
-	"log"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func CreateSysUser(user *models.SysUsers) (interface{}, error) {
 	log.Printf("Insert SysUser: %+v\n", user)
 
-	filter := bson.M{"status": 1, "username": user.Username }
+	filter := bson.M{"status": 1, "username": user.Username}
 
 	collection := config.GetCollection("sys_users")
 
@@ -58,7 +59,7 @@ func CreateSysUser(user *models.SysUsers) (interface{}, error) {
 
 		return result, nil
 	} else {
-		return "User with the same username already exists", nil
+		return gin.H{"error": "User with the same username already exists"}, nil
 	}
 }
 
@@ -66,7 +67,7 @@ func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
 	collection := config.GetCollection("sys_users")
 
 	filter := bson.M{"_id": updateData.ID, "status": 1}
-	
+
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -86,7 +87,7 @@ func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "User not found or inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	}
 }
 
@@ -112,7 +113,7 @@ func InactiveUserByID(id string) (interface{}, error) {
 	if user.Status == 1 {
 		result, err := collection.UpdateOne(ctx, filter, bson.M{
 			"$set": bson.M{
-				"status": 0,
+				"status":     0,
 				"updated_at": time.Now(),
 			},
 		})
@@ -122,7 +123,7 @@ func InactiveUserByID(id string) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "User is already inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	}
 }
 
@@ -133,7 +134,7 @@ func GetOneSysUserById(id string) (interface{}, error) {
 		return nil, err
 	}
 
-	filter := bson.M{ "_id": objectID, "status": 1 }
+	filter := bson.M{"_id": objectID, "status": 1}
 	var user models.SysUsers
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -142,9 +143,9 @@ func GetOneSysUserById(id string) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	
+
 	if user.Status == 0 {
-		return "User is inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	} else {
 		return &user, nil
 	}
@@ -190,14 +191,14 @@ func GetUserDetailByUsername(username string) (interface{}, error) {
 	}
 
 	last := gin.H{
-		"id":       user.ID,
-		"username": user.Username,
-		"email":    user.Email,
-		"avatarBase64":   user.AvatarBase64,
-		"roles": user.Roles,
-		"deptId": user.DeptId,
-		"roleLists": roleLists,
-		"department": department,
+		"id":           user.ID,
+		"username":     user.Username,
+		"email":        user.Email,
+		"avatarBase64": user.AvatarBase64,
+		"roles":        user.Roles,
+		"deptId":       user.DeptId,
+		"roleLists":    roleLists,
+		"department":   department,
 		"loginRecords": loginRecords,
 	}
 
@@ -221,7 +222,7 @@ func UpdateUserPassword(Username string, NewPassword string) (interface{}, error
 	if user.Status == 1 {
 		result, err := collection.UpdateOne(ctx, filter, bson.M{
 			"$set": bson.M{
-				"password": tools.HashPassword(NewPassword, tools.Salt),
+				"password":  tools.HashPassword(NewPassword, tools.Salt),
 				"updatedAt": time.Now(),
 			},
 		})
@@ -231,7 +232,7 @@ func UpdateUserPassword(Username string, NewPassword string) (interface{}, error
 		}
 		return result, nil
 	} else {
-		return "User not found or inactive", nil
+		return gin.H{"error": "User not found or already inactive"}, nil
 	}
 }
 
@@ -247,7 +248,7 @@ func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
 
 	collection := config.GetCollection("sys_users")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    defer cancel()
+	defer cancel()
 
 	filter := bson.M{"status": 1}
 
@@ -258,7 +259,7 @@ func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
 	}
 
 	skip := int64((pageDto.Page - 1) * pageDto.Limit)
-    limit := int64(pageDto.Limit)
+	limit := int64(pageDto.Limit)
 
 	findOptions := options.Find()
 	findOptions.SetSkip(skip)
@@ -306,7 +307,7 @@ func UserUpdateAvatar(Username string, PhotoBase string) (interface{}, error) {
 		result, err := collection.UpdateOne(ctx, filter, bson.M{
 			"$set": bson.M{
 				"avatarBase64": PhotoBase,
-				"createdAt":   time.Now(),
+				"createdAt":    time.Now(),
 			},
 		})
 
@@ -315,6 +316,6 @@ func UserUpdateAvatar(Username string, PhotoBase string) (interface{}, error) {
 		}
 		return result, nil
 	} else {
-		return "This user has been invalidated! Please contact admin!", nil
+		return gin.H{"error": "This user has been invalidated! Please contact admin!"}, nil
 	}
 }

@@ -93,7 +93,7 @@ export class ProductFormComponent implements OnInit {
     private changeEvent$ = new Subject<NzUploadChangeParam>()
 
     editForm: ProductFormDto = {
-        _id: '',
+        id: '',
         productCode: '',
         productName: '',
         itemCode: '',
@@ -183,21 +183,22 @@ export class ProductFormComponent implements OnInit {
 
     typeLists: any[] = []
     async loadTypeList() {
-        this.typeLists = await getApiWithAuth('/product/product-type/getAll')
+        this.typeLists = await getApiWithAuth('/product/product-type/all')
     }
 
     deptLists: any[] = []
     async loadDeptList() {
-        this.deptLists = await getApiWithAuth('/sys/department/getAll')
+        const res = await getApiWithAuth('/sys/department/all')
+        this.deptLists = res.data
     }
 
     vendorLists: any[] = []
     async loadVendorList() {
-        this.vendorLists = await getApiWithAuth('/base/vendor/getAll')
+        this.vendorLists = await getApiWithAuth('/base/vendor/all')
     }
 
     async submitForm() {
-        const url = this.editForm._id ? '/product/product-list/update' : '/product/product-list/create'
+        const url = this.editForm.id ? '/product/product-list/update' : '/product/product-list/create'
         this.editForm.uploaProductFiles = this.finalFileList
 
         const res = await postApiWithAuth(url, this.editForm)
@@ -212,7 +213,7 @@ export class ProductFormComponent implements OnInit {
 
     resetForm() {
         this.editForm = {
-            _id: '',
+            id: '',
             productCode: '',
             productName: '',
             itemCode: '',
@@ -247,7 +248,8 @@ export class ProductFormComponent implements OnInit {
 
     codeTypeLists: any[] = []
     async loadCodeTypeList() {
-        this.codeTypeLists = await getApiWithAuth('/base/code-type/get-type/Product-TaxType')
+        const res = await getApiWithAuth('/base/code-type/get-type/Product-TaxType')
+        this.codeTypeLists = res.datas
     }
 
 }

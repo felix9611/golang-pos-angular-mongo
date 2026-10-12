@@ -43,8 +43,8 @@ export class SalePointComponent implements OnInit {
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/getAll')
-        this.locationList = data
+        const data = await getApiWithAuth('/base/location/all')
+        this.locationList = data.data
         this.inputedProductList = []
         this.inputedPaymentList = []
     }
@@ -123,7 +123,7 @@ export class SalePointComponent implements OnInit {
         if (event) {
             
             const data = await getApiWithAuth(`/product/product-list/code/${event}`)
-            this.enterProductForm.productId = data._id
+            this.enterProductForm.productId = data.id
             this.enterProductForm.retailPrice = data.retailPrice
             this.productForm = data
 
@@ -133,7 +133,7 @@ export class SalePointComponent implements OnInit {
 
     locationIdChanged(event: any) {
         if (event)  {
-            const data = this.locationList.find((item: any) => item._id === event)
+            const data = this.locationList.find((item: any) => item.id === event)
             this.taxInfoFilter.countryCode = data.country
             this.findTaxInfoForSalePoint()
         }
@@ -142,16 +142,16 @@ export class SalePointComponent implements OnInit {
     qtyChanged(event: any) {
         this.enterProductForm.qty = event
         this.enterProductForm.allTotalPrice = event * this.enterProductForm.retailPrice
-        this.enterProductForm.taxAmount =  (event * (1 + this.enterProductForm.taxRate) * this.enterProductForm.retailPrice).toFixed(2)
+        this.enterProductForm.taxAmount =  event * (1 + this.enterProductForm.taxRate) * this.enterProductForm.retailPrice
     }
 
     typeChanged(event: any) {
         if (event === '%') {
             this.enterProductForm.allTotalPrice = this.enterProductForm.retailPrice * (1 - this.enterProductForm.discount /100) * this.enterProductForm.qty
-            this.enterProductForm.taxAmount =  ((1 + this.enterProductForm.taxRate) * this.enterProductForm.retailPrice * (1 - this.enterProductForm.discount /100) * this.enterProductForm.qty).toFixed(2)
+            this.enterProductForm.taxAmount =  (1 + this.enterProductForm.taxRate) * this.enterProductForm.retailPrice * (1 - this.enterProductForm.discount /100) * this.enterProductForm.qty
         } else if (event === '$') {
             this.enterProductForm.allTotalPrice = (this.enterProductForm.retailPrice - this.enterProductForm.discount) * this.enterProductForm.qty
-            this.enterProductForm.taxAmount = ((this.enterProductForm.retailPrice  - this.enterProductForm.discount) * (1 + this.enterProductForm.taxRate) * this.enterProductForm.qty).toFixed(2)
+            this.enterProductForm.taxAmount = (this.enterProductForm.retailPrice  - this.enterProductForm.discount) * (1 + this.enterProductForm.taxRate) * this.enterProductForm.qty
         }
     }
 
@@ -217,14 +217,14 @@ export class SalePointComponent implements OnInit {
 
     fillMemberInfo(data: any) {
         this.memberForm = data
-        this.invoiceForm.memberId = data._id
+        this.invoiceForm.memberId = data.id
     }
 
     totalTypeChnage(event: any) {
         if (event === '%') {
-            this.invoiceForm.totalAmount = parseFloat((this.orgTotal * (1 - this.invoiceForm.discount /100)).toFixed(2))
+            this.invoiceForm.totalAmount = this.orgTotal * (1 - this.invoiceForm.discount /100)
         } else if (event === '$') {
-            this.invoiceForm.totalAmount = parseFloat((this.orgTotal - this.enterProductForm.disscount).toFixed(2))
+            this.invoiceForm.totalAmount =this.orgTotal - this.enterProductForm.disscount
         }
     }
 
@@ -283,7 +283,7 @@ export class SalePointComponent implements OnInit {
         if (res) {
             this.message.success('Invoice created successfully!')
             timer(2500).subscribe(() => {
-                this.routeTo.navigate(['/invoice-detail'], { queryParams: { id: res._id}})
+                this.routeTo.navigate(['/invoice-detail'], { queryParams: { id: res.id}})
             })
         } else {
             this.message.error(res.msg)

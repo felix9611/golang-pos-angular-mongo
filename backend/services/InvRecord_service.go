@@ -2,173 +2,22 @@ package services
 
 import (
 	"context"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/tools"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CreateInvRecord(assetCode string, placeFrom string, placeTo string) (interface{}, error) {
-	collection := config.GetCollection("inv_records")
-
-	body := models.InvRecords{
-		AssetCode: assetCode,
-		PlaceFrom: placeFrom,
-		PlaceTo:   placeTo,
-		CreatedAt: time.Now(),
-	}
-
-	_, err := collection.InsertOne(context.Background(), body)
-	if err != nil {
-		CreateActionRecord("Inventory Record Create", "POST", "Inventory Record", body, "Failed")
-		return nil, err
-	}
-
-	CreateActionRecord("Inventory Record Create", "POST", "Inventory Record", body, "Success")
-
-	return body, nil
-}
-
-func ListInvRecordsWithFilter(dtoData *dto.ListRecordReqDto) (interface{}, error) {
-	collection := config.GetCollection("inv_records")
+func ListInvRecords(dtoData *dto.InvRecordListDto) (interface{}, error) {
+	collection := config.GetCollection("inventory_records")
 
 	filters := bson.M{}
 
-	if dtoData.AssetCode != "" {
-		filters["asset_code"] = dtoData.AssetCode
-	}
-
-	if len(dtoData.DateRange) > 0 {
-		filters["createdAt"] = bson.M{"$gte": dtoData.DateRange[0], "$lte": dtoData.DateRange[1]}
-	}
-
-	pipeline := mongo.Pipeline{
-		{{Key: "$match", Value: filters}},
-
-		// lookup asset item data
-		{{
-			Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "asset_lists"},
-				{Key: "localField", Value: "assetCode"},
-				{Key: "foreignField", Value: "assetCode"},
-				{Key: "as", Value: "assetlist"},
-			},
-		}},
-
-		// $lookup place from
-		{{
-			Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "locations"},
-				{Key: "let", Value: bson.D{
-					{Key: "placeFromStr", Value: bson.D{
-						{Key: "$convert", Value: bson.D{
-							{Key: "input", Value: "$placeFrom"},
-							{Key: "to", Value: "objectId"},
-							{Key: "onError", Value: nil},
-							{Key: "onNull", Value: nil},
-						}},
-					}},
-				}},
-				{Key: "pipeline", Value: mongo.Pipeline{
-					{{Key: "$match", Value: bson.D{
-						{Key: "$expr", Value: bson.D{
-							{Key: "$eq", Value: bson.A{"$_id", "$$placeFromStr"}},
-						}},
-					}}},
-				}},
-				{Key: "as", Value: "placeFromData"},
-			},
-		}},
-
-		// $lookup place to
-		{{
-			Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "locations"},
-				{Key: "let", Value: bson.D{
-					{Key: "placeToStr", Value: bson.D{
-						{Key: "$convert", Value: bson.D{
-							{Key: "input", Value: "$placeTo"},
-							{Key: "to", Value: "objectId"},
-							{Key: "onError", Value: nil},
-							{Key: "onNull", Value: nil},
-						}},
-					}},
-				}},
-				{Key: "pipeline", Value: mongo.Pipeline{
-					{{Key: "$match", Value: bson.D{
-						{Key: "$expr", Value: bson.D{
-							{Key: "$eq", Value: bson.A{"$_id", "$$placeToStr"}},
-						}},
-					}}},
-				}},
-				{Key: "as", Value: "placeToData"},
-			},
-		}},
-
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$assetlist"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$placeFromData"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$placeToData"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-
-		// sort
-		{{Key: "$sort", Value: bson.D{{Key: "createdAt", Value: 1}}}},
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	cursor, err := collection.Aggregate(ctx, pipeline)
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	var FinalResults []bson.M
-	if err := cursor.All(ctx, &FinalResults); err != nil {
-		return nil, err
-	}
-
-	var LastResults []dto.InvRecordPureList
-	for _, item := range FinalResults {
-		resultData, err := bson.Marshal(item)
-		if err != nil {
-			return nil, err
-		}
-
-		var assetDetails dto.InvRecordPureList
-		if err := bson.Unmarshal(resultData, &assetDetails); err != nil {
-			return nil, err
-		}
-
-		assetDetails.PlaceFromName = tools.GetNestedString(item, "placeFromData", "placeName")
-		assetDetails.PlaceFromCode = tools.GetNestedString(item, "placeFromData", "placeCode")
-		assetDetails.PlaceToCode = tools.GetNestedString(item, "placeToData", "placeCode")
-		assetDetails.PlaceToName = tools.GetNestedString(item, "placeToData", "placeName")
-		assetDetails.AssetName = tools.GetNestedString(item, "assetlist", "assetName")
-		assetDetails.AssetCode = tools.GetNestedString(item, "assetlist", "assetCode")
-
-		LastResults = append(LastResults, assetDetails)
-	}
-
-	return LastResults, nil
-
-}
-
-func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
-	collection := config.GetCollection("inv_records")
-
-	filters := bson.M{}
-
-	if dtoData.AssetCode != "" {
-		filters["asset_code"] = dtoData.AssetCode
-	}
-
-	if len(dtoData.DateRange) > 0 {
-		filters["createdAt"] = bson.M{"$gte": dtoData.DateRange[0], "$lte": dtoData.DateRange[1]}
+	if len(dtoData.Date) > 0 {
+		filters["createdAt"] = bson.M{"$gte": dtoData.Date[0], "$lte": dtoData.Date[1]}
 	}
 
 	skip := int64((dtoData.Page - 1) * dtoData.Limit)
@@ -177,16 +26,6 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: filters}},
 
-		// lookup asset item data
-		{{
-			Key: "$lookup", Value: bson.D{
-				{Key: "from", Value: "asset_lists"},
-				{Key: "localField", Value: "assetCode"},
-				{Key: "foreignField", Value: "assetCode"},
-				{Key: "as", Value: "assetlist"},
-			},
-		}},
-
 		// $lookup place from
 		{{
 			Key: "$lookup", Value: bson.D{
@@ -194,7 +33,7 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 				{Key: "let", Value: bson.D{
 					{Key: "placeFromStr", Value: bson.D{
 						{Key: "$convert", Value: bson.D{
-							{Key: "input", Value: "$placeFrom"},
+							{Key: "input", Value: "$locFrom"},
 							{Key: "to", Value: "objectId"},
 							{Key: "onError", Value: nil},
 							{Key: "onNull", Value: nil},
@@ -208,7 +47,7 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 						}},
 					}}},
 				}},
-				{Key: "as", Value: "placeFromData"},
+				{Key: "as", Value: "locFromData"},
 			},
 		}},
 
@@ -219,7 +58,7 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 				{Key: "let", Value: bson.D{
 					{Key: "placeToStr", Value: bson.D{
 						{Key: "$convert", Value: bson.D{
-							{Key: "input", Value: "$placeTo"},
+							{Key: "input", Value: "$locTo"},
 							{Key: "to", Value: "objectId"},
 							{Key: "onError", Value: nil},
 							{Key: "onNull", Value: nil},
@@ -233,13 +72,38 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 						}},
 					}}},
 				}},
-				{Key: "as", Value: "placeToData"},
+				{Key: "as", Value: "locToData"},
 			},
 		}},
 
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$assetlist"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$placeFromData"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
-		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$placeToData"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		// $lookup product
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "product_lists"},
+				{Key: "let", Value: bson.D{
+					{Key: "productToStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$ProductId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$productToStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "product"},
+			},
+		}},
+
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$product"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$locFromData"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$locToData"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
 
 		// sort
 		{{Key: "$sort", Value: bson.D{{Key: "createdAt", Value: 1}}}},
@@ -258,7 +122,7 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 	}
 	defer cursor.Close(ctx)
 
-	var results []bson.M
+	var results []dto.InvRecordList
 	if err := cursor.All(ctx, &results); err != nil {
 		return nil, err
 	}
@@ -268,6 +132,29 @@ func ListInvRecords(dtoData *dto.ListRecordReqDto) (interface{}, error) {
 		return nil, errCount
 	}
 
-	return gin.H{"lists": results, "total": count, "page": dtoData.Page, "limit": dtoData.Limit}, nil
+	return dto.InvRecordListResponse{Lists: results, Total: count, Page: dtoData.Page, Limit: dtoData.Limit}, nil
 
+}
+
+func InsertInventoryRecord(dto dto.InsertInvRecordDto) (interface{}, error) {
+
+	collection := config.GetCollection("inventory_records")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	finalData := models.InventoryRecords{
+		ProductId: dto.ProductId,
+		LocFrom:   dto.LocFrom,
+		LocTo:     dto.LocTo,
+		Qty:       dto.Qty,
+		Cost:      dto.Cost,
+		CreatedAt: time.Now(),
+	}
+
+	_, err := collection.InsertOne(ctx, finalData)
+	if err != nil {
+		return nil, err
+	}
+
+	return finalData, nil
 }

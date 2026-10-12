@@ -83,7 +83,7 @@ export class ProductTypeComponent {
     }
 
     editForm: LocationForm = {
-        _id: '',
+        id: '',
         typeCode: '',
         typeName: '',
         typeOtherName: '',
@@ -103,12 +103,12 @@ export class ProductTypeComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/product/product-type/create' : `/product/product-type/update`
+        const url = this.editForm.id === '' ? '/product/product-type/create' : `/product/product-type/update`
 
         const res = await postApiWithAuth(url, {
             
             ...this.editForm,
-            ...this.editForm._id ? { _id: this.editForm._id} : {},
+            ...this.editForm.id ? { _id: this.editForm.id} : {},
         })
 
         if (res.msg) {
@@ -119,7 +119,7 @@ export class ProductTypeComponent {
             this.loadLocationLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 typeCode: '',
                 typeName: '',
                 typeOtherName: '',
@@ -152,9 +152,9 @@ export class ProductTypeComponent {
     }
 
     async handleRemove() {
-        const url = `/product/product-type/remove/${this.handleRemoveId}`
+        const url = `/product/product-type/void/${this.handleRemoveId}`
 
-        const res: any = await getApiWithAuth(url)
+        const res: any = await deleteApiWithAuth(url)
 
         this.message.info(res.msg)
 

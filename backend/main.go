@@ -1,12 +1,12 @@
 package main
 
 import (
-	"golang-fixedasset-mongo-backend/backend/auth"
-	"golang-fixedasset-mongo-backend/backend/config"
-	"golang-fixedasset-mongo-backend/backend/controllers"
+	"golang-pos-mongo-backend/backend/auth"
+	"golang-pos-mongo-backend/backend/config"
+	"golang-pos-mongo-backend/backend/controllers"
 	"time"
 
-	_ "golang-fixedasset-mongo-backend/backend/docs"
+	_ "golang-pos-mongo-backend/backend/docs"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-contrib/cors"
@@ -32,9 +32,20 @@ func main() {
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:4200"},
+		AllowOriginFunc: func(origin string) bool {
+			// if local development will be allowed
+			if gin.Mode() == gin.DebugMode {
+				return true
+			}
+			// Producted will be allowed for the following origins
+			allowedOrigins := map[string]bool{
+				"http://localhost:7780": true,
+			}
+			return allowedOrigins[origin]
+		},
+		AllowOrigins:     []string{"http://localhost:7780", "http://localhost:4200"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization", "X-Requested-With", "Cache-Control"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
@@ -50,26 +61,28 @@ func main() {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	api := router.Group("/")
-	controllers.RegisterTongsRoutes(api)
 	controllers.RegisterDepartmentRoutes(api, authServiceMiddleware)
 	controllers.RegisterSysUserRoutes(api, authServiceMiddleware)
-	// example.RegisterAuthExampleRoute(api, authMiddleware)
 	controllers.RegisterAuthRoute(api, authServiceMiddleware)
 	controllers.RegisterSysRoleRoutes(api, authServiceMiddleware)
 	controllers.RegisterVendorRoutes(api, authServiceMiddleware)
 	controllers.RegisterLocationRoutes(api, authServiceMiddleware)
 	controllers.RegisterCodeTypeRoutes(api, authServiceMiddleware)
 	controllers.RegisterTaxInformationRoutes(api, authServiceMiddleware)
-	controllers.RegisterAssetTypeRoutes(api, authServiceMiddleware)
+	controllers.RegisterProductTypeRoutes(api, authServiceMiddleware)
 	controllers.RegisterInvRecordRoutes(api, authServiceMiddleware)
-	controllers.RegisterAssetListRoutes(api, authServiceMiddleware)
+	controllers.RegisterProductListRoutes(api, authServiceMiddleware)
 	controllers.RegisterStockTakeRoutes(api, authServiceMiddleware)
-	controllers.RegisterBudgetRoutes(api, authServiceMiddleware)
 	controllers.RegisterActionRecordsRoutes(api, authServiceMiddleware)
 	controllers.RegisterSysMenuRoutes(api, authServiceMiddleware)
-	controllers.RegisterRepairRecordRoutes(api, authServiceMiddleware)
 	controllers.RegisterExcelFieldMatchRoutes(api, authServiceMiddleware)
-	controllers.RegisterWriteOffsRoutes(api, authServiceMiddleware)
+	controllers.RegisterMemberClassRoutes(api, authServiceMiddleware)
+	controllers.RegisterMemberListRoutes(api, authServiceMiddleware)
+	controllers.RegisterInventoryRoutes(api, authServiceMiddleware)
+	controllers.RegisterInvoiceRoutes(api, authServiceMiddleware)
+	controllers.RegisterReturnInvoiceRoutes(api, authServiceMiddleware)
+	controllers.RegisterBudgetRoutes(api, authServiceMiddleware)
+	controllers.RegisterQueryRoutes(api, authServiceMiddleware)
 
 	router.Run(":6600")
 }
