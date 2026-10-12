@@ -173,7 +173,7 @@ export class ReturnInvoiceFormComponent implements OnInit {
 
     async submitForm() {
         const data = await postApiWithAuth('/return-invoice/create', this.returnInvoiceForm)
-        if (data.id) {
+        if (!data.error) {
             this.returnInvoiceForm = {
                 returnInvoiceNo: '',
                 returnReason: '',
@@ -196,6 +196,8 @@ export class ReturnInvoiceFormComponent implements OnInit {
                 this.routeTo.navigate([`/return-invoice-detail`], { queryParams: { id: data.id } })
              //   this.routeTo.navigate([`/return-invoice-list`])
             })
+        } else {
+            this.message.error(data.error)
         }
     }
 

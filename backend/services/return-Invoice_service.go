@@ -59,7 +59,7 @@ func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (interface{}, error) {
 		UpdatedAt:        now,
 	}
 
-	// 4. 寫入主單 (ReturnInvoice)
+	// ReturnInvoice
 	collection := config.GetCollection("return_invoices")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -70,7 +70,7 @@ func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (interface{}, error) {
 		return gin.H{"error": "failed to insert return invoice: %w"}, err
 	}
 
-	// 5. 批次寫入退貨項目 (InsertMany 提升效能)
+	// batch to write return invoice items
 	if len(req.ReturnItems) > 0 {
 		returnInvoiceHex := returnInvoice.ID.Hex()
 		itemsToInsert := make([]interface{}, len(req.ReturnItems))
@@ -98,7 +98,6 @@ func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (interface{}, error) {
 		}
 	}
 
-	// 6. 記錄操作日誌並回傳結果
 	CreateActionRecord("Create Return Invoice", "POST", "Return Invoice", returnInvoice, "Success")
 	return &returnInvoice, nil
 }
