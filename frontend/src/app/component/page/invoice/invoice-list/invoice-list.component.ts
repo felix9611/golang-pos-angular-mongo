@@ -95,6 +95,14 @@ export class InvoiceListComponent {
 
     ngOnInit() {
         this.loadInvoiceLists()
+        this.loadLocationList()
+    }
+
+    locationList: any[] = []
+
+    async loadLocationList() {
+        const data = await getApiWithAuth('/base/location/all')
+        this.locationList = data.data
     }
 
     async loadInvoiceLists() {
