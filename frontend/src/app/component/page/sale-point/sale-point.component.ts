@@ -280,13 +280,13 @@ export class SalePointComponent implements OnInit {
         }
 
         const res = await postApiWithAuth('/invoice/create', finalDataSubmit)
-        if (res) {
+        if (res.id) {
             this.message.success('Invoice created successfully!')
             timer(2500).subscribe(() => {
                 this.routeTo.navigate(['/invoice-detail'], { queryParams: { id: res.id}})
             })
-        } else {
-            this.message.error(res.msg)
+        } else if (res.error) {
+            this.message.error(res.error)
         }
     }
 
