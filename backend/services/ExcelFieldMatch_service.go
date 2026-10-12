@@ -23,7 +23,7 @@ func CreateExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error) {
 
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Failed to create Excel Field Match"}, err
 	}
 
 	if count == 0 {
@@ -44,7 +44,7 @@ func CreateExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error) {
 
 		result, err := collection.InsertOne(ctx, data)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Failed to create Excel Field Match"}, err
 		}
 
 		CreateActionRecord("Excel Field Match Create", "POST", "Excel Field Match", data, "Success")
