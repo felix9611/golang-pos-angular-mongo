@@ -52,10 +52,10 @@ func CreateProductType(productType *models.ProductTypes) (interface{}, error) {
 
 		result, err := collection.InsertOne(context.Background(), productType)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "failed to create product type"}, err
 		}
 
-		return result.InsertedID, nil
+		return result, nil
 	} else {
 		return gin.H{"error": "This product type Record with the same details already exists"}, nil
 	}

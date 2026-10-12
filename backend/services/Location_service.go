@@ -60,7 +60,7 @@ func CreateLocation(location *models.Locations) (interface{}, error) {
 		_, err := collection.InsertOne(ctx, location)
 
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Failed to create location"}, err
 		}
 
 		CreateActionRecord("Location Create", "POST", "Location", location, "Success")

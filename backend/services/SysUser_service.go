@@ -28,7 +28,7 @@ func CreateSysUser(user *models.SysUsers) (interface{}, error) {
 	count, err := collection.CountDocuments(ctx, filter)
 
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Failed to create user"}, err
 	}
 
 	if count == 0 {
@@ -54,7 +54,7 @@ func CreateSysUser(user *models.SysUsers) (interface{}, error) {
 
 		result, err := collection.InsertOne(ctx, user)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Failed to create user"}, err
 		}
 
 		return result, nil

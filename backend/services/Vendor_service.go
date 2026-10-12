@@ -36,7 +36,7 @@ func CreateVendor(vendor *models.Vendors) (interface{}, error) {
 	count, err := collection.CountDocuments(ctx, filter)
 
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Failed to create vendor"}, err
 	}
 
 	if count == 0 {
@@ -57,7 +57,7 @@ func CreateVendor(vendor *models.Vendors) (interface{}, error) {
 
 		_, err := collection.InsertOne(ctx, vendor)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Failed to create vendor"}, err
 		}
 
 		CreateActionRecord("Vendor Create", "POST", "Vendor", vendor, "Success")

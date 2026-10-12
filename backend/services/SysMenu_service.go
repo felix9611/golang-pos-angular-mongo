@@ -25,7 +25,7 @@ func CreateSysMenu(data *models.SysMenus) (interface{}, error) {
 
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Failed to create menu"}, err
 	}
 
 	if count == 0 {
@@ -50,10 +50,10 @@ func CreateSysMenu(data *models.SysMenus) (interface{}, error) {
 
 		CreateActionRecord("Menu Item Create", "POST", "System Menu", data, "Success")
 
-		return result.InsertedID, nil
+		return result, nil
 	} else {
 		CreateActionRecord("Menu Item Create", "POST", "System Menu", data, "Failed")
-		return gin.H{"msg": "Menu with the same name already exists"}, nil
+		return gin.H{"error": "Menu with the same name already exists"}, nil
 	}
 
 }

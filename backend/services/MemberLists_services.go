@@ -48,11 +48,11 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 
 		res, err := collection.InsertOne(ctxNew, member)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Failed to create member"}, err
 		}
 		memberId, ok := res.InsertedID.(primitive.ObjectID)
 		if !ok {
-			return nil, mongo.ErrNilDocument
+			return gin.H{"error": "Failed to create member"}, mongo.ErrNilDocument
 		}
 
 		if len(member.MemberSpecialDays) > 0 {
@@ -72,7 +72,7 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 				_, err := CreateMemberSpecialDay(newData)
 
 				if err != nil {
-					return nil, err
+					return gin.H{"error": "Failed to create member special day"}, err
 				}
 			}
 		}
@@ -82,7 +82,7 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 		return res, nil
 	} else {
 		CreateActionRecord("Member Create", "POST", "Member", member, "Failed")
-		return gin.H{"message": "Member already exists"}, nil
+		return gin.H{"error": "Member already exists"}, nil
 	}
 }
 

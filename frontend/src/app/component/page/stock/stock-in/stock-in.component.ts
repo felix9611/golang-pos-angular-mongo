@@ -134,7 +134,7 @@ export class StockInComponent implements OnInit {
             this.message.success(res.message)
             this.reloadProductLocation = true
         } else {
-            this.message.error(res.message)
+            this.message.error(res.error)
         }
     }
 }

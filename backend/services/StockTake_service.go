@@ -36,13 +36,13 @@ func CreateStockTakeForm(stockTakeForm dto.CreateStockTakeForm) (interface{}, er
 
 			result, err := collection.InsertOne(context.Background(), newForm)
 			if err != nil {
-				return nil, err
+				return gin.H{"error": "Failed to create stock take form"}, err
 			}
 			return result, nil
 		}
-		return nil, err
+		return gin.H{"error": "Failed to create stock take form"}, err
 	}
-	return gin.H{"message": "Stock take form already exists"}, nil
+	return gin.H{"error": "Stock take form already exists"}, nil
 }
 
 func GetOneStockTakeFormByID(id string) (interface{}, error) {
@@ -176,9 +176,9 @@ func UpdateStockTakeForm(updateData *models.StockTakes) (interface{}, error) {
 
 	switch existingStockTake.Status {
 	case 0:
-		return "Ooooops! This stock take form no longer active! Please create a new form!", nil
+		return gin.H{"error": "Ooooops! This stock take form no longer active! Please create a new form!"}, nil
 	case 2:
-		return "Ooooops! This stock take form has been completed! Please create a new form!", nil
+		return gin.H{"error": "Ooooops! This stock take form has been completed! Please create a new form!"}, nil
 	default:
 		res, err2 := collection.UpdateOne(context.Background(), bson.M{"_id": updateData.ID}, bson.M{"$set": updateData})
 		if err2 != nil {
@@ -337,7 +337,7 @@ func StockTakeItemSubmit(stockTakeItem *models.StockTakeItems) (interface{}, err
 	res, errInsert := collection.InsertOne(context.Background(), stockTakeItem)
 
 	if errInsert != nil {
-		return nil, errInsert
+		return gin.H{"error": "Failed to add stock take item"}, errInsert
 	}
 
 	return res, nil

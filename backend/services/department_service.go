@@ -40,7 +40,7 @@ func CreateDepartment(department *models.Department) (interface{}, error) {
 
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Failed to create department"}, err
 	}
 
 	if count == 0 {
@@ -61,7 +61,7 @@ func CreateDepartment(department *models.Department) (interface{}, error) {
 
 		result, err := collection.InsertOne(ctx, department)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Failed to create department"}, err
 		}
 
 		CreateActionRecord("Department Create", "POST", "Department", department, "Success")
@@ -69,7 +69,7 @@ func CreateDepartment(department *models.Department) (interface{}, error) {
 		return result, nil
 	} else {
 		CreateActionRecord("Department Create", "POST", "Department", department, "Failed")
-		return gin.H{"message": "Department already exists or not found"}, nil
+		return gin.H{"error": "Department already exists or not found"}, nil
 	}
 }
 
