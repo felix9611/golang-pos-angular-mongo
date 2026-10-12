@@ -23,7 +23,7 @@ func CreateMemberClass(memberClass *models.MemberClass) (interface{}, error) {
 	count, err := collection.CountDocuments(ctx, filter)
 
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Create Member Class Failed"}, err
 	}
 
 	if count == 0 {
@@ -45,7 +45,7 @@ func CreateMemberClass(memberClass *models.MemberClass) (interface{}, error) {
 		_, err := collection.InsertOne(ctxNew, memberClass)
 
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Create Member Class Failed"}, err
 		}
 
 		CreateActionRecord("MemberClass Create", "POST", "MemberClass", memberClass, "Success")
@@ -53,7 +53,7 @@ func CreateMemberClass(memberClass *models.MemberClass) (interface{}, error) {
 
 	} else {
 		CreateActionRecord("MemberClass Create", "POST", "MemberClass", memberClass, "Failed")
-		return "Member Class with the same data already exists", nil
+		return gin.H{"error": "Member Class already exists"}, nil
 	}
 }
 
