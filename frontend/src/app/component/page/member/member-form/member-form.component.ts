@@ -128,8 +128,11 @@ export class MemberFormComponent implements OnInit {
             this.editForm
         )
 
-        if (res) {
-            this.message.info(res.message)
+        if (res.error) {
+            this.message.info(res.error)
+        } else {
+            this.message.success('Create successful!')
+            this.backToList()
         }
     }
 
