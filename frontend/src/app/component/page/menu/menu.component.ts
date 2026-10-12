@@ -170,9 +170,9 @@ export class MenuListComponent implements OnInit {
         const url = this.editForm._id === '' ? '/sys/menu/create' : `/sys/menu/update`
         const res = await postApiWithAuth(url, this.editForm)
 
-        if (res.msg) {
-            this.message.error(res.msg)
-        } else if (res.matchedCount === 1 || !res.msg) {
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (res.InsertedID || !res.error) {
             this.editForm = {
                 _id: '',
                 mainId: '',
