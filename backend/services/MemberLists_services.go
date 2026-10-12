@@ -93,7 +93,7 @@ func CreateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) 
 
 	res, err := collection.InsertOne(ctx, data)
 	if err != nil {
-		return nil, err
+		return gin.H{"message": "Failed to create member special day"}, err
 	}
 
 	return res, nil
@@ -107,7 +107,7 @@ func UpdateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) 
 	res, err := collection.UpdateOne(ctx, bson.M{"_id": data.Id}, bson.M{"$set": data})
 
 	if err != nil {
-		return nil, err
+		return gin.H{"message": "Failed to update member special day"}, err
 	}
 
 	return res, nil
@@ -172,7 +172,7 @@ func GetOneMemberById(id string) (interface{}, error) {
 	}
 
 	if member.Status == 0 {
-		return "Member is inactive", nil
+		return gin.H{"message": "Member is already inactive"}, nil
 	} else {
 		speacialDayList, err := GetSpecialDayByMemberId(id)
 
@@ -183,7 +183,7 @@ func GetOneMemberById(id string) (interface{}, error) {
 		}
 
 		if err != nil {
-			return nil, err
+			return gin.H{"message": "Failed to get member special day"}, err
 		}
 
 		return &member, nil
