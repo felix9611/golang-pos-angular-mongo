@@ -85,11 +85,12 @@ type ReturnInvoiceDetailResponse struct {
 }
 
 type InvoiceListRequestDto struct {
-	Page          int      `json:"page"`
-	Limit         int      `json:"limit"`
-	CaseNumber    string   `json:"caseNumber"`
-	InvoiceNumber string   `json:"invoiceNumber"`
-	DateRange     []string `json:"dateRange"`
+	Page              int      `json:"page"`
+	Limit             int      `json:"limit"`
+	CaseNumber        string   `json:"caseNumber"`
+	InvoiceNumber     string   `json:"invoiceNumber"`
+	ReturnLocationIds []string `json:"locationId"`
+	DateRange         []string `json:"dateRange"`
 }
 
 type ReturnInvoiceList struct {

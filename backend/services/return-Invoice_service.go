@@ -276,6 +276,10 @@ func ListReturnInvoice(req dto.InvoiceListRequestDto) (dto.ReturnInvoiceList, er
 		filters["returnCaseNumber"] = bson.M{"$regex": req.CaseNumber, "$options": "i"}
 	}
 
+	if len(req.ReturnLocationIds) > 0 {
+		filters["returnLocationId"] = bson.M{"$in": req.ReturnLocationIds}
+	}
+
 	skip := int64((req.Page - 1) * req.Limit)
 	limit := int64(req.Limit)
 

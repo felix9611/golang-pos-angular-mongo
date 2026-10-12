@@ -3,4 +3,5 @@ export interface InvoiceListRequestDto {
     limit: number
     number?: string
     dateRange?: string[]
+    locationId?: string[]
 }
