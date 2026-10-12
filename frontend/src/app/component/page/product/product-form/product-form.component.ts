@@ -203,11 +203,13 @@ export class ProductFormComponent implements OnInit {
 
         const res = await postApiWithAuth(url, this.editForm)
 
-        if (!res.msg) {
+        if (!res.error) {
             this.message.info('Data save successfully!')
             timer(2500).subscribe(() => {
                 this.routeTo.navigate(['/product-list'])
             })
+        } else {
+            this.message.error(res.error)
         }
     }
 

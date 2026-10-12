@@ -113,8 +113,8 @@ export class RoleComponent implements OnInit{
             ...this.editForm.id ? { id: this.editForm.id} : {},
         })
 
-        if (res.msg) {
-            this.message.error(res.message)
+        if (res.error) {
+            this.message.error(res.error)
         } else if (res.matchedCount === 1 || !res.msg) {
             this.editForm = {
                 id: '',
