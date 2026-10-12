@@ -55,7 +55,7 @@ func ProductLocationGetByDataType(
 ) (interface{}, error) {
 
 	if query.DataTypeValue == "" {
-		return gin.H{"error": "Data Type is required"}, err
+		return gin.H{"error": "Data Type is required"}, errors.New("Data Type is required")
 	}
 
 	var dataTypeObj AggregationSet
