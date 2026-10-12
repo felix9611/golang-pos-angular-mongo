@@ -20,7 +20,7 @@ func CreateCodeType(codeType *models.CodeTypes) (interface{}, error) {
 
 	count, err := collection.CountDocuments(context.Background(), filter)
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "failed to create code type"}, err
 	}
 
 	if count == 0 {
@@ -42,13 +42,13 @@ func CreateCodeType(codeType *models.CodeTypes) (interface{}, error) {
 		CreateActionRecord("Code Type Create", "POST", "Code Type", codeType, "Success")
 
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "failed to create code type"}, err
 		}
 
 		return result, nil
 	} else {
 		CreateActionRecord("Code Type Create", "POST", "Code Type", codeType, "Failed")
-		return "CodeType with the same name already exists", nil
+		return gin.H{"error": "Code Type already exists"}, nil
 	}
 }
 
