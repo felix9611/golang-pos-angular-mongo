@@ -52,7 +52,7 @@ func CreateExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error) {
 		return result, nil
 	} else {
 		CreateActionRecord("Excel Field Match Create", "POST", "Excel Field Match", data, "Failed")
-		return "This record already exist!", nil
+		return gin.H{"error": "Excel Field Match already exists"}, nil
 	}
 }
 
@@ -75,7 +75,7 @@ func GetOneExcelFieldMatch(id string) (interface{}, error) {
 	}
 
 	if excelFieldMatch.Status == 0 {
-		return "This Excel Field Match record is inactive", nil
+		return gin.H{"error": "Excel Field Match not found or already voided"}, nil
 	} else {
 		return excelFieldMatch, nil
 	}
@@ -96,7 +96,7 @@ func GetOneExcelFieldMatchByCode(code string) (interface{}, error) {
 	}
 
 	if excelFieldMatch.Status == 0 {
-		return "This Excel Field Match record is inactive", nil
+		return gin.H{"error": "Excel Field Match not found or already voided"}, nil
 	} else {
 		return excelFieldMatch, nil
 	}
@@ -124,7 +124,7 @@ func InactiveOneExcelFieldMatch(id string) (interface{}, error) {
 
 	if excelFieldMatch.Status == 0 {
 		CreateActionRecord("Excel Field Match Inactive", "DELETE", "Excel Field Match", excelFieldMatch, "Failed")
-		return "This Excel Field Match record is inactive", nil
+		return gin.H{"error": "Excel Field Match not found or already voided"}, nil
 	} else {
 		excelFieldMatch.Status = 0
 		excelFieldMatch.UpdatedAt = time.Now()
@@ -154,7 +154,7 @@ func UpdateOneExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error
 
 	if excelFieldMatch.Status == 0 {
 		CreateActionRecord("Excel Field Match Update", "POST", "Excel Field Match", data, "Failed")
-		return "This Excel Field Match record is inactive", nil
+		return gin.H{"error": "Excel Field Match not found or already voided"}, nil
 	} else {
 		data.UpdatedAt = time.Now()
 		result, err := collection.UpdateOne(ctx, filter, bson.M{"$set": data})
