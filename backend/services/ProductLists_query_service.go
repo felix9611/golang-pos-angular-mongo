@@ -7,6 +7,7 @@ import (
 	"golang-pos-mongo-backend/backend/dto"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -51,10 +52,10 @@ func ProductLocationGetLocationSet() AggregationSet {
 func ProductLocationGetByDataType(
 	ctx context.Context,
 	query dto.InvoiceDashboardReqDto,
-) ([]bson.M, error) {
+) (interface{}, error) {
 
 	if query.DataTypeValue == "" {
-		return nil, errors.New("Data Type is required")
+		return gin.H{"error": "Data Type is required"}, err
 	}
 
 	var dataTypeObj AggregationSet
