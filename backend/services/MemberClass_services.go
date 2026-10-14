@@ -116,7 +116,7 @@ func VoidOneMemberClass(id string) (interface{}, error) {
 		return gin.H{"message": "Member deactivated successfully"}, nil
 	} else {
 		CreateActionRecord("Member Inactive", "DELETE", "Member Class", memberClass, "Failed")
-		return gin.H{"message": "Member is already inactive"}, nil
+		return gin.H{"error": "Member is already inactive"}, nil
 	}
 }
 

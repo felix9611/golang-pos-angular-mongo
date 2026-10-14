@@ -311,7 +311,7 @@ func UpdateMember(updateDto *models.MemberLists) (interface{}, error) {
 		return result, nil
 	} else {
 		CreateActionRecord("Member Update", "POST", "Member", updateDto, "Failed")
-		return gin.H{"message": "This member is already inactive"}, nil
+		return gin.H{"error": "This member is already inactive"}, nil
 	}
 }
 

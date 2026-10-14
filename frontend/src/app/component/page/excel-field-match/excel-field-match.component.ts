@@ -73,7 +73,7 @@ export class ExcelFieldMatchComponent {
     }
 
     editForm: ExcelFieldListForm = {
-        _id: '',
+        id: '',
         functionCode: '',
         functionName: '',
         functionType: '',
@@ -94,12 +94,12 @@ export class ExcelFieldMatchComponent {
     }
 
     async submitForm() {
-        const url = this.editForm._id === '' ? '/sys/excel-field-match/create' : `/sys/excel-field-match/update`
+        const url = this.editForm.id === '' ? '/sys/excel-field-match/create' : `/sys/excel-field-match/update`
 
         const res = await postApiWithAuth(url, {
             
             ...this.editForm,
-            ...this.editForm._id ? { _id: this.editForm._id} : {},
+            ...this.editForm.id ? { id: this.editForm.id} : {},
         })
 
         if (res.error) {
@@ -110,7 +110,7 @@ export class ExcelFieldMatchComponent {
             this.loadRecordLists()
 
             this.editForm = {
-                _id: '',
+                id: '',
                 functionCode: '',
                 functionName: '',
                 functionType: '',
@@ -147,10 +147,13 @@ export class ExcelFieldMatchComponent {
 
         const res: any = await getApiWithAuth(url)
 
-        this.message.info(res.msg)
-
-        this.closeRemoveDialog()
-        this.loadRecordLists()
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.message.success('Delete successful!')
+            this.closeRemoveDialog()
+            this.loadRecordLists()
+        }
     }
 
 
@@ -167,7 +170,8 @@ export class ExcelFieldMatchComponent {
 
     codeTypeLists: any[] = []
     async loadCodeType() {
-        this.codeTypeLists = await getApiWithAuth('/base/code-type/get-type/ExcelFieldMatch')
+        const data = await getApiWithAuth('/base/code-type/get-type/ExcelFieldMatch')
+        this.codeTypeLists = data.datas
     }
 
     fieldAddRow(): void {

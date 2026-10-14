@@ -199,10 +199,13 @@ export class UsersComponent {
 
         const res: any = await getApiWithAuth(url)
 
-        this.message.info(res.msg)
-        this.loadUserLists()
-        this.closeRemoveDialog()
-        
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.message.success('Delete successful!')
+            this.closeRemoveDialog()
+            this.loadUserLists()
+        }
     }
 
 

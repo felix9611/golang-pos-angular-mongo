@@ -110,13 +110,13 @@ func VoidOneCodeType(id string) (interface{}, error) {
 		})
 
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Something went wrong, please try again"}, err
 		}
 		CreateActionRecord("Code Type Void", "DELETE", "Code Type", codeType, "Success")
 		return result, nil
 	} else {
 		CreateActionRecord("Code Type Void", "DELETE", "Code Type", codeType, "Failed")
-		return "This Code Type is already voided", nil
+		return gin.H{"error": "This Code Type Record already is inactive"}, nil
 	}
 }
 

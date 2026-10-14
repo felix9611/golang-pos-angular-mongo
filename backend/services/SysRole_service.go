@@ -46,7 +46,7 @@ func CreateSysRole(role *models.SysRoles) (interface{}, error) {
 
 		_, err := collection.InsertOne(ctx, role)
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Create Role Failed"}, err
 		}
 
 		return role, nil
@@ -167,7 +167,7 @@ func VoidRoleById(id string) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		return result.ModifiedCount, nil
+		return result, nil
 	} else {
 		return gin.H{"error": "Role is already voided"}, nil
 	}

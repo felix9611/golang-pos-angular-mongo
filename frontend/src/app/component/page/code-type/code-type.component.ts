@@ -148,10 +148,13 @@ export class CodeTypeComponent {
 
         const res: any = await deleteApiWithAuth(url)
 
-        this.message.info(res.msg)
-
-        this.closeRemoveDialog()
-        this.loadCodeTypeLists()
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.message.success('Delete successful!')
+            this.closeRemoveDialog()
+            this.loadCodeTypeLists()
+        }
     }
 
 
