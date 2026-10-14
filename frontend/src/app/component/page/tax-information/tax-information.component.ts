@@ -217,10 +217,13 @@ export class TaxInformationComponent {
 
         const res: any = await deleteApiWithAuth(url)
 
-        this.message.info(res.msg)
-        this.loadTaxInfoLists()
-        this.closeRemoveDialog()
-        
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.message.success('Delete successful!')
+            this.closeRemoveDialog()
+            this.loadTaxInfoLists()
+        }
     }
 
 
