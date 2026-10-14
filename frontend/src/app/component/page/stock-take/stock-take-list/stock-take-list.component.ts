@@ -166,7 +166,7 @@ export class StockTakeListComponent implements OnInit {
             this.loadStockTakeLists()
             this.closeFinishDialog()
         } else {
-            this.message.error(res.message)
+            this.message.error(res.errore)
             this.closeFinishDialog()
         }
     }
@@ -178,7 +178,7 @@ export class StockTakeListComponent implements OnInit {
             this.loadStockTakeLists()
             this.closeFinishDialog()
         } else {
-            this.message.error(res.message)
+            this.message.error(res.error)
             this.closeFinishDialog()
         }
     }

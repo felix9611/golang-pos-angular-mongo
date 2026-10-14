@@ -364,9 +364,9 @@ func FinishOrVoidStockTakeForm(_id string, status int, username string) (interfa
 
 	switch existingStockTake.Status {
 	case 0:
-		return "Ooooops! This stock take form no longer active! Please create a new form!", nil
+		return gin.H{"error": "Ooooops! This stock take form no longer active! Please create a new form!"}, nil
 	case 2:
-		return "Ooooops! This stock take form has been completed! Please create a new form!", nil
+		return gin.H{"error": "Ooooops! This stock take form has been completed! Please create a new form!"}, nil
 	default:
 		finalData := bson.M{
 			"finishBy":   username,
