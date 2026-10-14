@@ -138,8 +138,11 @@ export class ProductListComponent {
 
     async goToVoid() {
         const res = await await deleteApiWithAuth(`/product/product-list/void/${this.handleId}`)
-        if (res) {
-            this.message.info(res.msg)
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.message.success('Delete successful!')
+            this.closeRemoveDialog()
             this.loadProductLists()
         }
     }
