@@ -150,10 +150,13 @@ export class DepartmentComponent {
 
         const res: any = await deleteApiWithAuth(url)
 
-        this.message.info(res.message)
-
-        this.closeRemoveDialog()
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.message.success('void successful!')
+            this.closeRemoveDialog()
         this.loadDepartmentLists()
+        }
     }
 
 

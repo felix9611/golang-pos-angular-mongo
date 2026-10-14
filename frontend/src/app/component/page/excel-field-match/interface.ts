@@ -1,5 +1,5 @@
 export interface ExcelFieldListForm {
-    _id?: string,
+    id?: string,
     functionCode: string
     functionName: string
     functionType: string
