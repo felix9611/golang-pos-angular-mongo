@@ -20,11 +20,22 @@ import (
 // @Router       /sys/excel-field-match/list [post]
 func ListPageExcelFieldMatch(c *gin.Context) {
 	var param dto.ExcelFieldMatchPageDto
-	result, err := services.ExcelFieldMatchListAndPage(param)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
+	if err := c.ShouldBindJSON(&param); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
 		return
 	}
+
+	result, err := services.ExcelFieldMatchListAndPage(param)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
