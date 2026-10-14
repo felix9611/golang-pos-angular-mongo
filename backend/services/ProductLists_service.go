@@ -400,10 +400,10 @@ func ListProductItemsWithFilters(req *dto.ListProductReqDto) ([]dto.ListProductD
 			return nil, err
 		}
 
-		productDetails.TypeName = tools.GetNestedString(item, "producttype", "typeName")
-		productDetails.TypeCode = tools.GetNestedString(item, "producttype", "typeCode")
-		productDetails.DeptName = tools.GetNestedString(item, "department", "deptName")
-		productDetails.DeptCode = tools.GetNestedString(item, "department", "deptCode")
+		productDetails.TypeName = tools.GetNestedValue(item, "producttype", "typeName").(string)
+		productDetails.TypeCode = tools.GetNestedValue(item, "producttype", "typeCode").(string)
+		productDetails.DeptName = tools.GetNestedValue(item, "department", "deptName").(string)
+		productDetails.DeptCode = tools.GetNestedValue(item, "department", "deptCode").(string)
 
 		LastResults = append(LastResults, productDetails)
 	}

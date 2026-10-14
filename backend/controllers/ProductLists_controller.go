@@ -136,7 +136,7 @@ func RemoveProductFile(c *gin.Context) {
 // @Tags         Product List
 // @Accept       json
 // @Produce      json
-// @Param        request  body      []dto.ListProductReqDto true  "Asset List Request Body"
+// @Param        request  body      []dto.ListProductReqDto true  "Request Body"
 // @Success      200      {object}  []dto.ProductListList
 // @Router       /product/product-list/list [post]
 func ListProductItems(c *gin.Context) {
@@ -156,13 +156,13 @@ func ListProductItems(c *gin.Context) {
 	c.JSON(http.StatusOK, productItems)
 }
 
-// @Summary      List Product Items
-// @Description  List Product Items
+// @Summary      List Product Items with filters
+// @Description  List Product Items with filters
 // @Tags         Product List
 // @Accept       json
 // @Produce      json
-// @Param        request  body      []dto.ListProductReqDto true  "Asset List Request Body"
-// @Success      200      {object}  []dto.ProductListList
+// @Param        request  body      []dto.ListProductReqDto true  "Request Body"
+// @Success      200      {object}  []dto.ListProductDetailPure
 // @Router       /product/product-list/filter/list [post]
 func ListProductItemsWithFilter(c *gin.Context) {
 	var req dto.ListProductReqDto

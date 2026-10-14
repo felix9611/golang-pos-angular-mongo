@@ -6,6 +6,22 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type ProductLocationPureList struct {
+	ProductCode string  `bson:"productCode" json:"productCode"`
+	ProductName string  `bson:"productName" json:"productName"`
+	ItemCode    string  `bson:"itemCode" json:"itemCode"`
+	BrandCode   string  `bson:"brandCode" json:"brandCode"`
+	BrandName   string  `bson:"brandName" json:"brandName"`
+	CostPrice   float64 `bson:"costPrice" json:"costPrice"`
+	RetailPrice float64 `bson:"retailPrice" json:"retailPrice"`
+	Unit        string  `bson:"unit" json:"unit"`
+	PlaceCode   string  `bson:"placeCode" json:"placeCode"`
+	PlaceName   string  `bson:"placeName" json:"placeName"`
+	Qty         float64 `bson:"qty" json:"qty"`
+	TotalPrice  float64 `bson:"totalPrice" json:"totalPrice"`
+	TotalCost   float64 `bson:"totalCost" json:"totalCost"`
+}
+
 type StockInOutProductLocationDto struct {
 	ProductCode string  `bson:"productCode" json:"productCode"`
 	ProductId   string  `bson:"productId" json:"productId"`
