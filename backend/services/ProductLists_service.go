@@ -6,6 +6,7 @@ import (
 	"golang-pos-mongo-backend/backend/config"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/tools"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -276,6 +277,138 @@ func DeleteProductFile(fileId string) (interface{}, error) {
 	} else {
 		return gin.H{"error": "File not found"}, nil
 	}
+}
+
+func ListProductItemsWithFilters(req *dto.ListProductReqDto) ([]dto.ListProductDetailPure, error) {
+	collection := config.GetCollection("product_lists")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filters := bson.M{
+		"status": 1,
+	}
+
+	if req.ProductCode != "" {
+		filters["productCode"] = req.ProductCode
+	}
+
+	if req.ProductName != "" {
+		filters["productName"] = bson.M{"$regex": req.ProductName, "$options": "i"}
+	}
+
+	if len(req.TypeIds) > 0 {
+		filters["typeIds"] = bson.M{"$in": req.TypeIds}
+	}
+
+	if len(req.DeptIds) > 0 {
+		filters["deptIds"] = bson.M{"$in": req.DeptIds}
+	}
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: filters}}, // filters must be bson.D or bson.M
+		// $lookup departments
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "departments"},
+				{Key: "let", Value: bson.D{
+					{Key: "deptIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$deptId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$deptIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "department"},
+			},
+		}},
+		// $lookup assettypes
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "product_types"},
+				{Key: "let", Value: bson.D{
+					{Key: "typeIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$typeId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$typeIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "producttype"},
+			},
+		}},
+
+		// $addFields assetCodeInt
+		{{
+			Key: "$addFields", Value: bson.D{
+				{Key: "productCodeInt", Value: bson.D{
+					{Key: "$convert", Value: bson.D{
+						{Key: "input", Value: "$productCode"},
+						{Key: "to", Value: "int"},
+						{Key: "onError", Value: 0},
+						{Key: "onNull", Value: 0},
+					}},
+				}},
+			},
+		}},
+
+		// unwind
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$department"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$producttype"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+
+		// sort
+		{{Key: "$sort", Value: bson.D{{Key: "productCodeInt", Value: 1}}}},
+	}
+
+	cursor, err := collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var FinalResults []bson.M
+	if err := cursor.All(ctx, &FinalResults); err != nil {
+		return nil, err
+	}
+
+	var LastResults []dto.ListProductDetailPure
+	for _, item := range FinalResults {
+		resultData, err := bson.Marshal(item)
+		if err != nil {
+			return nil, err
+		}
+
+		var productDetails dto.ListProductDetailPure
+		if err := bson.Unmarshal(resultData, &productDetails); err != nil {
+			return nil, err
+		}
+
+		productDetails.TypeName = tools.GetNestedString(item, "producttype", "typeName")
+		productDetails.TypeCode = tools.GetNestedString(item, "producttype", "typeCode")
+		productDetails.DeptName = tools.GetNestedString(item, "department", "deptName")
+		productDetails.DeptCode = tools.GetNestedString(item, "department", "deptCode")
+
+		LastResults = append(LastResults, productDetails)
+	}
+
+	return LastResults, err
 }
 
 func ListProductItems(req *dto.ListProductReqDto) (interface{}, error) {

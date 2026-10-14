@@ -156,6 +156,31 @@ func ListProductItems(c *gin.Context) {
 	c.JSON(http.StatusOK, productItems)
 }
 
+// @Summary      List Product Items
+// @Description  List Product Items
+// @Tags         Product List
+// @Accept       json
+// @Produce      json
+// @Param        request  body      []dto.ListProductReqDto true  "Asset List Request Body"
+// @Success      200      {object}  []dto.ProductListList
+// @Router       /product/product-list/filter/list [post]
+func ListProductItemsWithFilter(c *gin.Context) {
+	var req dto.ListProductReqDto
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Call the service to list the asset items
+	productItems, err := services.ListProductItemsWithFilters(&req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, productItems)
+}
+
 // @Summary      Void one Product Items record by id
 // @Description  Void one Product Items record by id
 // @Tags         Product Items
@@ -185,5 +210,6 @@ func RegisterProductListRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware
 		productList.DELETE("/file-remove/:id", RemoveProductFile)
 		productList.POST("/list", ListProductItems)
 		productList.DELETE("/void/:id", InactiveProductItems)
+		productList.POST("/filter/list", ListProductItemsWithFilter)
 	}
 }
