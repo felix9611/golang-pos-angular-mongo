@@ -118,10 +118,12 @@ export class MemberListComponent {
 
     async goToVoid() {
         const res = await await deleteApiWithAuth(`/member/member-list/void/${this.handleId}`)
-        if (res) {
-            this.message.info(res.message)
+        if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.message.success('Delete successful!')
+            this.closeRemoveDialog()
             this.loadMemberLists()
-            this.removeDialog = false
         }
     }
 
