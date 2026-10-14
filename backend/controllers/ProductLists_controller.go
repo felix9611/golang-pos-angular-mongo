@@ -136,7 +136,7 @@ func RemoveProductFile(c *gin.Context) {
 // @Tags         Product List
 // @Accept       json
 // @Produce      json
-// @Param        request  body      []dto.ListProductReqDto true  "Asset List Request Body"
+// @Param        request  body      []dto.ListProductReqDto true  "Request Body"
 // @Success      200      {object}  []dto.ProductListList
 // @Router       /product/product-list/list [post]
 func ListProductItems(c *gin.Context) {
@@ -148,6 +148,31 @@ func ListProductItems(c *gin.Context) {
 
 	// Call the service to list the asset items
 	productItems, err := services.ListProductItems(&req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, productItems)
+}
+
+// @Summary      List Product Items with filters
+// @Description  List Product Items with filters
+// @Tags         Product List
+// @Accept       json
+// @Produce      json
+// @Param        request  body      []dto.ListProductReqDto true  "Request Body"
+// @Success      200      {object}  []dto.ListProductDetailPure
+// @Router       /product/product-list/filter/list [post]
+func ListProductItemsWithFilter(c *gin.Context) {
+	var req dto.ListProductReqDto
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Call the service to list the asset items
+	productItems, err := services.ListProductItemsWithFilters(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -185,5 +210,6 @@ func RegisterProductListRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware
 		productList.DELETE("/file-remove/:id", RemoveProductFile)
 		productList.POST("/list", ListProductItems)
 		productList.DELETE("/void/:id", InactiveProductItems)
+		productList.POST("/filter/list", ListProductItemsWithFilter)
 	}
 }

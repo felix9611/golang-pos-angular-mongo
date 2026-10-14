@@ -5,12 +5,123 @@ import (
 	"golang-pos-mongo-backend/backend/config"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/tools"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+func ProductLocationListWithFilter(req dto.ListProductLocationtRequestDto) ([]dto.ProductLocationPureList, error) {
+	collection := config.GetCollection("product_location")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filters := bson.M{}
+
+	if len(req.LocationIds) > 0 {
+		filters["locationId"] = bson.M{"$in": req.LocationIds}
+	}
+
+	if req.ProductCode != "" {
+		filters["productCode"] = req.ProductCode
+	}
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: filters}},
+
+		// lookup product
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "product_lists"},
+				{Key: "let", Value: bson.D{
+					{Key: "productIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$productId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$productIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "product"},
+			},
+		}},
+		// lookup location
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "locations"},
+				{Key: "let", Value: bson.D{
+					{Key: "locationIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$locationId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$locationIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "location"},
+			}}},
+		// unwind
+		{{Key: "$unwind", Value: bson.D{bson.E{Key: "path", Value: "$product"}, bson.E{Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{bson.E{Key: "path", Value: "$location"}, bson.E{Key: "preserveNullAndEmptyArrays", Value: true}}}},
+	}
+
+	cursor, err := collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var FinalResults []bson.M
+	if err := cursor.All(ctx, &FinalResults); err != nil {
+		return nil, err
+	}
+
+	var LastResults []dto.ProductLocationPureList
+	for _, item := range FinalResults {
+		resultData, err := bson.Marshal(item)
+		if err != nil {
+			return nil, err
+		}
+
+		var productLocationDetails dto.ProductLocationPureList
+		if err := bson.Unmarshal(resultData, &productLocationDetails); err != nil {
+			return nil, err
+		}
+
+		productLocationDetails.ProductCode, _ = tools.GetNestedValue(item, "product", "productCode").(string)
+		productLocationDetails.ProductName, _ = tools.GetNestedValue(item, "product", "productName").(string)
+		productLocationDetails.ItemCode, _ = tools.GetNestedValue(item, "product", "itemCode").(string)
+		productLocationDetails.BrandCode, _ = tools.GetNestedValue(item, "product", "brandCode").(string)
+		productLocationDetails.BrandName, _ = tools.GetNestedValue(item, "product", "brandName").(string)
+		productLocationDetails.CostPrice = tools.GetFloat64(item, "product", "costPrice").(float64)
+		productLocationDetails.RetailPrice = tools.GetFloat64(item, "product", "retailPrice").(float64)
+		productLocationDetails.Unit = tools.GetNestedValue(item, "product", "unit").(string)
+		productLocationDetails.PlaceCode, _ = tools.GetNestedValue(item, "location", "placeCode").(string)
+		productLocationDetails.PlaceName, _ = tools.GetNestedValue(item, "location", "placeName").(string)
+
+		LastResults = append(LastResults, productLocationDetails)
+	}
+
+	return LastResults, nil
+}
 
 func ProductLocationList(req dto.ListProductLocationtRequestDto) (interface{}, error) {
 	skip := int64((req.Page - 1) * req.Limit)
