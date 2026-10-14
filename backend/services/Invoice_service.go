@@ -474,10 +474,10 @@ func VoidOneInvoice(invoiceId string) (interface{}, error) {
 
 	_, err := collection.UpdateOne(ctx, bson.M{"_id": invoiceId}, bson.M{"$set": bson.M{"status": 0}})
 	if err != nil {
-		return nil, err
+		return gin.H{"error": "Something went wrong, please try again"}, err
 	}
 
 	CreateActionRecord("Void Invoice", "POST", "Invoice", bson.M{"invoiceId": invoiceId}, "Success")
 
-	return gin.H{"status": "Void Invoice success"}, nil
+	return gin.H{"message": "Void Invoice success"}, nil
 }
