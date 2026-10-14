@@ -428,7 +428,7 @@ func InactiveProductItemsByID(id string) (interface{}, error) {
 		})
 
 		if err != nil {
-			return nil, err
+			return gin.H{"error": "Something went wrong, please try again"}, err
 		}
 
 		CreateActionRecord("Product Item Inactive", "DELETE", "Product Item", existingProduct, "Success")
@@ -436,6 +436,6 @@ func InactiveProductItemsByID(id string) (interface{}, error) {
 		return gin.H{"message": "This product deleted successfully"}, nil
 	} else {
 		CreateActionRecord("Product Item Inactive", "DELETE", "Product Item", existingProduct, "Failed")
-		return gin.H{"message": "This product is already inactive"}, nil
+		return gin.H{"error": "This product is already inactive"}, nil
 	}
 }
