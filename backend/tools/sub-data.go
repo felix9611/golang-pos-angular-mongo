@@ -1,6 +1,8 @@
 package tools
 
 import (
+	"strconv"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -19,20 +21,63 @@ func GetSubMap(val interface{}) map[string]interface{} {
 }
 
 // Helper to safely fetch a string from a nested map
-func GetNestedString(item interface{}, parentKey, childKey string) string {
-	var parentMap map[string]interface{}
+func GetNestedValue(item interface{}, parentKey, childKey string) interface{} {
+	parentVal := getFieldValue(item, parentKey)
+	if parentVal == nil {
+		return nil
+	}
 
+	return getFieldValue(parentVal, childKey)
+}
+
+// Helper to safely fetch a string from a nested map
+func getFieldValue(item interface{}, key string) interface{} {
 	switch m := item.(type) {
 	case bson.M:
-		parentMap = GetSubMap(m[parentKey])
-	case map[string]interface{}:
-		parentMap = GetSubMap(m[parentKey])
-	}
-
-	if parentMap != nil {
-		if strVal, ok := parentMap[childKey].(string); ok {
-			return strVal
+		return m[key]
+	case map[string]any:
+		return m[key]
+	case primitive.D:
+		for _, elem := range m {
+			if elem.Key == key {
+				return elem.Value
+			}
 		}
 	}
-	return ""
+	return nil
+}
+
+func GetFloat64(item interface{}, parentKey, childKey string) interface{} {
+	parent := getFieldValue(item, parentKey)
+
+	if parent == nil {
+		return float64(0)
+	}
+
+	value := parent
+
+	// If childKey is provided, get nested value
+	if childKey != "" {
+		value = getFieldValue(parent, childKey)
+	}
+
+	switch v := value.(type) {
+	case float64:
+		return v
+	case float32:
+		return float64(v)
+	case int:
+		return float64(v)
+	case int32:
+		return float64(v)
+	case int64:
+		return float64(v)
+	case primitive.Decimal128:
+		f, err := strconv.ParseFloat(v.String(), 64)
+		if err == nil {
+			return f
+		}
+	}
+
+	return float64(0)
 }
