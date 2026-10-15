@@ -8,6 +8,24 @@ import (
 )
 
 type InvRecordPureList struct {
+	ProductId   string    `bson:"ProductId,omitempty" json:"ProductId"`
+	LocFrom     string    `bson:"locFrom,omitempty" json:"locFrom"`
+	LocTo       string    `bson:"locTo,omitempty" json:"locTo"`
+	Qty         float64   `bson:"qty" json:"qty"`
+	Cost        float64   `bson:"cost" json:"cost"`
+	CreatedAt   time.Time `bson:"createdAt,omitempty" json:"createdAt"`
+	ProductCode string    `bson:"productCode" json:"productCode"`
+	ProductName string    `bson:"productName" json:"productName"`
+	Unit        string    `bson:"unit" json:"unit"`
+	ItemCode    string    `bson:"itemCode" json:"itemCode"`
+	BrandCode   string    `bson:"brandCode" json:"brandCode"`
+	BrandName   string    `bson:"brandName" json:"brandName"`
+	CostPrice   float64   `bson:"costPrice" json:"costPrice"`
+	RetailPrice float64   `bson:"retailPrice" json:"retailPrice"`
+	LocFromCode string    `bson:"locFromCode" json:"locFromCode"`
+	LocFromName string    `bson:"locFromName" json:"locFromName"`
+	LocToCode   string    `bson:"locToCode" json:"locToCode"`
+	LocToName   string    `bson:"locToName" json:"locToName"`
 }
 
 type InvRecordList struct {

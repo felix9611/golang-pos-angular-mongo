@@ -20,6 +20,22 @@ type InvoiceDto struct {
 	InvoicePayment []models.InvoicePayment  `bson:"invoicePayments,omitempty" json:"invoicePayments"`
 }
 
+type InvoicePureBody struct {
+	ID           primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Number       string             `bson:"number,omitempty" json:"number"`
+	TotalAmount  float64            `bson:"totalAmount,omitempty" json:"totalAmount"`
+	Discount     float64            `bson:"discount,omitempty" json:"discount"`
+	DiscountType string             `bson:"discountType,omitempty" json:"discountType"`
+	TaxTotal     float64            `bson:"taxTotal,omitempty" json:"taxTotal"`
+	TaxRefNo     string             `bson:"taxRefNo,omitempty" json:"taxRefNo"`
+	Remark       string             `bson:"remark,omitempty" json:"remark"`
+	Status       int                `bson:"status" json:"status"`
+	CreatedAt    time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
+	UpdatedAt    time.Time          `bson:"updatedAt,omitempty" json:"updatedAt"`
+	PlaceCode    string             `bson:"placeCode" json:"placeCode"`
+	PlaceName    string             `bson:"placeName" json:"placeName"`
+}
+
 type InvoiceBody struct {
 	ID              primitive.ObjectID      `bson:"_id,omitempty" json:"id"`
 	Number          string                  `bson:"number,omitempty" json:"number"`

@@ -33,6 +33,30 @@ func CreateInvoice(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      List Invoice With Filter
+// @Description  List Invoice With Filter
+// @Tags         Invoice
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.ListInvoiceRequestDto  true  "List Code Type Request Body"
+// @Success      200      {object}  []dto.InvoicePureBody
+// @Router       /invoice/filter/list [post]
+func ListInvoiceWithFilter(c *gin.Context) {
+	var req dto.ListInvoiceRequestDto
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := services.ListInvoicesWithFilter(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
 // @Summary      List Invoice
 // @Description  List Invoice
 // @Tags         Invoice
@@ -119,5 +143,6 @@ func RegisterInvoiceRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 		invoiceGroup.GET("/one/:id", GetInvoiceById)
 		invoiceGroup.DELETE("/void/:id", VoidInvoiceByID)
 		invoiceGroup.GET("/number/:number", GetInvoiceByNo)
+		invoiceGroup.POST("/filter/list", ListInvoiceWithFilter)
 	}
 }
