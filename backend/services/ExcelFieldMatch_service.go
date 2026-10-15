@@ -5,6 +5,7 @@ import (
 	"golang-pos-mongo-backend/backend/config"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
+	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -166,56 +167,78 @@ func UpdateOneExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error
 	}
 }
 
-func ExcelFieldMatchListAndPage(pageDto dto.ExcelFieldMatchPageDto) (interface{}, error) {
+func ExcelFieldMatchListAndPage(
+	pageDto dto.ExcelFieldMatchPageDto,
+) (interface{}, error) {
 
 	collection := config.GetCollection("excel_field_matchs")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
-	if pageDto.Page < 1 {
+	if pageDto.Page <= 0 {
 		pageDto.Page = 1
 	}
-	if pageDto.Limit < 1 {
+
+	if pageDto.Limit <= 0 {
 		pageDto.Limit = 10
 	}
 
 	skip := (pageDto.Page - 1) * pageDto.Limit
-	limit := pageDto.Limit
+	limit := int64(pageDto.Limit)
+
+	log.Printf(
+		"ExcelFieldMatch Page=%d Limit=%d Skip=%d",
+		pageDto.Page,
+		pageDto.Limit,
+		skip,
+	)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"status": 1}
 
 	if pageDto.Name != "" {
-		filter["FunctionNam"] = bson.M{"$regex": pageDto.Name, "$options": "i"}
+		filter["FunctionNam"] = bson.M{
+			"$regex":   pageDto.Name,
+			"$options": "i",
+		}
 	}
 
 	if pageDto.Type != "" {
-		filter["functionType"] = bson.M{"$regex": pageDto.Type, "$options": "i"}
-	}
-
-	count, errCount := collection.CountDocuments(ctx, filter)
-	if errCount != nil {
-		return nil, errCount
+		filter["functionType"] = bson.M{
+			"$regex":   pageDto.Type,
+			"$options": "i",
+		}
 	}
 
 	findOptions := options.Find()
 	findOptions.SetSkip(int64(skip))
-	findOptions.SetLimit(int64(limit))
-	findOptions.SetSort(bson.D{{"created_at", -1}})
-	cursor, err := collection.Find(ctx, filter, findOptions)
+	findOptions.SetLimit(limit)
+	findOptions.SetSort(bson.D{
+		{Key: "createdAt", Value: -1},
+		{Key: "_id", Value: -1},
+	})
 
+	cursor, err := collection.Find(ctx, filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	records := make([]models.ExcelFieldMatchs, 0)
+
+	if err := cursor.All(ctx, &records); err != nil {
+		return nil, err
+	}
+
+	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
 
-	var excelFieldMatchs []models.ExcelFieldMatchs
-	for cursor.Next(ctx) {
-		var excelFieldMatch models.ExcelFieldMatchs
-		err := cursor.Decode(&excelFieldMatch)
-		if err != nil {
-			return nil, err
-		}
-		excelFieldMatchs = append(excelFieldMatchs, excelFieldMatch)
-	}
-
-	return gin.H{"lists": excelFieldMatchs, "total": count, "page": pageDto.Page, "limit": pageDto.Limit}, nil
+	return gin.H{
+		"lists": records,
+		"total": count,
+		"page":  pageDto.Page,
+		"limit": pageDto.Limit,
+	}, nil
 }

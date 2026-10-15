@@ -93,6 +93,24 @@ export class ExcelFieldMatchComponent {
         this.loadCodeType()
     }
 
+    onPageChange(page: number): void {
+        if (this.searchForm.page === page) return;
+
+        this.searchForm.page = page;
+        console.log('Page changed:', page);
+        this.loadRecordLists();
+    }
+
+    onPageSizeChange(limit: number): void {
+        if (this.searchForm.limit === limit) return;
+
+        this.searchForm.limit = limit;
+        this.searchForm.page = 1;
+
+        console.log('Page size changed:', limit);
+        this.loadRecordLists();
+    }
+
     async submitForm() {
         const url = this.editForm.id === '' ? '/sys/excel-field-match/create' : `/sys/excel-field-match/update`
 
