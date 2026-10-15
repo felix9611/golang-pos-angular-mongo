@@ -94,7 +94,8 @@ func ProductLocationListWithFilter(req dto.ListProductLocationtRequestDto) ([]dt
 		return nil, err
 	}
 
-	var LastResults []dto.ProductLocationPureList
+	LastResults := make([]dto.ProductLocationPureList, 0, len(FinalResults))
+
 	for _, item := range FinalResults {
 		resultData, err := bson.Marshal(item)
 		if err != nil {
