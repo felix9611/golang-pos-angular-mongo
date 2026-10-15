@@ -294,7 +294,7 @@ func StockIn(entryData dto.StockInOutProductLocationDto) (interface{}, error) {
 
 	insertRecord := dto.InsertInvRecordDto{
 		ProductId: entryData.ProductId,
-		LocFrom:   entryData.LocationId,
+		LocFrom:   "",
 		LocTo:     entryData.LocationId,
 		Qty:       entryData.Qty,
 		Cost:      entryData.TotalCost,
