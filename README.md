@@ -1,52 +1,55 @@
-
-<h1>Fixed Asset Management System In Golang</h1>
-<p><strong>Golang Gin & Angular SSR | Cloud-based Web Application for Asset Management</strong></p>
-<p>Current version: V1.0 </p>
-<p>Next version function: Unit test and Excel Data Export </p>
-<p>If you find this project helpful, please click ⭐ Star! This helps more people discover it.</p>
+<h1>POS System</h1>
+<p><strong>Golang Gin & Angular SSR | Cloud-based Web Application for POS System</strong></p>
+<p>NCPL（Non-Commercial Public License）</p>
 
 <h2>🌟 Project Overview</h2>
-<p>This is a full-stack <strong>Fixed Asset Management System</strong> built with <strong>Golang Gin Framework</strong> and <strong>Angular SSR</strong>, designed for managing fixed assets within facilities. The system includes:</p>
+<p>This is a full-stack <strong>POS (Point of Sale) System</strong> built with <strong>Golang Gin Framework</strong> and <strong>Angular SSR</strong>, It is designed for businesses to manage purchase orders, transactions, inventory, and product records.</p>
 <ul>
-  <li>Purchase and maintenance record management</li>
-  <li>Asset write-off tracking</li>
-  <li>Status monitoring and reporting</li>
+  <li>Manage purchase orders and transaction history</li>
+  <li>Track inventory and product records</li>
+  <li>Generate real-time reports and export data</li>
 </ul>
-<p>The system is <strong>cloud-based</strong>, significantly reducing IT infrastructure costs and improving usability, with no installation required.</p>
+<p>The system is <strong>cloud-based</strong>, reducing IT infrastructure costs and offering ease of use with no installation required.</p>
 
-<p>🔗 <strong><a href="https://fixedasset-gin.felix9611.com/login" target="_blank">Online Demo Front from Cloudflare DNS Tunnel and my Raspberry Pi5 server</a></strong></p>
-
+<p>🔗 <strong><a href="https://pos.felix9611.com/login" target="_blank">Online Demo</a></strong></p>
 <p><strong>Username:</strong> <code>Demo</code><br>
 <strong>Password:</strong> <code>888888</code></p>
 <p><em>Note: Backend and Frontend both hosted on self-hosted Raspberry Pi5 with Cloudflare</em></p>
 
+<!-- Add example images here if available -->
 <h2>📸 Example Screenshots</h2>
 
-<h3>Tax Information</h3>
-<img src="https://github.com/felix9611/nest-fixedasset-mongo-angular/blob/dev/image/fixedasset-1.png" alt="Dashboard Overview">
-
-<h3>Asset Form View</h3>
-<img src="https://github.com/felix9611/nest-fixedasset-mongo-angular/blob/dev/image/fixedasset-2.png" alt="Asset List View">
-
-<h3>User Info</h3>
-<img src="https://github.com/felix9611/nest-fixedasset-mongo-angular/blob/dev/image/fixedasset-3.png" alt="Maintenance Records">
-
 <h3>Dashboard</h3>
-<img src="https://github.com/felix9611/nest-fixedasset-mongo-angular/blob/dev/image/fixedasset-4.png" alt="Write-Off Management">
+<img src="https://github.com/felix9611/nest-pos-mongo-angular/blob/main/image/pos-1.png" >
+
+<h3>Stock Take Form View</h3>
+<img src="https://github.com/felix9611/nest-pos-mongo-angular/blob/main/image/pos-2.png" >
+
+<h3>Stock In</h3>
+<img src="https://github.com/felix9611/nest-pos-mongo-angular/blob/main/image/pos-3.png" >
+
+<h3>Product Form</h3>
+<img src="https://github.com/felix9611/nest-pos-mongo-angular/blob/main/image/pos-4.png" >
+
+<h3>Product List</h3>
+<img src="https://github.com/felix9611/nest-pos-mongo-angular/blob/main/image/pos-5.png" >
+
+<h3>POS</h3>
+<img src="https://github.com/felix9611/nest-pos-mongo-angular/blob/main/image/pos-6.png" 
 
 <h2>🚀 Key Features</h2>
 <ul>
-  <li><strong>Comprehensive Asset Management:</strong> Manage asset status, purchase records, maintenance schedules, and write-offs.</li>
-  <li><strong>Secure Authentication & Authorization:</strong> Utilizes <strong>JWT tokens</strong> for enhanced security and data protection.</li>
-  <li><strong>Cloud-Based Architecture:</strong> Easy deployment and access without installation, lowering operational costs.</li>
-  <li><strong>Real-Time Data Visualization:</strong> Integrated <strong>Chart.js</strong> for graphical representation of asset data.</li>
+  <li><strong>Comprehensive Purchase Order & Transaction Management</strong></li>
+  <li><strong>Real-Time Inventory Tracking</strong></li>
+  <li><strong>Member System Integration</strong></li>
+  <li><strong>Secure Authentication & Authorization:</strong> Utilizes <strong>JWT tokens</strong> for data protection.</li>
 </ul>
 
 <h2>⚙️ Tech Stack</h2>
 <h3>Frontend:</h3>
 <ul>
   <li>Angular 21</li>
-  <li>Node.js 22</li>
+  <li>Node.js 24</li>
   <li>Typescript</li>
   <li>Tailwind CSS</li>
   <li>Canvas.js 3.12.5</li>
@@ -60,15 +63,6 @@
   <li>Gin OpenAPI UI v0.24.1 for API documentation</li>
 </ul>
 
-<h2>🛠️ Core Functionalities</h2>
-<ul>
-  <li><strong>Asset Registration & Tracking:</strong> Record and track fixed assets with detailed status and information.</li>
-  <li><strong>Expenditure & Maintenance Management:</strong> Log asset purchase, maintenance, and write-off records for better financial control.</li>
-  <li><strong>Dynamic Reporting:</strong> Showing chart graphs for easy analysis and sharing.</li>
-  <li><strong>Secure Authentication & RBAC:</strong> Unit by per role with menu page permission, customization user group(s) to actionable functions</li>
-  <li><strong>Excel Data Import:</strong> Batch upload data increases efficiency</li>
-  <li><strong>Excel Data Export:</strong> Auto batch to report data increases efficiency</li>
-</ul>
 
 <h2>📋 How to Run the Project</h2>
 
@@ -93,7 +87,7 @@ swag init
 
 
 // API Documentation URL
-http://localhost:6500/api
+http://localhost:6600/api
 </code></pre>
 
 <h3>Frontend</h3>
@@ -121,14 +115,20 @@ http://localhost:4200
 
 <h2>🌐 Deployment</h2>
 <ul>
-  <li><strong>Database:</strong><strong>New experiment!</strong> Self-hosted in My Raspberry Pi5 server</li>
-  <li><strong>Backend:</strong><strong>New experiment!</strong> Fullset self-hosted server power by my Raspberry Pi5 server</li>
-  <li><strong>Frontend:</strong>Cloudflare Tunnel DNS + Raspberry Pi5 runing in Angualr SSR</li>
+  <li><strong>Database:</strong> <del>Mongodb Atlas</del><strong>New experiment!</strong> Self-hosted in My Raspberry Pi5 server</li>
+  <li><strong>Backend:</strong> <del>AWS runing in Linux & Nginx</del> <strong>New experiment!</strong> Fullset self-hosted server power by my Raspberry Pi5 server</li>
+  <li><strong>Frontend:</strong> Cloudflare Tunnel DNS + Raspberry Pi5 runing in Angualr SSR</li>
 </ul>
 
 <h2>📈 Business Impact</h2>
 <ul>
-  <li><strong>Reduced Operational Costs</strong> by eliminating the need for desktop installations.</li>
-  <li><strong>Improved Data Security</strong> through JWT-based user authentication.</li>
-  <li><strong>Enhanced Decision-Making</strong> with real-time data visualization and comprehensive reporting.</li>
+  <li><strong>Improved Business Operations</strong> with real-time inventory tracking and reporting.</li>
+  <li><strong>Enhanced Data Security</strong> through JWT-based user authentication.</li>
+  <li><strong>Reduced Costs</strong> by eliminating the need for on-premise installations.</li>
+</ul>
+
+<h2>Version Update Note</h2>
+<ul>
+  <li><strong>Node updated to version 22 at 24 Sep 2026</strong></li>
+  <li><strong>Please remove package lock files and folder node_modules both Backend & Frontend folder, and reinstall node_modules</li>
 </ul>
