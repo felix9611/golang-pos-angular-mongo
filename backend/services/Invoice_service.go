@@ -455,7 +455,8 @@ func ListInvoicesWithFilter(req dto.ListInvoiceRequestDto) ([]dto.InvoicePureBod
 		return nil, err
 	}
 
-	var LastResults []dto.InvoicePureBody
+	LastResults := make([]dto.InvoicePureBody, 0, len(FinalResults))
+
 	for _, item := range FinalResults {
 		resultData, err := bson.Marshal(item)
 		if err != nil {
@@ -463,7 +464,8 @@ func ListInvoicesWithFilter(req dto.ListInvoiceRequestDto) ([]dto.InvoicePureBod
 		}
 
 		var result dto.InvoicePureBody
-		err = bson.UnmarshalExtJSON(resultData, true, &result)
+
+		err = bson.Unmarshal(resultData, &result)
 		if err != nil {
 			return nil, err
 		}
@@ -482,6 +484,14 @@ func ListInvoices(req dto.ListInvoiceRequestDto) (dto.ListInvoices, error) {
 	collection := config.GetCollection("invoices")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	if req.Page <= 0 {
+		req.Page = 1
+	}
+
+	if req.Limit <= 0 {
+		req.Limit = 10
+	}
 
 	filters := bson.M{
 		"status": 1,
@@ -549,7 +559,7 @@ func ListInvoices(req dto.ListInvoiceRequestDto) (dto.ListInvoices, error) {
 		return dto.ListInvoices{}, errCount
 	}
 
-	return dto.ListInvoices{Lists: invoices, Total: count, Page: req.Page, Limit: req.Limit}, nil
+	return dto.ListInvoices{Lists: invoices, Total: int(count), Page: req.Page, Limit: req.Limit}, nil
 }
 
 func VoidOneInvoice(invoiceId string) (interface{}, error) {
