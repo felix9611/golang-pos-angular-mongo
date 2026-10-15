@@ -6,6 +6,7 @@ import (
 	"golang-pos-mongo-backend/backend/config"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/tools"
 	"math/rand/v2"
 	"strconv"
 	"time"
@@ -391,6 +392,90 @@ func GetOneInvoiceDetailById(id string) (interface{}, error) {
 	}
 
 	return &finalItem, nil
+}
+
+func ListInvoicesWithFilter(req dto.ListInvoiceRequestDto) ([]dto.InvoicePureBody, error) {
+	collection := config.GetCollection("invoices")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filters := bson.M{
+		"status": 1,
+	}
+
+	if len(req.LocationIds) > 0 {
+		filters["locationId"] = bson.M{"$in": req.LocationIds}
+	}
+
+	if len(req.Date) > 0 {
+		filters["createdAt"] = bson.M{"$gte": req.Date[0], "$lte": req.Date[1]}
+	}
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: filters}},
+
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "locations"},
+				{Key: "let", Value: bson.D{
+					{Key: "locationIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$locationId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$locationIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "location"},
+			},
+		}},
+
+		// unwind
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$location"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+
+		{{Key: "$sort", Value: bson.D{{Key: "createdAt", Value: -1}}}},
+	}
+
+	cursor, err := collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var FinalResults []bson.M
+	if err := cursor.All(ctx, &FinalResults); err != nil {
+		return nil, err
+	}
+
+	var LastResults []dto.InvoicePureBody
+	for _, item := range FinalResults {
+		resultData, err := bson.Marshal(item)
+		if err != nil {
+			return nil, err
+		}
+
+		var result dto.InvoicePureBody
+		err = bson.UnmarshalExtJSON(resultData, true, &result)
+		if err != nil {
+			return nil, err
+		}
+
+		result.PlaceCode, _ = tools.GetNestedValue(item, "location", "placeCode").(string)
+		result.PlaceName, _ = tools.GetNestedValue(item, "location", "placeName").(string)
+
+		LastResults = append(LastResults, result)
+	}
+
+	return LastResults, nil
+
 }
 
 func ListInvoices(req dto.ListInvoiceRequestDto) (dto.ListInvoices, error) {
