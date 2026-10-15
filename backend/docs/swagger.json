@@ -51,510 +51,6 @@
                 }
             }
         },
-        "/asset/asset-list/chart-query-date": {
-            "post": {
-                "description": "Query Asset Data by Data Type",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "Query Asset Data by Data Type",
-                "parameters": [
-                    {
-                        "description": "Dashboard Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.DashboardReqDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/asset-list/create": {
-            "post": {
-                "description": "Create Asset Item record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "Create Asset Item record",
-                "parameters": [
-                    {
-                        "description": "Asset List Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.AssetLists"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.AssetLists"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/asset-list/file-remove/{id}": {
-            "delete": {
-                "description": "Remove Asset File record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "Remove Asset File record",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "asset file ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/asset-list/list": {
-            "post": {
-                "description": "List Asset Items",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "List Asset Items",
-                "parameters": [
-                    {
-                        "description": "Asset List Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dto.ListAssetReqDto"
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/dto.AssetListList"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/asset-list/list-all": {
-            "get": {
-                "description": "List All Asset Items",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "List All Asset Items",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.AssetLists"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/asset-list/update": {
-            "post": {
-                "description": "Update Asset Item record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "Update Asset Item record",
-                "parameters": [
-                    {
-                        "description": "Asset List Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AssetLists"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/stock-take/create": {
-            "post": {
-                "description": "Create one stock take form",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Stock Take"
-                ],
-                "summary": "Create one stock take form",
-                "parameters": [
-                    {
-                        "description": "List Action Record Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.StockTakes"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/stock-take/finish/{id}": {
-            "delete": {
-                "description": "Finish stock take form",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Stock Take"
-                ],
-                "summary": "Finish stock take form",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Stock Take Form ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/stock-take/item-submit": {
-            "post": {
-                "description": "Submit stock take item",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Stock Take"
-                ],
-                "summary": "Submit stock take item",
-                "parameters": [
-                    {
-                        "description": "Stock Take Item Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.StockTakeItems"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/stock-take/list": {
-            "post": {
-                "description": "List stock take forms with pagination",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Stock Take"
-                ],
-                "summary": "List stock take forms with pagination",
-                "parameters": [
-                    {
-                        "description": "List Action Record Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListStockTakeDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.StockTakeResponseList"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/stock-take/one/{id}": {
-            "get": {
-                "description": "Get one stock take form by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Stock Take"
-                ],
-                "summary": "Get one stock take form by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Stock Take Form ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GetStockTakeFormWithItemsResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/stock-take/void/{id}": {
-            "delete": {
-                "description": "Void stock take form",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Stock Take"
-                ],
-                "summary": "Void stock take form",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Stock Take Form ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/type/all": {
-            "get": {
-                "description": "Get one Asset Type records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Asset Type"
-                ],
-                "summary": "Get one Asset Type records",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.AssetTypes"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/type/create": {
-            "post": {
-                "description": "Create one Asset Type record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Asset Type"
-                ],
-                "summary": "Create one Asset Type record",
-                "parameters": [
-                    {
-                        "description": "Asset Type Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AssetTypes"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/type/filter/list": {
-            "post": {
-                "description": "List Asset Types",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Asset Type"
-                ],
-                "summary": "List Asset Types",
-                "parameters": [
-                    {
-                        "description": "List Asset Types Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.AssetTypeListDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.AssetTypes"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/asset/type/list": {
             "get": {
                 "description": "Get user details by token",
@@ -576,461 +72,9 @@
                         }
                     }
                 }
-            },
-            "post": {
-                "description": "List Asset Types",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Asset Type"
-                ],
-                "summary": "List Asset Types",
-                "parameters": [
-                    {
-                        "description": "List Asset Types Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.AssetTypeListDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.AssetTypeList"
-                        }
-                    }
-                }
             }
         },
-        "/asset/type/one/{id}": {
-            "get": {
-                "description": "Get one Asset Type record by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Asset Type"
-                ],
-                "summary": "Get one Asset Type record by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Asset Type ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.AssetTypes"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/type/update": {
-            "post": {
-                "description": "Update one Asset Type record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Asset Type"
-                ],
-                "summary": "Update one Asset Type record",
-                "parameters": [
-                    {
-                        "description": "Asset Type Request Body for update",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.AssetTypes"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/type/void/{id}": {
-            "delete": {
-                "description": "Void one Asset Type record by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Asset Type"
-                ],
-                "summary": "Void one Asset Type record by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Asset Type ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralUpdateInactiveResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/write-off/create": {
-            "post": {
-                "description": "Create one Write Off record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Write Off"
-                ],
-                "summary": "Create one Write Off record",
-                "parameters": [
-                    {
-                        "description": "Write Off Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.CreateWriteOffRecrod"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/asset/write-off/list": {
-            "post": {
-                "description": "List Write Off Records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Write Off"
-                ],
-                "summary": "List Write Off Records",
-                "parameters": [
-                    {
-                        "description": "List Write Off Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.ListWriteOffReqDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.WriteOffList"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/asset-list/code/{code}": {
-            "get": {
-                "description": "Get one asset record by code",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "Get one asset record by code",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "asset code",
-                        "name": "code",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.AssetLists"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/asset-list/load-file/{id}": {
-            "get": {
-                "description": "Get one asset file records by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "Get one asset file records by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "asset list ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.AssetListFiles"
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/base/asset-list/one/{id}": {
-            "get": {
-                "description": "Get one asset record by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "AssetList"
-                ],
-                "summary": "Get one asset record by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "asset list ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.AssetLists"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/budget/create": {
-            "post": {
-                "description": "Create one Budget record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Budget"
-                ],
-                "summary": "Create one Budget record",
-                "parameters": [
-                    {
-                        "description": "Budget Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Budgets"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/budget/getBudgetSummary": {
-            "get": {
-                "description": "Get budget summary",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Budget"
-                ],
-                "summary": "Get budget summary",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.BudgetSummary"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/budget/one/{id}": {
-            "get": {
-                "description": "Get one budget record by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Budget"
-                ],
-                "summary": "Get one budget record by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "budget ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Budgets"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/budget/update": {
-            "post": {
-                "description": "Update one budget record",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Budget"
-                ],
-                "summary": "Update one budget record",
-                "parameters": [
-                    {
-                        "description": "Budget Request Body for update",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Budgets"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralUpdateInactiveResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/budget/void/{id}": {
-            "delete": {
-                "description": "Delete one budget record by id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Budget"
-                ],
-                "summary": "Delete one budget record by id",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Budget ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.GeneralUpdateInactiveResponseBody"
-                        }
-                    }
-                }
-            }
-        },
-        "/base/code-type/batch-upload": {
+        "/base/code-type/batch-create": {
             "post": {
                 "description": "Batch upload code type record",
                 "consumes": [
@@ -1059,12 +103,9 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK",
+                        "description": "Batch upload Asset Type record",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.CodeTypes"
-                            }
+                            "type": "string"
                         }
                     }
                 }
@@ -1305,6 +346,76 @@
                 }
             }
         },
+        "/base/department//create": {
+            "post": {
+                "description": "Batch Create Department record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Batch Create Department record",
+                "parameters": [
+                    {
+                        "description": "Department Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Department"
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/base/department/batch-upload": {
+            "post": {
+                "description": "Batch upload department record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "summary": "Batch upload department record",
+                "parameters": [
+                    {
+                        "description": "Department Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Department"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Department"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/base/location/all": {
             "get": {
                 "description": "Get all location record",
@@ -1326,6 +437,36 @@
                         }
                     }
                 }
+            }
+        },
+        "/base/location/batch-create": {
+            "post": {
+                "description": "Batch Create location record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tax Information"
+                ],
+                "summary": "Batch Create location record",
+                "parameters": [
+                    {
+                        "description": "Locations Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Locations"
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
             }
         },
         "/base/location/create": {
@@ -1554,6 +695,36 @@
                 }
             }
         },
+        "/base/tax-information/batch-create": {
+            "post": {
+                "description": "Batch Create Tax Information record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tax Information"
+                ],
+                "summary": "Batch Create Tax Information record",
+                "parameters": [
+                    {
+                        "description": "Tax Information Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TaxInformations"
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/base/tax-information/create": {
             "post": {
                 "description": "Create one Tax Information record",
@@ -1583,6 +754,43 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/base/tax-information/filter/list": {
+            "post": {
+                "description": "List Tax Information With filter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Tax Information"
+                ],
+                "summary": "List Tax Information With filter",
+                "parameters": [
+                    {
+                        "description": "List Tax Information Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TaxInformationListDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.TaxInformations"
+                            }
                         }
                     }
                 }
@@ -1741,6 +949,36 @@
                         }
                     }
                 }
+            }
+        },
+        "/base/vendor/batch-create": {
+            "post": {
+                "description": "Batch create vendor record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Vendor"
+                ],
+                "summary": "Batch create vendor record",
+                "parameters": [
+                    {
+                        "description": "Vendor Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Vendors"
+                            }
+                        }
+                    }
+                ],
+                "responses": {}
             }
         },
         "/base/vendor/create": {
@@ -1909,9 +1147,9 @@
                 }
             }
         },
-        "/sys/budget/filter/list": {
+        "/inventory-record/filter/list": {
             "post": {
-                "description": "List Budgets With Filter",
+                "description": "List Inventory Records With Filter",
                 "consumes": [
                     "application/json"
                 ],
@@ -1919,17 +1157,122 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Budget"
+                    "Inventory Record"
                 ],
-                "summary": "List Budgets With Filter",
+                "summary": "List Inventory Records With Filter",
                 "parameters": [
                     {
-                        "description": "List Budget Request Body",
+                        "description": "List Action Record Request Body",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ListBudgetRecordsDto"
+                            "$ref": "#/definitions/dto.InvRecordListDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List Inventory Records",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.InvRecordPureList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory-record/list": {
+            "post": {
+                "description": "List Inventory Records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory Record"
+                ],
+                "summary": "List Inventory Records",
+                "parameters": [
+                    {
+                        "description": "List Action Record Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvRecordListDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List Inventory Records",
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvRecordListResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/check": {
+            "post": {
+                "description": "List Product Locations",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "List Product Locations",
+                "parameters": [
+                    {
+                        "description": "List Location Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CheckProductAndLocationDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CheckProductAndLocationResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/filter/product-location-list": {
+            "post": {
+                "description": "List Product Locations With Filter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "List Product Locations With Filter",
+                "parameters": [
+                    {
+                        "description": "List Location Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListProductLocationtRequestDto"
                         }
                     }
                 ],
@@ -1939,16 +1282,16 @@
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Budgets"
+                                "$ref": "#/definitions/dto.ProductLocationPureList"
                             }
                         }
                     }
                 }
             }
         },
-        "/sys/budget/list": {
+        "/inventory/product-location-list": {
             "post": {
-                "description": "List Budgets",
+                "description": "List Product Locations",
                 "consumes": [
                     "application/json"
                 ],
@@ -1956,17 +1299,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Budget"
+                    "Inventory"
                 ],
-                "summary": "List Budgets",
+                "summary": "List Product Locations",
                 "parameters": [
                     {
-                        "description": "List Budget Request Body",
+                        "description": "List Location Request Body",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/dto.ListBudgetRecordsDto"
+                            "$ref": "#/definitions/dto.ListProductLocationtRequestDto"
                         }
                     }
                 ],
@@ -1974,7 +1317,1701 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.BudgetList"
+                            "$ref": "#/definitions/dto.ListProductLocationts"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/stock-in": {
+            "post": {
+                "description": "Stock In",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Stock In",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockInOutProductLocationDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/stock-move": {
+            "post": {
+                "description": "Stock Move",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Stock Move",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockMoveProductLocationDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/inventory/stock-out": {
+            "post": {
+                "description": "Stock Out",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Inventory"
+                ],
+                "summary": "Stock Out",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockInOutProductLocationDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/invoice/create": {
+            "post": {
+                "description": "Create one Invoice record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Create one Invoice record",
+                "parameters": [
+                    {
+                        "description": "Invoice Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvoiceDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/invoice/filter/list": {
+            "post": {
+                "description": "List Invoice With Filter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "List Invoice With Filter",
+                "parameters": [
+                    {
+                        "description": "List Code Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListInvoiceRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.InvoicePureBody"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/invoice/list": {
+            "post": {
+                "description": "List Invoice",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "List Invoice",
+                "parameters": [
+                    {
+                        "description": "List Code Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListInvoiceRequestDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListInvoices"
+                        }
+                    }
+                }
+            }
+        },
+        "/invoice/number/{number}": {
+            "get": {
+                "description": "Get one Invoice record by number",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Get one Invoice record by number",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Invoice Number",
+                        "name": "number",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvoiceBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/invoice/one/{id}": {
+            "get": {
+                "description": "Get one Invoice record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Invoice"
+                ],
+                "summary": "Get one Invoice record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Invoice ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvoiceBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-class/all": {
+            "get": {
+                "description": "Get all records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member Class"
+                ],
+                "summary": "Get all records",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.MemberClass"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-class/create": {
+            "post": {
+                "description": "Create one Member Class record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member Class"
+                ],
+                "summary": "Create one Member Class record",
+                "parameters": [
+                    {
+                        "description": "Member Class Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MemberClass"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-class/list": {
+            "post": {
+                "description": "List Member Class",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member Class"
+                ],
+                "summary": "List Member Class",
+                "parameters": [
+                    {
+                        "description": "List Member Class Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.MemberClassListDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.MemberClassList"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-class/one/{id}": {
+            "get": {
+                "description": "Get one Member Class record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member Class"
+                ],
+                "summary": "Get one Member Class record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Member Class ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.MemberClass"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-class/update": {
+            "post": {
+                "description": "Update one Member Class record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member Class"
+                ],
+                "summary": "Update one Member Class record",
+                "parameters": [
+                    {
+                        "description": "Member Class Request Body for update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MemberClass"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-class/void/{id}": {
+            "delete": {
+                "description": "Void one Product Types record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Types"
+                ],
+                "summary": "Void one Product Types record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product Types ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateInactiveResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-list/create": {
+            "post": {
+                "description": "Create one member record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member List"
+                ],
+                "summary": "Create one member record",
+                "parameters": [
+                    {
+                        "description": "Member List Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.MemberLists"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-list/list": {
+            "post": {
+                "description": "List Member Items",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member List"
+                ],
+                "summary": "List Member Items",
+                "parameters": [
+                    {
+                        "description": "Asset List Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.MemberListsDto"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.MemberList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-list/list-member": {
+            "post": {
+                "description": "List Member by name",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member List"
+                ],
+                "summary": "List Member by name",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.MemberListsByNameDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.MemberList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-list/special-day/remove/{id}": {
+            "delete": {
+                "description": "Remove member special day record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member List"
+                ],
+                "summary": "Remove member special day record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "special day data ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-list/update": {
+            "post": {
+                "description": "Update member record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member List"
+                ],
+                "summary": "Update member record",
+                "parameters": [
+                    {
+                        "description": "Member List Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductLists"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-list/void/{id}": {
+            "delete": {
+                "description": "Remove member record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member List"
+                ],
+                "summary": "Remove member record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "asset file ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/member/member-list/{id}": {
+            "get": {
+                "description": "Get one member record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Member List"
+                ],
+                "summary": "Get one member record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "member ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.MemberLists"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/load-file/{id}": {
+            "get": {
+                "description": "Get one product file records by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product List"
+                ],
+                "summary": "Get one product file records by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "product list ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductListFiles"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/create": {
+            "post": {
+                "description": "Create one Product List record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product List"
+                ],
+                "summary": "Create one Product List record",
+                "parameters": [
+                    {
+                        "description": "Product List Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductLists"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/file-remove/{id}": {
+            "delete": {
+                "description": "Remove Product File record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product List"
+                ],
+                "summary": "Remove Product File record",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "asset file ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/filter/list": {
+            "post": {
+                "description": "List Product Items with filters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product List"
+                ],
+                "summary": "List Product Items with filters",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ListProductReqDto"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ListProductDetailPure"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/list": {
+            "post": {
+                "description": "List Product Items",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product List"
+                ],
+                "summary": "List Product Items",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ListProductReqDto"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ProductListList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/update": {
+            "post": {
+                "description": "Update Product Item record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product List"
+                ],
+                "summary": "Update Product Item record",
+                "parameters": [
+                    {
+                        "description": "Asset List Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductLists"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/void/{id}": {
+            "delete": {
+                "description": "Void one Product Items record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Items"
+                ],
+                "summary": "Void one Product Items record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product Items ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateInactiveResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/{code}": {
+            "get": {
+                "description": "Get one product record by code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ProductList"
+                ],
+                "summary": "Get one product record by code",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "product code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductLists"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-list/{id}": {
+            "get": {
+                "description": "Get one product record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product List"
+                ],
+                "summary": "Get one product record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "product list ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductLists"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-type/all": {
+            "get": {
+                "description": "Get all records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Type"
+                ],
+                "summary": "Get all records",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductTypes"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-type/batch-create": {
+            "post": {
+                "description": "Batch upload Product Type record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Type"
+                ],
+                "summary": "Batch upload Product Type record",
+                "parameters": [
+                    {
+                        "description": "Product Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.ProductTypes"
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Batch upload Product Type record",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-type/create": {
+            "post": {
+                "description": "Create one Product Type record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Type"
+                ],
+                "summary": "Create one Product Type record",
+                "parameters": [
+                    {
+                        "description": "Product Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductTypes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-type/list": {
+            "post": {
+                "description": "List Product Types",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Type"
+                ],
+                "summary": "List Product Types",
+                "parameters": [
+                    {
+                        "description": "List Product Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ProductTypeListDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ProductTypeList"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-type/one/{id}": {
+            "get": {
+                "description": "Get one Product Type record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Type"
+                ],
+                "summary": "Get one Product Type record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product Type ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductTypes"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-type/update": {
+            "post": {
+                "description": "Update one Product Types record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Types"
+                ],
+                "summary": "Update one Product Types record",
+                "parameters": [
+                    {
+                        "description": "Product Types Request Body for update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.ProductTypes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/product/product-type/void/{id}": {
+            "delete": {
+                "description": "Void one Product Types record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product Types"
+                ],
+                "summary": "Void one Product Types record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Product Types ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateInactiveResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/query/inventory_records": {
+            "post": {
+                "description": "Get query for inventory by data type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Query"
+                ],
+                "summary": "Get query for inventory by data type",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvoiceDashboardReqDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/query/invoice": {
+            "post": {
+                "description": "Get query for invoice item by data type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Query"
+                ],
+                "summary": "Get query for invoice item by data type",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvoiceDashboardReqDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/query/product-location": {
+            "post": {
+                "description": "Get query for product location by data type",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Query"
+                ],
+                "summary": "Get query for product location by data type",
+                "parameters": [
+                    {
+                        "description": "Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.InvoiceDashboardReqDto"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/return-invoice/create": {
+            "post": {
+                "description": "Create one Return Invoice record",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Return Invoice"
+                ],
+                "summary": "Create one Return Invoice record",
+                "parameters": [
+                    {
+                        "description": "Code Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateReturnInvoiceDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/return-invoice/filter/list": {
+            "post": {
+                "description": "List Return Invoice records with filter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Return Invoice"
+                ],
+                "summary": "List Return Invoice records with filter",
+                "parameters": [
+                    {
+                        "description": "Code Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateReturnInvoiceDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.ReturnInvoicePureList"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/return-invoice/list": {
+            "post": {
+                "description": "List Return Invoice records",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Return Invoice"
+                ],
+                "summary": "List Return Invoice records",
+                "parameters": [
+                    {
+                        "description": "Code Type Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateReturnInvoiceDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/return-invoice/one/{id}": {
+            "get": {
+                "description": "Get one Return Invoice record by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Return Invoice"
+                ],
+                "summary": "Get one Return Invoicee record by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "data ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ReturnInvoiceDetailResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock-take/create-form": {
+            "post": {
+                "description": "Create one stock take form",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stock Take"
+                ],
+                "summary": "Create one stock take form",
+                "parameters": [
+                    {
+                        "description": "List Action Record Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateStockTakeForm"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock-take/finish/{id}": {
+            "delete": {
+                "description": "Finish stock take form",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stock Take"
+                ],
+                "summary": "Finish stock take form",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Take Form ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock-take/item-submit": {
+            "post": {
+                "description": "Submit stock take item",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stock Take"
+                ],
+                "summary": "Submit stock take item",
+                "parameters": [
+                    {
+                        "description": "Stock Take Item Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockTakeItems"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock-take/list": {
+            "post": {
+                "description": "List stock take forms with pagination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stock Take"
+                ],
+                "summary": "List stock take forms with pagination",
+                "parameters": [
+                    {
+                        "description": "List Action Record Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.ListStockTakeDto"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.StockTakeResponseList"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock-take/one/{id}": {
+            "get": {
+                "description": "Get one stock take form by id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stock Take"
+                ],
+                "summary": "Get one stock take form by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Take Form ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GetStockTakeFormWithItemsResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock-take/update": {
+            "post": {
+                "description": "Update one stock take form",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stock Take"
+                ],
+                "summary": "Update one stock take form",
+                "parameters": [
+                    {
+                        "description": "List Action Record Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.StockTakes"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralUpdateResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/stock-take/void/{id}": {
+            "delete": {
+                "description": "Void stock take form",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Stock Take"
+                ],
+                "summary": "Void stock take form",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Stock Take Form ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.GeneralCreateResponseBody"
                         }
                     }
                 }
@@ -1990,6 +3027,43 @@
                     "Department"
                 ],
                 "summary": "Get all Department record",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Department"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/sys/department/filter/list": {
+            "post": {
+                "description": "List Departments with filter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Department"
+                ],
+                "summary": "List Departments with filter",
+                "parameters": [
+                    {
+                        "description": "List Action Record Request Body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DepartmentPageDto"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2330,40 +3404,6 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.GeneralUpdateResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/sys/inv-record/list": {
-            "post": {
-                "description": "List Inventory Records",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Inventory Record"
-                ],
-                "summary": "List Inventory Records",
-                "parameters": [
-                    {
-                        "description": "List Action Record Request Body",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/dto.InvRecordListDto"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "List Inventory Records",
-                        "schema": {
-                            "$ref": "#/definitions/dto.InvRecordListResponse"
                         }
                     }
                 }
@@ -3114,186 +4154,6 @@
                 }
             }
         },
-        "dto.AssetListList": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "lists": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.AssetListsDetails"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.AssetListsDetails": {
-            "type": "object",
-            "properties": {
-                "accountCode": {
-                    "type": "string"
-                },
-                "accountName": {
-                    "type": "string"
-                },
-                "afterBeforeTax": {
-                    "type": "number"
-                },
-                "assetCode": {
-                    "type": "string"
-                },
-                "assetName": {
-                    "type": "string"
-                },
-                "assetType": {
-                    "$ref": "#/definitions/models.AssetTypes"
-                },
-                "brandCode": {
-                    "type": "string"
-                },
-                "brandName": {
-                    "type": "string"
-                },
-                "chequeNo": {
-                    "type": "string"
-                },
-                "cost": {
-                    "type": "number"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "department": {
-                    "$ref": "#/definitions/models.Department"
-                },
-                "deptId": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "includeTax": {
-                    "type": "boolean"
-                },
-                "invoiceDate": {
-                    "type": "string"
-                },
-                "invoiceNo": {
-                    "type": "string"
-                },
-                "invoiceRemark": {
-                    "description": "I",
-                    "type": "string"
-                },
-                "location": {
-                    "$ref": "#/definitions/models.Locations"
-                },
-                "maintenancePeriodEnd": {
-                    "type": "string"
-                },
-                "maintenancePeriodStart": {
-                    "type": "string"
-                },
-                "placeId": {
-                    "type": "string"
-                },
-                "purchaseDate": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "serialNo": {
-                    "type": "string"
-                },
-                "sponsor": {
-                    "type": "boolean"
-                },
-                "sponsorName": {
-                    "type": "string"
-                },
-                "staffName": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "taxCode": {
-                    "type": "string"
-                },
-                "taxCountryCode": {
-                    "type": "string"
-                },
-                "taxInfoId": {
-                    "type": "string"
-                },
-                "taxRate": {
-                    "type": "number"
-                },
-                "typeId": {
-                    "type": "string"
-                },
-                "unit": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "vendorId": {
-                    "type": "string"
-                },
-                "voucherNo": {
-                    "type": "string"
-                },
-                "voucherUsedDate": {
-                    "type": "string"
-                }
-            }
-        },
-        "dto.AssetTypeList": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "lists": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AssetTypes"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "dto.AssetTypeListDto": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "page": {
-                    "type": "integer"
-                }
-            }
-        },
         "dto.AuthDataResponse": {
             "type": "object",
             "properties": {
@@ -3302,40 +4162,25 @@
                 }
             }
         },
-        "dto.BudgetList": {
+        "dto.CheckProductAndLocationDto": {
             "type": "object",
             "properties": {
-                "limit": {
-                    "type": "integer"
+                "locationId": {
+                    "type": "string"
                 },
-                "lists": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Budgets"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
+                "productId": {
+                    "type": "string"
                 }
             }
         },
-        "dto.BudgetSummary": {
+        "dto.CheckProductAndLocationResponse": {
             "type": "object",
             "properties": {
-                "budgetAmount": {
-                    "type": "number"
+                "data": {
+                    "$ref": "#/definitions/models.ProductLocations"
                 },
-                "month": {
-                    "type": "integer"
-                },
-                "year": {
-                    "type": "integer"
-                },
-                "yearMonth": {
-                    "type": "string"
+                "status": {
+                    "type": "boolean"
                 }
             }
         },
@@ -3373,48 +4218,89 @@
                 }
             }
         },
-        "dto.CreateWriteOffRecrod": {
+        "dto.CreateReturnInvoiceDto": {
             "type": "object",
             "properties": {
-                "assetId": {
+                "processMethod": {
                     "type": "string"
                 },
-                "disposalMethod": {
-                    "type": "string"
+                "refund": {
+                    "type": "boolean"
                 },
-                "lastDay": {
-                    "type": "string"
-                },
-                "lastPlaceId": {
-                    "type": "string"
-                },
-                "reason": {
-                    "type": "string"
-                },
-                "remainingValue": {
+                "refundAmount": {
                     "type": "number"
+                },
+                "refundMethod": {
+                    "type": "string"
+                },
+                "returnDatail": {
+                    "type": "string"
+                },
+                "returnInvoiceNo": {
+                    "type": "string"
+                },
+                "returnItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.CreateReturnInvoiceItemDto"
+                    }
+                },
+                "returnLocationId": {
+                    "type": "string"
+                },
+                "returnMethod": {
+                    "type": "string"
+                },
+                "returnReason": {
+                    "type": "string"
+                },
+                "returnToVendor": {
+                    "type": "boolean"
                 }
             }
         },
-        "dto.DashboardReqDto": {
+        "dto.CreateReturnInvoiceItemDto": {
             "type": "object",
             "properties": {
-                "dataType": {
-                    "type": "boolean"
+                "price": {
+                    "type": "number"
                 },
-                "dataTypeValue": {
+                "productId": {
                     "type": "string"
                 },
-                "dateType": {
-                    "type": "boolean"
+                "qty": {
+                    "type": "number"
                 },
-                "dateTypeValue": {
+                "returnInvoiceId": {
                     "type": "string"
                 },
-                "filter": {
-                    "$ref": "#/definitions/dto.DashboardReqFilterDto"
+                "taxAmount": {
+                    "type": "number"
                 },
-                "valueField": {
+                "taxCode": {
+                    "type": "string"
+                },
+                "taxRate": {
+                    "type": "number"
+                },
+                "taxType": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.CreateStockTakeForm": {
+            "type": "object",
+            "properties": {
+                "actionName": {
+                    "type": "string"
+                },
+                "actionPlaceId": {
+                    "type": "string"
+                },
+                "createdBy": {
+                    "type": "string"
+                },
+                "remark": {
                     "type": "string"
                 }
             }
@@ -3434,7 +4320,13 @@
                         "type": "string"
                     }
                 },
-                "purchaseDates": {
+                "productCode": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "salesDateRange": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -3614,9 +4506,6 @@
                 "assetId": {
                     "type": "string"
                 },
-                "assetlist": {
-                    "$ref": "#/definitions/dto.AssetListsDetails"
-                },
                 "checkTime": {
                     "type": "string"
                 },
@@ -3678,11 +4567,11 @@
         "dto.InvRecordList": {
             "type": "object",
             "properties": {
-                "assetCode": {
+                "ProductId": {
                     "type": "string"
                 },
-                "assetList": {
-                    "$ref": "#/definitions/models.AssetLists"
+                "cost": {
+                    "type": "number"
                 },
                 "createdAt": {
                     "type": "string"
@@ -3690,23 +4579,35 @@
                 "id": {
                     "type": "string"
                 },
-                "placeFrom": {
+                "locFrom": {
                     "type": "string"
                 },
-                "placeFromData": {
+                "locFromData": {
                     "$ref": "#/definitions/models.Locations"
                 },
-                "placeTo": {
+                "locTo": {
                     "type": "string"
                 },
-                "placeToData": {
+                "locToData": {
                     "$ref": "#/definitions/models.Locations"
+                },
+                "product": {
+                    "$ref": "#/definitions/models.ProductLists"
+                },
+                "qty": {
+                    "type": "number"
                 }
             }
         },
         "dto.InvRecordListDto": {
             "type": "object",
             "properties": {
+                "date": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "limit": {
                     "type": "integer"
                 },
@@ -3735,6 +4636,311 @@
                 }
             }
         },
+        "dto.InvRecordPureList": {
+            "type": "object",
+            "properties": {
+                "ProductId": {
+                    "type": "string"
+                },
+                "brandCode": {
+                    "type": "string"
+                },
+                "brandName": {
+                    "type": "string"
+                },
+                "cost": {
+                    "type": "number"
+                },
+                "costPrice": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "itemCode": {
+                    "type": "string"
+                },
+                "locFrom": {
+                    "type": "string"
+                },
+                "locFromCode": {
+                    "type": "string"
+                },
+                "locFromName": {
+                    "type": "string"
+                },
+                "locTo": {
+                    "type": "string"
+                },
+                "locToCode": {
+                    "type": "string"
+                },
+                "locToName": {
+                    "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "retailPrice": {
+                    "type": "number"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.InvoiceBody": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "discount": {
+                    "type": "number"
+                },
+                "discountType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "invoiceItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.InvoiceItemListBody"
+                    }
+                },
+                "invoicePayments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InvoicePayment"
+                    }
+                },
+                "locationId": {
+                    "type": "string"
+                },
+                "memberId": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxRefNo": {
+                    "type": "string"
+                },
+                "taxTotal": {
+                    "type": "number"
+                },
+                "totalAmount": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.InvoiceDashboardReqDto": {
+            "type": "object",
+            "properties": {
+                "dataTypeValue": {
+                    "type": "string"
+                },
+                "dateTypeValue": {
+                    "type": "string"
+                },
+                "filter": {
+                    "$ref": "#/definitions/dto.DashboardReqFilterDto"
+                },
+                "valueField": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.InvoiceDto": {
+            "type": "object",
+            "properties": {
+                "discount": {
+                    "type": "number"
+                },
+                "discountType": {
+                    "type": "string"
+                },
+                "invoiceItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InvoiceItemList"
+                    }
+                },
+                "invoicePayments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.InvoicePayment"
+                    }
+                },
+                "locationId": {
+                    "type": "string"
+                },
+                "memberId": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "taxRefNo": {
+                    "type": "string"
+                },
+                "taxTotal": {
+                    "type": "number"
+                },
+                "totalAmount": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.InvoiceItemListBody": {
+            "type": "object",
+            "properties": {
+                "discount": {
+                    "type": "number"
+                },
+                "discountType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "invoiceId": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product": {
+                    "$ref": "#/definitions/models.ProductLists"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "taxAmount": {
+                    "type": "number"
+                },
+                "taxCode": {
+                    "type": "string"
+                },
+                "taxRate": {
+                    "type": "number"
+                },
+                "taxType": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.InvoiceListBody": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "discount": {
+                    "type": "boolean"
+                },
+                "discountType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/models.Locations"
+                },
+                "locationId": {
+                    "type": "string"
+                },
+                "memberId": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxRefNo": {
+                    "type": "string"
+                },
+                "taxTotal": {
+                    "type": "number"
+                },
+                "totalAmount": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.InvoicePureBody": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "discount": {
+                    "type": "number"
+                },
+                "discountType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "placeCode": {
+                    "type": "string"
+                },
+                "placeName": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxRefNo": {
+                    "type": "string"
+                },
+                "taxTotal": {
+                    "type": "number"
+                },
+                "totalAmount": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.ListActionRecordReqDto": {
             "type": "object",
             "properties": {
@@ -3757,16 +4963,10 @@
                 }
             }
         },
-        "dto.ListAssetReqDto": {
+        "dto.ListInvoiceRequestDto": {
             "type": "object",
             "properties": {
-                "assetCode": {
-                    "type": "string"
-                },
-                "assetName": {
-                    "type": "string"
-                },
-                "deptIds": {
+                "date": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -3775,31 +4975,36 @@
                 "limit": {
                     "type": "integer"
                 },
+                "locationId": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "page": {
                     "type": "integer"
-                },
-                "placeIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "purchaseDates": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "typeIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
                 }
             }
         },
-        "dto.ListBudgetRecordsDto": {
-            "type": "object"
+        "dto.ListInvoices": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.InvoiceListBody"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
         },
         "dto.ListMenus": {
             "type": "object",
@@ -3857,34 +5062,184 @@
                 }
             }
         },
-        "dto.ListStockTakeDto": {
+        "dto.ListProductDetail": {
+            "type": "object",
+            "properties": {
+                "brandCode": {
+                    "type": "string"
+                },
+                "brandName": {
+                    "type": "string"
+                },
+                "costPrice": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "department": {
+                    "$ref": "#/definitions/models.Department"
+                },
+                "deptID": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemCode": {
+                    "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "productType": {
+                    "$ref": "#/definitions/models.ProductTypes"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "retailPrice": {
+                    "type": "number"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxType": {
+                    "type": "string"
+                },
+                "typeID": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ListProductDetailPure": {
+            "type": "object",
+            "properties": {
+                "brandCode": {
+                    "type": "string"
+                },
+                "brandName": {
+                    "type": "string"
+                },
+                "costPrice": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deptCode": {
+                    "type": "string"
+                },
+                "deptID": {
+                    "type": "string"
+                },
+                "deptName": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemCode": {
+                    "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "retailPrice": {
+                    "type": "number"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxType": {
+                    "type": "string"
+                },
+                "typeCode": {
+                    "type": "string"
+                },
+                "typeID": {
+                    "type": "string"
+                },
+                "typeName": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ListProductLocationtRequestDto": {
             "type": "object",
             "properties": {
                 "limit": {
                     "type": "integer"
                 },
-                "name": {
-                    "type": "string"
+                "locationIds": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
                 "page": {
                     "type": "integer"
                 },
-                "placeIds": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
+                "productCode": {
+                    "type": "string"
                 }
             }
         },
-        "dto.ListWriteOffReqDto": {
+        "dto.ListProductLocationts": {
             "type": "object",
             "properties": {
-                "dateRange": {
+                "limit": {
+                    "type": "integer"
+                },
+                "lists": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/definitions/dto.ProductLocationLists"
                     }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ListProductReqDto": {
+            "type": "object",
+            "properties": {
+                "assetCode": {
+                    "type": "string"
+                },
+                "assetName": {
+                    "type": "string"
                 },
                 "deptIds": {
                     "type": "array",
@@ -3898,13 +5253,27 @@
                 "page": {
                     "type": "integer"
                 },
-                "placeIds": {
+                "typeIds": {
                     "type": "array",
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "dto.ListStockTakeDto": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "number"
                 },
-                "typeIds": {
+                "name": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "number"
+                },
+                "placeIds": {
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -3946,6 +5315,132 @@
                 }
             }
         },
+        "dto.MemberClassList": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MemberClass"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.MemberClassListDto": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.MemberList": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.MemberListDetail"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.MemberListDetail": {
+            "type": "object",
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "address": {
+                    "type": "string"
+                },
+                "classCode": {
+                    "type": "string"
+                },
+                "classId": {
+                    "type": "string"
+                },
+                "className": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fax": {
+                    "type": "string"
+                },
+                "memberClass": {
+                    "$ref": "#/definitions/models.MemberClass"
+                },
+                "memberCode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.MemberListsByNameDto": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.MemberListsDto": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.MenuItemPermissionBody": {
             "type": "object",
             "properties": {
@@ -3962,6 +5457,292 @@
             "type": "object",
             "properties": {
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ProductListList": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ListProductDetail"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ProductLocationLists": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/models.Locations"
+                },
+                "locationId": {
+                    "type": "string"
+                },
+                "product": {
+                    "$ref": "#/definitions/models.ProductLists"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "totalCost": {
+                    "type": "number"
+                },
+                "totalPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.ProductLocationPureList": {
+            "type": "object",
+            "properties": {
+                "brandCode": {
+                    "type": "string"
+                },
+                "brandName": {
+                    "type": "string"
+                },
+                "costPrice": {
+                    "type": "number"
+                },
+                "itemCode": {
+                    "type": "string"
+                },
+                "placeCode": {
+                    "type": "string"
+                },
+                "placeName": {
+                    "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "retailPrice": {
+                    "type": "number"
+                },
+                "totalCost": {
+                    "type": "number"
+                },
+                "totalPrice": {
+                    "type": "number"
+                },
+                "unit": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ProductTypeList": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "lists": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductTypes"
+                    }
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ProductTypeListDto": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.ReturnInvoiceDetailResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "invoice": {
+                    "$ref": "#/definitions/models.Invoice"
+                },
+                "invoiceNumber": {
+                    "type": "string"
+                },
+                "member": {
+                    "$ref": "#/definitions/models.MemberLists"
+                },
+                "processMethod": {
+                    "type": "string"
+                },
+                "refund": {
+                    "type": "boolean"
+                },
+                "refundAmount": {
+                    "type": "number"
+                },
+                "refundMethod": {
+                    "type": "string"
+                },
+                "returnCaseNumber": {
+                    "type": "string"
+                },
+                "returnDatail": {
+                    "type": "string"
+                },
+                "returnDate": {
+                    "type": "string"
+                },
+                "returnItems": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ReturnInvoiceItemDetail"
+                    }
+                },
+                "returnLocationId": {
+                    "type": "string"
+                },
+                "returnMethod": {
+                    "type": "string"
+                },
+                "returnReason": {
+                    "type": "string"
+                },
+                "returnToVendor": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "dto.ReturnInvoiceItemDetail": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "product": {
+                    "$ref": "#/definitions/models.ProductLists"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "returnDataId": {
+                    "type": "string"
+                },
+                "returnInvoiceId": {
+                    "type": "string"
+                },
+                "taxAmount": {
+                    "type": "number"
+                },
+                "taxCode": {
+                    "type": "string"
+                },
+                "taxRate": {
+                    "type": "number"
+                },
+                "taxType": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ReturnInvoicePureList": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "invoiceCreatedAt": {
+                    "type": "string"
+                },
+                "invoiceNumber": {
+                    "type": "string"
+                },
+                "invoiceRemark": {
+                    "type": "string"
+                },
+                "paidAmount": {
+                    "type": "number"
+                },
+                "paidAmountWithTax": {
+                    "type": "number"
+                },
+                "placeCode": {
+                    "type": "string"
+                },
+                "placeName": {
+                    "type": "string"
+                },
+                "processMethod": {
+                    "type": "string"
+                },
+                "refund": {
+                    "type": "string"
+                },
+                "refundAmount": {
+                    "type": "number"
+                },
+                "refundMethod": {
+                    "type": "string"
+                },
+                "returnCaseNumber": {
+                    "type": "string"
+                },
+                "returnDatail": {
+                    "type": "string"
+                },
+                "returnDate": {
+                    "type": "string"
+                },
+                "returnMethod": {
+                    "type": "string"
+                },
+                "returnReason": {
+                    "type": "string"
+                },
+                "returnToVendor": {
+                    "type": "string"
+                },
+                "taxRefNo": {
+                    "type": "string"
+                },
+                "updatedAt": {
                     "type": "string"
                 }
             }
@@ -4014,11 +5795,69 @@
                 }
             }
         },
+        "dto.StockInOutProductLocationDto": {
+            "type": "object",
+            "properties": {
+                "locationId": {
+                    "type": "string"
+                },
+                "placeCode": {
+                    "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "totalCost": {
+                    "type": "number"
+                },
+                "totalPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.StockMoveProductLocationDto": {
+            "type": "object",
+            "properties": {
+                "fromLocationId": {
+                    "type": "string"
+                },
+                "fromPlaceCode": {
+                    "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "toLocationId": {
+                    "type": "string"
+                },
+                "toPlaceCode": {
+                    "type": "string"
+                },
+                "totalCost": {
+                    "type": "number"
+                },
+                "totalPrice": {
+                    "type": "number"
+                }
+            }
+        },
         "dto.StockTakeResponseList": {
             "type": "object",
             "properties": {
                 "limit": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "lists": {
                     "type": "array",
@@ -4027,10 +5866,10 @@
                     }
                 },
                 "page": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "total": {
-                    "type": "integer"
+                    "type": "number"
                 }
             }
         },
@@ -4334,26 +6173,6 @@
                 }
             }
         },
-        "dto.WriteOffList": {
-            "type": "object",
-            "properties": {
-                "limit": {
-                    "type": "integer"
-                },
-                "lists": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.WriteOffs"
-                    }
-                },
-                "page": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
         "models.ActionRecords": {
             "type": "object",
             "properties": {
@@ -4377,190 +6196,6 @@
                     "type": "string"
                 }
             }
-        },
-        "models.AssetListFiles": {
-            "type": "object",
-            "properties": {
-                "assetId": {
-                    "type": "string"
-                },
-                "base64": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "fileName": {
-                    "type": "string"
-                },
-                "fileType": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.AssetLists": {
-            "type": "object",
-            "properties": {
-                "accountCode": {
-                    "type": "string"
-                },
-                "accountName": {
-                    "type": "string"
-                },
-                "afterBeforeTax": {
-                    "type": "number"
-                },
-                "assetCode": {
-                    "type": "string"
-                },
-                "assetName": {
-                    "type": "string"
-                },
-                "brandCode": {
-                    "type": "string"
-                },
-                "brandName": {
-                    "type": "string"
-                },
-                "chequeNo": {
-                    "type": "string"
-                },
-                "cost": {
-                    "type": "number"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "deptId": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "includeTax": {
-                    "type": "boolean"
-                },
-                "invoiceDate": {
-                    "type": "string"
-                },
-                "invoiceNo": {
-                    "type": "string"
-                },
-                "invoiceRemark": {
-                    "description": "I",
-                    "type": "string"
-                },
-                "maintenancePeriodEnd": {
-                    "type": "string"
-                },
-                "maintenancePeriodStart": {
-                    "type": "string"
-                },
-                "placeId": {
-                    "type": "string"
-                },
-                "purchaseDate": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "serialNo": {
-                    "type": "string"
-                },
-                "sponsor": {
-                    "type": "boolean"
-                },
-                "sponsorName": {
-                    "type": "string"
-                },
-                "staffName": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "taxCode": {
-                    "type": "string"
-                },
-                "taxCountryCode": {
-                    "type": "string"
-                },
-                "taxInfoId": {
-                    "type": "string"
-                },
-                "taxRate": {
-                    "type": "number"
-                },
-                "typeId": {
-                    "type": "string"
-                },
-                "unit": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                },
-                "uploadAssetListFiles": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.AssetListFiles"
-                    }
-                },
-                "vendorId": {
-                    "type": "string"
-                },
-                "voucherNo": {
-                    "type": "string"
-                },
-                "voucherUsedDate": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.AssetTypes": {
-            "type": "object",
-            "properties": {
-                "createdAt": {
-                    "type": "string"
-                },
-                "depreciationRate": {
-                    "type": "number"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "remark": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "typeCode": {
-                    "type": "string"
-                },
-                "typeName": {
-                    "type": "string"
-                },
-                "updatedAt": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Budgets": {
-            "type": "object"
         },
         "models.CodeTypes": {
             "type": "object",
@@ -4660,19 +6295,168 @@
                 }
             }
         },
-        "models.Locations": {
+        "models.Invoice": {
             "type": "object",
             "properties": {
                 "createdAt": {
                     "type": "string"
                 },
+                "discount": {
+                    "type": "number"
+                },
+                "discountType": {
+                    "type": "string"
+                },
                 "id": {
+                    "type": "string"
+                },
+                "locationId": {
+                    "type": "string"
+                },
+                "memberId": {
+                    "type": "string"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxRefNo": {
+                    "type": "string"
+                },
+                "taxTotal": {
+                    "type": "number"
+                },
+                "totalAmount": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InvoiceItemList": {
+            "type": "object",
+            "properties": {
+                "discount": {
+                    "type": "number"
+                },
+                "discountType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "invoiceId": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "taxAmount": {
+                    "type": "number"
+                },
+                "taxCode": {
+                    "type": "string"
+                },
+                "taxRate": {
+                    "type": "number"
+                },
+                "taxType": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.InvoicePayment": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "invoiceId": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "paymentTime": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Locations": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "country": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fax": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "placeCode": {
                     "type": "string"
                 },
                 "placeName": {
+                    "type": "string"
+                },
+                "placeOtherName": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "zipCode": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MemberClass": {
+            "type": "object",
+            "properties": {
+                "classCode": {
+                    "type": "string"
+                },
+                "className": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 },
                 "remark": {
@@ -4686,16 +6470,233 @@
                 }
             }
         },
-        "models.StockTakeItems": {
+        "models.MemberLists": {
             "type": "object",
             "properties": {
-                "assetCode": {
+                "address": {
                     "type": "string"
                 },
+                "classId": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "fax": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "memberCode": {
+                    "type": "string"
+                },
+                "memberSpecialDays": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.MemberSpecialDays"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.MemberSpecialDays": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "date": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "memberId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProductListFiles": {
+            "type": "object",
+            "properties": {
                 "assetId": {
                     "type": "string"
                 },
+                "base64": {
+                    "type": "string"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "fileName": {
+                    "type": "string"
+                },
+                "fileType": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.ProductLists": {
+            "type": "object",
+            "properties": {
+                "brandCode": {
+                    "type": "string"
+                },
+                "brandName": {
+                    "type": "string"
+                },
+                "costPrice": {
+                    "type": "number"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "deptId": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "itemCode": {
+                    "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productName": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "retailPrice": {
+                    "type": "number"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "taxType": {
+                    "type": "string"
+                },
+                "typeId": {
+                    "type": "string"
+                },
+                "unit": {
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "uploadProductListFiles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ProductListFiles"
+                    }
+                }
+            }
+        },
+        "models.ProductLocations": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "locationId": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
+                },
+                "totalCost": {
+                    "type": "number"
+                },
+                "totalPrice": {
+                    "type": "number"
+                }
+            }
+        },
+        "models.ProductTypes": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "typeCode": {
+                    "type": "string"
+                },
+                "typeName": {
+                    "type": "string"
+                },
+                "typeOtherName": {
+                    "description": "typeOtherName",
+                    "type": "string"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.StockTakeItems": {
+            "type": "object",
+            "properties": {
                 "checkTime": {
+                    "type": "string"
+                },
+                "finalStatus": {
                     "type": "string"
                 },
                 "id": {
@@ -4703,6 +6704,15 @@
                 },
                 "placeId": {
                     "type": "string"
+                },
+                "productCode": {
+                    "type": "string"
+                },
+                "productId": {
+                    "type": "string"
+                },
+                "qty": {
+                    "type": "number"
                 },
                 "remark": {
                     "type": "string"
@@ -4965,41 +6975,6 @@
                     "type": "string"
                 },
                 "website": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.WriteOffs": {
-            "type": "object",
-            "properties": {
-                "assetId": {
-                    "type": "string"
-                },
-                "createdAt": {
-                    "type": "string"
-                },
-                "disposalMethod": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "lastDay": {
-                    "type": "string"
-                },
-                "lastPlaceId": {
-                    "type": "string"
-                },
-                "reason": {
-                    "type": "string"
-                },
-                "remainingValue": {
-                    "type": "string"
-                },
-                "status": {
-                    "type": "integer"
-                },
-                "updatedAt": {
                     "type": "string"
                 }
             }

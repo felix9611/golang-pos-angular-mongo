@@ -40,7 +40,6 @@ func GetOneVendorByIdGet(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.Vendors  true  "Vendor Request Body"
-// @Success      200      string
 // @Router      /base/vendor/batch-create [post]
 func BatchCreateVendorPost(c *gin.Context) {
 	var vendor []models.Vendors

@@ -15,7 +15,6 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body      dto.InvoiceDashboardReqDto  true  "Request Body"
-// @Success      200      {object}
 // @Router      /query/invoice [post]
 func IvoivceItemQuery(ctx *gin.Context) {
 	var req dto.InvoiceDashboardReqDto
@@ -39,7 +38,6 @@ func IvoivceItemQuery(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      dto.InvoiceDashboardReqDto  true  "Request Body"
-// @Success      200      {object}
 // @Router      /query/product-location [post]
 func ProductLocationQuery(ctx *gin.Context) {
 	var req dto.InvoiceDashboardReqDto
@@ -63,7 +61,6 @@ func ProductLocationQuery(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      dto.InvoiceDashboardReqDto  true  "Request Body"
-// @Success      200      {object}
 // @Router      /query/inventory_records [post]
 func InvRecordQuery(ctx *gin.Context) {
 	var req dto.InvoiceDashboardReqDto

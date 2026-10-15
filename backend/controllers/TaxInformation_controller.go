@@ -16,7 +16,6 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.TaxInformations  true  "Tax Information Request Body"
-// @Success      200      string
 // @Router      /base/tax-information/batch-create [post]
 func BatchCreateTaxInformation(c *gin.Context) {
 	var taxInfo []models.TaxInformations
