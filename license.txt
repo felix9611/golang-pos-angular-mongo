@@ -1,0 +1,14 @@
+NCPL（Non-Commercial Public License）
+This software is licensed under the No-Cost Public License (NCPL). The terms are as follows:
+
+- Free for personal and non-commercial use.
+- For commercial purposes (including enterprise or organization internal use), a commercial license is required.
+
+To obtain a commercial license or customized services, please contact:
+
+Email: felix9611.ca@gmail.com
+
+About the Developer:
+I am a full-stack developer specializing in management solutions. I offer customized services, including report generation, system integration, and more. Companies are welcome to collaborate with me to tailor this tool to your specific needs!
+
+For any questions, feedback, or collaboration inquiries, feel free to reach out.
