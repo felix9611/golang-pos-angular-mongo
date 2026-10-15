@@ -16,7 +16,7 @@ import (
 // @Produce      json
 // @Param        request  body      dto.InvRecordListDto  true  "List Action Record Request Body"
 // @Success      200      {object}  dto.InvRecordListResponse  "List Inventory Records"
-// @Router       /sys/inv-record/list [post]
+// @Router       /inventory-record/list [post]
 func ListInvRecord(c *gin.Context) {
 	var req dto.InvRecordListDto
 
@@ -34,9 +34,35 @@ func ListInvRecord(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      List Inventory Records With Filter
+// @Description  List Inventory Records With Filter
+// @Tags         Inventory Record
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.InvRecordListDto  true  "List Action Record Request Body"
+// @Success      200      {object}  []dto.InvRecordPureList  "List Inventory Records"
+// @Router       /inventory-record/filter/list [post]
+func ListInvRecordWithFilter(c *gin.Context) {
+	var req dto.InvRecordListDto
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := services.ListInvRecordsWithFilter(&req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
 func RegisterInvRecordRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 	InvRecordGroup := rg.Group("/inventory-record", handle.MiddlewareFunc())
 	{
 		InvRecordGroup.POST("/list", ListInvRecord)
+		InvRecordGroup.POST("/filter/list", ListInvRecordWithFilter)
 	}
 }
