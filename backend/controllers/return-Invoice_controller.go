@@ -75,11 +75,36 @@ func ListReturnInvoice(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      List Return Invoice records with filter
+// @Description  List Return Invoice records with filter
+// @Tags         Return Invoice
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.CreateReturnInvoiceDto  true  "Code Type Request Body"
+// @Success      200      {object}  []dto.ReturnInvoicePureList
+// @Router      /return-invoice/filter/list [post]
+func ListReturnInvoiceWithFilter(c *gin.Context) {
+	var req dto.InvoiceListRequestDto
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := services.ListReturnInvoiceWithFilter(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
 func RegisterReturnInvoiceRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 	returnInvoiceRoutes := rg.Group("/return-invoice", handle.MiddlewareFunc())
 	{
 		returnInvoiceRoutes.POST("/create", CreateReturnInvoice)
 		returnInvoiceRoutes.GET("/one/:id", GetReturnInvoiceById)
 		returnInvoiceRoutes.POST("/list", ListReturnInvoice)
+		returnInvoiceRoutes.POST("/filter/list", ListReturnInvoiceWithFilter)
 	}
 }

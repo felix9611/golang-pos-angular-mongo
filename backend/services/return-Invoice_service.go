@@ -5,6 +5,7 @@ import (
 	"golang-pos-mongo-backend/backend/config"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/tools"
 	"math/rand/v2"
 	"strconv"
 	"time"
@@ -354,4 +355,136 @@ func ListReturnInvoice(req dto.InvoiceListRequestDto) (dto.ReturnInvoiceList, er
 		Page:  req.Page,
 		Limit: req.Limit,
 	}, nil
+}
+
+func ListReturnInvoiceWithFilter(req dto.InvoiceListRequestDto) ([]dto.ReturnInvoicePureList, error) {
+	collection := config.GetCollection("return_invoices")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filters := bson.M{
+		"status": 1,
+	}
+
+	if len(req.DateRange) > 0 {
+		filters["createdAt"] = bson.M{"$gte": req.DateRange[0], "$lte": req.DateRange[1]}
+	}
+
+	if req.InvoiceNumber != "" {
+		filters["invoiceNumber"] = bson.M{"$regex": req.InvoiceNumber, "$options": "i"}
+	}
+
+	if req.CaseNumber != "" {
+		filters["returnCaseNumber"] = bson.M{"$regex": req.CaseNumber, "$options": "i"}
+	}
+
+	if len(req.ReturnLocationIds) > 0 {
+		filters["returnLocationId"] = bson.M{"$in": req.ReturnLocationIds}
+	}
+
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: filters}},
+
+		// $lookup invoices
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "invoices"},
+				{Key: "let", Value: bson.D{{Key: "invoiceIdStr", Value: "$invoiceNumber"}}},
+				{Key: "pipeline", Value: bson.A{
+					bson.D{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$number", "$$invoiceIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "invoice"},
+			},
+		}},
+		{{
+			Key: "$lookup", Value: bson.D{
+				{Key: "from", Value: "locations"},
+				{Key: "let", Value: bson.D{
+					{Key: "locationIdStr", Value: bson.D{
+						{Key: "$convert", Value: bson.D{
+							{Key: "input", Value: "$returnLocationId"},
+							{Key: "to", Value: "objectId"},
+							{Key: "onError", Value: nil},
+							{Key: "onNull", Value: nil},
+						}},
+					}},
+				}},
+				{Key: "pipeline", Value: mongo.Pipeline{
+					{{Key: "$match", Value: bson.D{
+						{Key: "$expr", Value: bson.D{
+							{Key: "$eq", Value: bson.A{"$_id", "$$locationIdStr"}},
+						}},
+					}}},
+				}},
+				{Key: "as", Value: "location"},
+			}}},
+		//$unwind
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$invoice"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		{{Key: "$unwind", Value: bson.D{{Key: "path", Value: "$location"}, {Key: "preserveNullAndEmptyArrays", Value: true}}}},
+		// pagination
+	}
+
+	cursor, err := collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+
+	var FinalResults []bson.M
+	if err := cursor.All(ctx, &FinalResults); err != nil {
+		return nil, err
+	}
+
+	var LastResults []dto.ReturnInvoicePureList
+
+	for _, item := range FinalResults {
+
+		var result dto.ReturnInvoicePureList
+
+		switch item["refund"] {
+		case true:
+			result.Refund = "Yes"
+		case false:
+			result.Refund = "No"
+		default:
+			result.Refund = ""
+		}
+
+		switch item["returnToVendor"] {
+		case true:
+			result.ReturnToVendor = "Yes"
+		case false:
+			result.ReturnToVendor = "No"
+		default:
+			result.ReturnToVendor = ""
+		}
+
+		result.InvoiceNumber = item["invoiceNumber"].(string)
+		result.ReturnCaseNumber = item["returnCaseNumber"].(string)
+		result.ReturnReason = item["returnReason"].(string)
+		result.ReturnDate = item["returnDate"].(string)
+		result.ReturnDetail = item["returnDatail"].(string)
+		result.ReturnMethod = item["returnMethod"].(string)
+		result.ProcessMethod = item["processMethod"].(string)
+		result.RefundAmount = item["refundAmount"].(float64)
+		result.RefundMethod = item["refundMethod"].(string)
+		result.CreatedAt = item["createdAt"].(string)
+		result.UpdatedAt = item["updatedAt"].(string)
+		result.TaxRefNo = tools.GetNestedValue(item, "invoice", "taxRefNo").(string)
+		result.PaidAmount = tools.GetFloat64(item, "invoice", "totalAmount").(float64)
+		result.PaidAmountWithTax = tools.GetFloat64(item, "invoice", "taxTotal").(float64)
+		result.InvoiceRemark = tools.GetNestedValue(item, "invoice", "remark").(string)
+		result.InvoiceCreatedAt = tools.GetNestedValue(item, "invoice", "createdAt").(primitive.DateTime).Time().Format("2006-01-02 15:04:05")
+		result.PlaceName = tools.GetNestedValue(item, "location", "placeCode").(string)
+		result.PlaceCode = tools.GetNestedValue(item, "location", "placeName").(string)
+
+		LastResults = append(LastResults, result)
+	}
+
+	return LastResults, nil
 }

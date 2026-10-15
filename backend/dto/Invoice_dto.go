@@ -95,7 +95,7 @@ type ListInvoiceRequestDto struct {
 
 type ListInvoices struct {
 	Lists []InvoiceListBody `bson:"lists" json:"lists"`
-	Total int64             `bson:"total" json:"total"`
+	Total int               `bson:"total" json:"total"`
 	Page  int               `bson:"page" json:"page"`
 	Limit int               `bson:"limit" json:"limit"`
 }

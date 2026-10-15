@@ -99,3 +99,26 @@ type ReturnInvoiceList struct {
 	Page  int                   `json:"page"`
 	Limit int                   `json:"limit"`
 }
+
+type ReturnInvoicePureList struct {
+	InvoiceNumber     string  `json:"invoiceNumber" bson:"invoiceNumber"`
+	ReturnDate        string  `json:"returnDate" bson:"returnDate"`
+	ReturnReason      string  `json:"returnReason" bson:"returnReason"`
+	ReturnCaseNumber  string  `json:"returnCaseNumber" bson:"returnCaseNumber"`
+	ReturnDetail      string  `json:"returnDatail" bson:"returnDatail"`
+	ReturnMethod      string  `json:"returnMethod" bson:"returnMethod"`
+	ProcessMethod     string  `json:"processMethod" bson:"processMethod"`
+	RefundAmount      float64 `json:"refundAmount" bson:"refundAmount"`
+	RefundMethod      string  `json:"refundMethod" bson:"refundMethod"`
+	CreatedAt         string  `json:"createdAt" bson:"createdAt"`
+	UpdatedAt         string  `json:"updatedAt" bson:"updatedAt"`
+	Refund            string  `json:"refund" bson:"refund"`
+	ReturnToVendor    string  `json:"returnToVendor" bson:"returnToVendor"`
+	TaxRefNo          string  `json:"taxRefNo" bson:"taxRefNo"`
+	PaidAmount        float64 `json:"paidAmount" bson:"paidAmount"`
+	PaidAmountWithTax float64 `json:"paidAmountWithTax" bson:"paidAmountWithTax"`
+	InvoiceRemark     string  `json:"invoiceRemark" bson:"invoiceRemark"`
+	InvoiceCreatedAt  string  `json:"invoiceCreatedAt" bson:"invoiceCreatedAt"`
+	PlaceName         string  `json:"placeName" bson:"placeName"`
+	PlaceCode         string  `json:"placeCode" bson:"placeCode"`
+}

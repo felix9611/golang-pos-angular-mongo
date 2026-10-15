@@ -158,23 +158,25 @@ func ListInvRecordsWithFilter(dtoData *dto.InvRecordListDto) ([]dto.InvRecordPur
 	return LastResults, nil
 }
 
-func ListInvRecords(dtoData *dto.InvRecordListDto) (interface{}, error) {
+func ListInvRecords(req *dto.InvRecordListDto) (interface{}, error) {
 	collection := config.GetCollection("inventory_records")
 
 	filters := bson.M{}
 
-	if len(dtoData.Date) > 0 {
-		filters["createdAt"] = bson.M{"$gte": dtoData.Date[0], "$lte": dtoData.Date[1]}
+	if len(req.Date) > 0 {
+		filters["createdAt"] = bson.M{"$gte": req.Date[0], "$lte": req.Date[1]}
 	}
 
-	skip := int64(0)
-	if dtoData.Page == 1 {
-		skip = int64((dtoData.Page) * dtoData.Limit)
-	} else {
-		skip = int64((dtoData.Page - 1) * dtoData.Limit)
+	if req.Page <= 0 {
+		req.Page = 1
 	}
 
-	limit := int64(dtoData.Limit)
+	if req.Limit <= 0 {
+		req.Limit = 10
+	}
+
+	skip := int64((req.Page - 1) * req.Limit)
+	limit := int64(req.Limit)
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: filters}},
@@ -285,7 +287,7 @@ func ListInvRecords(dtoData *dto.InvRecordListDto) (interface{}, error) {
 		return nil, errCount
 	}
 
-	return dto.InvRecordListResponse{Lists: results, Total: count, Page: dtoData.Page, Limit: dtoData.Limit}, nil
+	return dto.InvRecordListResponse{Lists: results, Total: count, Page: req.Page, Limit: req.Limit}, nil
 
 }
 
