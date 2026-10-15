@@ -19,7 +19,6 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.Department  true  "Department Request Body"
-// @Success      200      string
 // @Router      /base/department//create [post]
 func BatchCreateDepartment(c *gin.Context) {
 	var departments []models.Department

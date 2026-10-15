@@ -97,7 +97,7 @@ func GetProductTypes(c *gin.Context) {
 // @Tags         Product Type
 // @Accept       json
 // @Produce      json
-// @Param        request  body      dto.AssetTypeListDto  true  "List Product Type Request Body"
+// @Param        request  body      dto.ProductTypeListDto  true  "List Product Type Request Body"
 // @Success      200      {object}  []models.ProductTypes
 // @Router       /product/product-type/list [post]
 func ListProductTypeWithFilter(c *gin.Context) {
@@ -119,7 +119,7 @@ func ListProductTypeWithFilter(c *gin.Context) {
 // @Tags         Product Type
 // @Accept       json
 // @Produce      json
-// @Param        request  body      dto.AssetTypeListDto  true  "List Product Type Request Body"
+// @Param        request  body      dto.ProductTypeListDto  true  "List Product Type Request Body"
 // @Success      200      {object}  dto.ProductTypeList
 // @Router       /product/product-type/list [post]
 func ListProductType(c *gin.Context) {

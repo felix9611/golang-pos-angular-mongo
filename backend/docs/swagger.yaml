@@ -12,153 +12,24 @@ definitions:
       total:
         type: integer
     type: object
-  dto.AssetListList:
-    properties:
-      limit:
-        type: integer
-      lists:
-        items:
-          $ref: '#/definitions/dto.AssetListsDetails'
-        type: array
-      page:
-        type: integer
-      total:
-        type: integer
-    type: object
-  dto.AssetListsDetails:
-    properties:
-      accountCode:
-        type: string
-      accountName:
-        type: string
-      afterBeforeTax:
-        type: number
-      assetCode:
-        type: string
-      assetName:
-        type: string
-      assetType:
-        $ref: '#/definitions/models.AssetTypes'
-      brandCode:
-        type: string
-      brandName:
-        type: string
-      chequeNo:
-        type: string
-      cost:
-        type: number
-      createdAt:
-        type: string
-      department:
-        $ref: '#/definitions/models.Department'
-      deptId:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      includeTax:
-        type: boolean
-      invoiceDate:
-        type: string
-      invoiceNo:
-        type: string
-      invoiceRemark:
-        description: I
-        type: string
-      location:
-        $ref: '#/definitions/models.Locations'
-      maintenancePeriodEnd:
-        type: string
-      maintenancePeriodStart:
-        type: string
-      placeId:
-        type: string
-      purchaseDate:
-        type: string
-      remark:
-        type: string
-      serialNo:
-        type: string
-      sponsor:
-        type: boolean
-      sponsorName:
-        type: string
-      staffName:
-        type: string
-      status:
-        type: integer
-      taxCode:
-        type: string
-      taxCountryCode:
-        type: string
-      taxInfoId:
-        type: string
-      taxRate:
-        type: number
-      typeId:
-        type: string
-      unit:
-        type: string
-      updatedAt:
-        type: string
-      vendorId:
-        type: string
-      voucherNo:
-        type: string
-      voucherUsedDate:
-        type: string
-    type: object
-  dto.AssetTypeList:
-    properties:
-      limit:
-        type: integer
-      lists:
-        items:
-          $ref: '#/definitions/models.AssetTypes'
-        type: array
-      page:
-        type: integer
-      total:
-        type: integer
-    type: object
-  dto.AssetTypeListDto:
-    properties:
-      limit:
-        type: integer
-      name:
-        type: string
-      page:
-        type: integer
-    type: object
   dto.AuthDataResponse:
     properties:
       data:
         $ref: '#/definitions/models.SysUsers'
     type: object
-  dto.BudgetList:
+  dto.CheckProductAndLocationDto:
     properties:
-      limit:
-        type: integer
-      lists:
-        items:
-          $ref: '#/definitions/models.Budgets'
-        type: array
-      page:
-        type: integer
-      total:
-        type: integer
-    type: object
-  dto.BudgetSummary:
-    properties:
-      budgetAmount:
-        type: number
-      month:
-        type: integer
-      year:
-        type: integer
-      yearMonth:
+      locationId:
         type: string
+      productId:
+        type: string
+    type: object
+  dto.CheckProductAndLocationResponse:
+    properties:
+      data:
+        $ref: '#/definitions/models.ProductLocations'
+      status:
+        type: boolean
     type: object
   dto.CodeTypeList:
     properties:
@@ -182,34 +53,61 @@ definitions:
       page:
         type: integer
     type: object
-  dto.CreateWriteOffRecrod:
+  dto.CreateReturnInvoiceDto:
     properties:
-      assetId:
+      processMethod:
         type: string
-      disposalMethod:
-        type: string
-      lastDay:
-        type: string
-      lastPlaceId:
-        type: string
-      reason:
-        type: string
-      remainingValue:
+      refund:
+        type: boolean
+      refundAmount:
         type: number
+      refundMethod:
+        type: string
+      returnDatail:
+        type: string
+      returnInvoiceNo:
+        type: string
+      returnItems:
+        items:
+          $ref: '#/definitions/dto.CreateReturnInvoiceItemDto'
+        type: array
+      returnLocationId:
+        type: string
+      returnMethod:
+        type: string
+      returnReason:
+        type: string
+      returnToVendor:
+        type: boolean
     type: object
-  dto.DashboardReqDto:
+  dto.CreateReturnInvoiceItemDto:
     properties:
-      dataType:
-        type: boolean
-      dataTypeValue:
+      price:
+        type: number
+      productId:
         type: string
-      dateType:
-        type: boolean
-      dateTypeValue:
+      qty:
+        type: number
+      returnInvoiceId:
         type: string
-      filter:
-        $ref: '#/definitions/dto.DashboardReqFilterDto'
-      valueField:
+      taxAmount:
+        type: number
+      taxCode:
+        type: string
+      taxRate:
+        type: number
+      taxType:
+        type: string
+    type: object
+  dto.CreateStockTakeForm:
+    properties:
+      actionName:
+        type: string
+      actionPlaceId:
+        type: string
+      createdBy:
+        type: string
+      remark:
         type: string
     type: object
   dto.DashboardReqFilterDto:
@@ -222,7 +120,11 @@ definitions:
         items:
           type: string
         type: array
-      purchaseDates:
+      productCode:
+        type: string
+      productName:
+        type: string
+      salesDateRange:
         items:
           type: string
         type: array
@@ -339,8 +241,6 @@ definitions:
         type: string
       assetId:
         type: string
-      assetlist:
-        $ref: '#/definitions/dto.AssetListsDetails'
       checkTime:
         type: string
       id:
@@ -381,25 +281,33 @@ definitions:
     type: object
   dto.InvRecordList:
     properties:
-      assetCode:
+      ProductId:
         type: string
-      assetList:
-        $ref: '#/definitions/models.AssetLists'
+      cost:
+        type: number
       createdAt:
         type: string
       id:
         type: string
-      placeFrom:
+      locFrom:
         type: string
-      placeFromData:
+      locFromData:
         $ref: '#/definitions/models.Locations'
-      placeTo:
+      locTo:
         type: string
-      placeToData:
+      locToData:
         $ref: '#/definitions/models.Locations'
+      product:
+        $ref: '#/definitions/models.ProductLists'
+      qty:
+        type: number
     type: object
   dto.InvRecordListDto:
     properties:
+      date:
+        items:
+          type: string
+        type: array
       limit:
         type: integer
       page:
@@ -418,6 +326,207 @@ definitions:
       total:
         type: integer
     type: object
+  dto.InvRecordPureList:
+    properties:
+      ProductId:
+        type: string
+      brandCode:
+        type: string
+      brandName:
+        type: string
+      cost:
+        type: number
+      costPrice:
+        type: number
+      createdAt:
+        type: string
+      itemCode:
+        type: string
+      locFrom:
+        type: string
+      locFromCode:
+        type: string
+      locFromName:
+        type: string
+      locTo:
+        type: string
+      locToCode:
+        type: string
+      locToName:
+        type: string
+      productCode:
+        type: string
+      productName:
+        type: string
+      qty:
+        type: number
+      retailPrice:
+        type: number
+      unit:
+        type: string
+    type: object
+  dto.InvoiceBody:
+    properties:
+      createdAt:
+        type: string
+      discount:
+        type: number
+      discountType:
+        type: string
+      id:
+        type: string
+      invoiceItems:
+        items:
+          $ref: '#/definitions/dto.InvoiceItemListBody'
+        type: array
+      invoicePayments:
+        items:
+          $ref: '#/definitions/models.InvoicePayment'
+        type: array
+      locationId:
+        type: string
+      memberId:
+        type: string
+      number:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      taxRefNo:
+        type: string
+      taxTotal:
+        type: number
+      totalAmount:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  dto.InvoiceDashboardReqDto:
+    properties:
+      dataTypeValue:
+        type: string
+      dateTypeValue:
+        type: string
+      filter:
+        $ref: '#/definitions/dto.DashboardReqFilterDto'
+      valueField:
+        type: string
+    type: object
+  dto.InvoiceDto:
+    properties:
+      discount:
+        type: number
+      discountType:
+        type: string
+      invoiceItems:
+        items:
+          $ref: '#/definitions/models.InvoiceItemList'
+        type: array
+      invoicePayments:
+        items:
+          $ref: '#/definitions/models.InvoicePayment'
+        type: array
+      locationId:
+        type: string
+      memberId:
+        type: string
+      remark:
+        type: string
+      taxRefNo:
+        type: string
+      taxTotal:
+        type: number
+      totalAmount:
+        type: number
+    type: object
+  dto.InvoiceItemListBody:
+    properties:
+      discount:
+        type: number
+      discountType:
+        type: string
+      id:
+        type: string
+      invoiceId:
+        type: string
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/models.ProductLists'
+      productId:
+        type: string
+      qty:
+        type: number
+      taxAmount:
+        type: number
+      taxCode:
+        type: string
+      taxRate:
+        type: number
+      taxType:
+        type: string
+    type: object
+  dto.InvoiceListBody:
+    properties:
+      createdAt:
+        type: string
+      discount:
+        type: boolean
+      discountType:
+        type: string
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/models.Locations'
+      locationId:
+        type: string
+      memberId:
+        type: string
+      number:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      taxRefNo:
+        type: string
+      taxTotal:
+        type: number
+      totalAmount:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  dto.InvoicePureBody:
+    properties:
+      createdAt:
+        type: string
+      discount:
+        type: number
+      discountType:
+        type: string
+      id:
+        type: string
+      number:
+        type: string
+      placeCode:
+        type: string
+      placeName:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      taxRefNo:
+        type: string
+      taxTotal:
+        type: number
+      totalAmount:
+        type: number
+      updatedAt:
+        type: string
+    type: object
   dto.ListActionRecordReqDto:
     properties:
       limit:
@@ -432,34 +541,33 @@ definitions:
           $ref: '#/definitions/models.SysRoles'
         type: array
     type: object
-  dto.ListAssetReqDto:
+  dto.ListInvoiceRequestDto:
     properties:
-      assetCode:
-        type: string
-      assetName:
-        type: string
-      deptIds:
+      date:
         items:
           type: string
         type: array
       limit:
         type: integer
+      locationId:
+        items:
+          type: string
+        type: array
       page:
         type: integer
-      placeIds:
-        items:
-          type: string
-        type: array
-      purchaseDates:
-        items:
-          type: string
-        type: array
-      typeIds:
-        items:
-          type: string
-        type: array
     type: object
-  dto.ListBudgetRecordsDto:
+  dto.ListInvoices:
+    properties:
+      limit:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/dto.InvoiceListBody'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
     type: object
   dto.ListMenus:
     properties:
@@ -498,25 +606,124 @@ definitions:
       write:
         type: boolean
     type: object
-  dto.ListStockTakeDto:
+  dto.ListProductDetail:
+    properties:
+      brandCode:
+        type: string
+      brandName:
+        type: string
+      costPrice:
+        type: number
+      createdAt:
+        type: string
+      department:
+        $ref: '#/definitions/models.Department'
+      deptID:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      itemCode:
+        type: string
+      productCode:
+        type: string
+      productName:
+        type: string
+      productType:
+        $ref: '#/definitions/models.ProductTypes'
+      remark:
+        type: string
+      retailPrice:
+        type: number
+      status:
+        type: integer
+      taxType:
+        type: string
+      typeID:
+        type: string
+      unit:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  dto.ListProductDetailPure:
+    properties:
+      brandCode:
+        type: string
+      brandName:
+        type: string
+      costPrice:
+        type: number
+      createdAt:
+        type: string
+      deptCode:
+        type: string
+      deptID:
+        type: string
+      deptName:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      itemCode:
+        type: string
+      productCode:
+        type: string
+      productName:
+        type: string
+      remark:
+        type: string
+      retailPrice:
+        type: number
+      status:
+        type: integer
+      taxType:
+        type: string
+      typeCode:
+        type: string
+      typeID:
+        type: string
+      typeName:
+        type: string
+      unit:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  dto.ListProductLocationtRequestDto:
     properties:
       limit:
         type: integer
-      name:
-        type: string
+      locationIds:
+        items:
+          type: string
+        type: array
       page:
         type: integer
-      placeIds:
-        items:
-          type: string
-        type: array
+      productCode:
+        type: string
     type: object
-  dto.ListWriteOffReqDto:
+  dto.ListProductLocationts:
     properties:
-      dateRange:
+      limit:
+        type: integer
+      lists:
         items:
-          type: string
+          $ref: '#/definitions/dto.ProductLocationLists'
         type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.ListProductReqDto:
+    properties:
+      assetCode:
+        type: string
+      assetName:
+        type: string
       deptIds:
         items:
           type: string
@@ -525,11 +732,20 @@ definitions:
         type: integer
       page:
         type: integer
-      placeIds:
+      typeIds:
         items:
           type: string
         type: array
-      typeIds:
+    type: object
+  dto.ListStockTakeDto:
+    properties:
+      limit:
+        type: number
+      name:
+        type: string
+      page:
+        type: number
+      placeIds:
         items:
           type: string
         type: array
@@ -556,6 +772,88 @@ definitions:
       page:
         type: integer
     type: object
+  dto.MemberClassList:
+    properties:
+      limit:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/models.MemberClass'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.MemberClassListDto:
+    properties:
+      limit:
+        type: integer
+      name:
+        type: string
+      page:
+        type: integer
+    type: object
+  dto.MemberList:
+    properties:
+      limit:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/dto.MemberListDetail'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.MemberListDetail:
+    properties:
+      _id:
+        type: string
+      address:
+        type: string
+      classCode:
+        type: string
+      classId:
+        type: string
+      className:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      fax:
+        type: string
+      memberClass:
+        $ref: '#/definitions/models.MemberClass'
+      memberCode:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  dto.MemberListsByNameDto:
+    properties:
+      name:
+        type: string
+    type: object
+  dto.MemberListsDto:
+    properties:
+      limit:
+        type: integer
+      name:
+        type: string
+      page:
+        type: integer
+    type: object
   dto.MenuItemPermissionBody:
     properties:
       id:
@@ -567,6 +865,194 @@ definitions:
   dto.MessageResponse:
     properties:
       message:
+        type: string
+    type: object
+  dto.ProductListList:
+    properties:
+      limit:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/dto.ListProductDetail'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.ProductLocationLists:
+    properties:
+      id:
+        type: string
+      location:
+        $ref: '#/definitions/models.Locations'
+      locationId:
+        type: string
+      product:
+        $ref: '#/definitions/models.ProductLists'
+      productId:
+        type: string
+      qty:
+        type: number
+      totalCost:
+        type: number
+      totalPrice:
+        type: number
+    type: object
+  dto.ProductLocationPureList:
+    properties:
+      brandCode:
+        type: string
+      brandName:
+        type: string
+      costPrice:
+        type: number
+      itemCode:
+        type: string
+      placeCode:
+        type: string
+      placeName:
+        type: string
+      productCode:
+        type: string
+      productName:
+        type: string
+      qty:
+        type: number
+      retailPrice:
+        type: number
+      totalCost:
+        type: number
+      totalPrice:
+        type: number
+      unit:
+        type: string
+    type: object
+  dto.ProductTypeList:
+    properties:
+      limit:
+        type: integer
+      lists:
+        items:
+          $ref: '#/definitions/models.ProductTypes'
+        type: array
+      page:
+        type: integer
+      total:
+        type: integer
+    type: object
+  dto.ProductTypeListDto:
+    properties:
+      limit:
+        type: integer
+      name:
+        type: string
+      page:
+        type: integer
+    type: object
+  dto.ReturnInvoiceDetailResponse:
+    properties:
+      id:
+        type: string
+      invoice:
+        $ref: '#/definitions/models.Invoice'
+      invoiceNumber:
+        type: string
+      member:
+        $ref: '#/definitions/models.MemberLists'
+      processMethod:
+        type: string
+      refund:
+        type: boolean
+      refundAmount:
+        type: number
+      refundMethod:
+        type: string
+      returnCaseNumber:
+        type: string
+      returnDatail:
+        type: string
+      returnDate:
+        type: string
+      returnItems:
+        items:
+          $ref: '#/definitions/dto.ReturnInvoiceItemDetail'
+        type: array
+      returnLocationId:
+        type: string
+      returnMethod:
+        type: string
+      returnReason:
+        type: string
+      returnToVendor:
+        type: boolean
+    type: object
+  dto.ReturnInvoiceItemDetail:
+    properties:
+      id:
+        type: string
+      price:
+        type: number
+      product:
+        $ref: '#/definitions/models.ProductLists'
+      productId:
+        type: string
+      qty:
+        type: number
+      returnDataId:
+        type: string
+      returnInvoiceId:
+        type: string
+      taxAmount:
+        type: number
+      taxCode:
+        type: string
+      taxRate:
+        type: number
+      taxType:
+        type: string
+    type: object
+  dto.ReturnInvoicePureList:
+    properties:
+      createdAt:
+        type: string
+      invoiceCreatedAt:
+        type: string
+      invoiceNumber:
+        type: string
+      invoiceRemark:
+        type: string
+      paidAmount:
+        type: number
+      paidAmountWithTax:
+        type: number
+      placeCode:
+        type: string
+      placeName:
+        type: string
+      processMethod:
+        type: string
+      refund:
+        type: string
+      refundAmount:
+        type: number
+      refundMethod:
+        type: string
+      returnCaseNumber:
+        type: string
+      returnDatail:
+        type: string
+      returnDate:
+        type: string
+      returnMethod:
+        type: string
+      returnReason:
+        type: string
+      returnToVendor:
+        type: string
+      taxRefNo:
+        type: string
+      updatedAt:
         type: string
     type: object
   dto.RoleIdsBody:
@@ -600,18 +1086,56 @@ definitions:
       page:
         type: integer
     type: object
+  dto.StockInOutProductLocationDto:
+    properties:
+      locationId:
+        type: string
+      placeCode:
+        type: string
+      productCode:
+        type: string
+      productId:
+        type: string
+      qty:
+        type: number
+      totalCost:
+        type: number
+      totalPrice:
+        type: number
+    type: object
+  dto.StockMoveProductLocationDto:
+    properties:
+      fromLocationId:
+        type: string
+      fromPlaceCode:
+        type: string
+      productCode:
+        type: string
+      productId:
+        type: string
+      qty:
+        type: number
+      toLocationId:
+        type: string
+      toPlaceCode:
+        type: string
+      totalCost:
+        type: number
+      totalPrice:
+        type: number
+    type: object
   dto.StockTakeResponseList:
     properties:
       limit:
-        type: integer
+        type: number
       lists:
         items:
           $ref: '#/definitions/dto.GetStockTakeResponse'
         type: array
       page:
-        type: integer
+        type: number
       total:
-        type: integer
+        type: number
     type: object
   dto.SysMenuChildrenSencond:
     properties:
@@ -809,19 +1333,6 @@ definitions:
       place:
         type: string
     type: object
-  dto.WriteOffList:
-    properties:
-      limit:
-        type: integer
-      lists:
-        items:
-          $ref: '#/definitions/models.WriteOffs'
-        type: array
-      page:
-        type: integer
-      total:
-        type: integer
-    type: object
   models.ActionRecords:
     properties:
       actionData: {}
@@ -837,128 +1348,6 @@ definitions:
         type: string
       id:
         type: string
-    type: object
-  models.AssetListFiles:
-    properties:
-      assetId:
-        type: string
-      base64:
-        type: string
-      createdAt:
-        type: string
-      fileName:
-        type: string
-      fileType:
-        type: string
-      id:
-        type: string
-      status:
-        type: integer
-      updatedAt:
-        type: string
-    type: object
-  models.AssetLists:
-    properties:
-      accountCode:
-        type: string
-      accountName:
-        type: string
-      afterBeforeTax:
-        type: number
-      assetCode:
-        type: string
-      assetName:
-        type: string
-      brandCode:
-        type: string
-      brandName:
-        type: string
-      chequeNo:
-        type: string
-      cost:
-        type: number
-      createdAt:
-        type: string
-      deptId:
-        type: string
-      description:
-        type: string
-      id:
-        type: string
-      includeTax:
-        type: boolean
-      invoiceDate:
-        type: string
-      invoiceNo:
-        type: string
-      invoiceRemark:
-        description: I
-        type: string
-      maintenancePeriodEnd:
-        type: string
-      maintenancePeriodStart:
-        type: string
-      placeId:
-        type: string
-      purchaseDate:
-        type: string
-      remark:
-        type: string
-      serialNo:
-        type: string
-      sponsor:
-        type: boolean
-      sponsorName:
-        type: string
-      staffName:
-        type: string
-      status:
-        type: integer
-      taxCode:
-        type: string
-      taxCountryCode:
-        type: string
-      taxInfoId:
-        type: string
-      taxRate:
-        type: number
-      typeId:
-        type: string
-      unit:
-        type: string
-      updatedAt:
-        type: string
-      uploadAssetListFiles:
-        items:
-          $ref: '#/definitions/models.AssetListFiles'
-        type: array
-      vendorId:
-        type: string
-      voucherNo:
-        type: string
-      voucherUsedDate:
-        type: string
-    type: object
-  models.AssetTypes:
-    properties:
-      createdAt:
-        type: string
-      depreciationRate:
-        type: number
-      id:
-        type: string
-      remark:
-        type: string
-      status:
-        type: integer
-      typeCode:
-        type: string
-      typeName:
-        type: string
-      updatedAt:
-        type: string
-    type: object
-  models.Budgets:
     type: object
   models.CodeTypes:
     properties:
@@ -1024,15 +1413,113 @@ definitions:
       sort:
         type: integer
     type: object
-  models.Locations:
+  models.Invoice:
     properties:
       createdAt:
         type: string
+      discount:
+        type: number
+      discountType:
+        type: string
       id:
+        type: string
+      locationId:
+        type: string
+      memberId:
+        type: string
+      number:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      taxRefNo:
+        type: string
+      taxTotal:
+        type: number
+      totalAmount:
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  models.InvoiceItemList:
+    properties:
+      discount:
+        type: number
+      discountType:
+        type: string
+      id:
+        type: string
+      invoiceId:
+        type: string
+      price:
+        type: number
+      productId:
+        type: string
+      qty:
+        type: number
+      taxAmount:
+        type: number
+      taxCode:
+        type: string
+      taxRate:
+        type: number
+      taxType:
+        type: string
+    type: object
+  models.InvoicePayment:
+    properties:
+      amount:
+        type: number
+      id:
+        type: string
+      invoiceId:
+        type: string
+      method:
+        type: string
+      paymentTime:
+        type: string
+    type: object
+  models.Locations:
+    properties:
+      address:
+        type: string
+      country:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      fax:
+        type: string
+      id:
+        type: string
+      phone:
         type: string
       placeCode:
         type: string
       placeName:
+        type: string
+      placeOtherName:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+      zipCode:
+        type: string
+    type: object
+  models.MemberClass:
+    properties:
+      classCode:
+        type: string
+      className:
+        type: string
+      createdAt:
+        type: string
+      id:
         type: string
       remark:
         type: string
@@ -1041,18 +1528,167 @@ definitions:
       updatedAt:
         type: string
     type: object
-  models.StockTakeItems:
+  models.MemberLists:
     properties:
-      assetCode:
+      address:
         type: string
+      classId:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      fax:
+        type: string
+      id:
+        type: string
+      memberCode:
+        type: string
+      memberSpecialDays:
+        items:
+          $ref: '#/definitions/models.MemberSpecialDays'
+        type: array
+      name:
+        type: string
+      phone:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.MemberSpecialDays:
+    properties:
+      createdAt:
+        type: string
+      date:
+        type: string
+      id:
+        type: string
+      memberId:
+        type: string
+      name:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.ProductListFiles:
+    properties:
       assetId:
         type: string
+      base64:
+        type: string
+      createdAt:
+        type: string
+      fileName:
+        type: string
+      fileType:
+        type: string
+      id:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  models.ProductLists:
+    properties:
+      brandCode:
+        type: string
+      brandName:
+        type: string
+      costPrice:
+        type: number
+      createdAt:
+        type: string
+      deptId:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      itemCode:
+        type: string
+      productCode:
+        type: string
+      productName:
+        type: string
+      remark:
+        type: string
+      retailPrice:
+        type: number
+      status:
+        type: integer
+      taxType:
+        type: string
+      typeId:
+        type: string
+      unit:
+        type: string
+      updatedAt:
+        type: string
+      uploadProductListFiles:
+        items:
+          $ref: '#/definitions/models.ProductListFiles'
+        type: array
+    type: object
+  models.ProductLocations:
+    properties:
+      id:
+        type: string
+      locationId:
+        type: string
+      productId:
+        type: string
+      qty:
+        type: number
+      totalCost:
+        type: number
+      totalPrice:
+        type: number
+    type: object
+  models.ProductTypes:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      remark:
+        type: string
+      status:
+        type: integer
+      typeCode:
+        type: string
+      typeName:
+        type: string
+      typeOtherName:
+        description: typeOtherName
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  models.StockTakeItems:
+    properties:
       checkTime:
+        type: string
+      finalStatus:
         type: string
       id:
         type: string
       placeId:
         type: string
+      productCode:
+        type: string
+      productId:
+        type: string
+      qty:
+        type: number
       remark:
         type: string
       status:
@@ -1228,29 +1864,6 @@ definitions:
       website:
         type: string
     type: object
-  models.WriteOffs:
-    properties:
-      assetId:
-        type: string
-      createdAt:
-        type: string
-      disposalMethod:
-        type: string
-      id:
-        type: string
-      lastDay:
-        type: string
-      lastPlaceId:
-        type: string
-      reason:
-        type: string
-      remainingValue:
-        type: string
-      status:
-        type: integer
-      updatedAt:
-        type: string
-    type: object
 host: localhost:6500
 info:
   contact:
@@ -1287,334 +1900,6 @@ paths:
       summary: List Action Records
       tags:
       - Action Records
-  /asset/asset-list/chart-query-date:
-    post:
-      consumes:
-      - application/json
-      description: Query Asset Data by Data Type
-      parameters:
-      - description: Dashboard Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.DashboardReqDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              type: string
-            type: array
-      summary: Query Asset Data by Data Type
-      tags:
-      - AssetList
-  /asset/asset-list/create:
-    post:
-      consumes:
-      - application/json
-      description: Create Asset Item record
-      parameters:
-      - description: Asset List Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/models.AssetLists'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.AssetLists'
-            type: array
-      summary: Create Asset Item record
-      tags:
-      - AssetList
-  /asset/asset-list/file-remove/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Remove Asset File record
-      parameters:
-      - description: asset file ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralUpdateResponse'
-      summary: Remove Asset File record
-      tags:
-      - AssetList
-  /asset/asset-list/list:
-    post:
-      consumes:
-      - application/json
-      description: List Asset Items
-      parameters:
-      - description: Asset List Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          items:
-            $ref: '#/definitions/dto.ListAssetReqDto'
-          type: array
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/dto.AssetListList'
-            type: array
-      summary: List Asset Items
-      tags:
-      - AssetList
-  /asset/asset-list/list-all:
-    get:
-      consumes:
-      - application/json
-      description: List All Asset Items
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.AssetLists'
-            type: array
-      summary: List All Asset Items
-      tags:
-      - AssetList
-  /asset/asset-list/update:
-    post:
-      consumes:
-      - application/json
-      description: Update Asset Item record
-      parameters:
-      - description: Asset List Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.AssetLists'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralUpdateResponse'
-      summary: Update Asset Item record
-      tags:
-      - AssetList
-  /asset/stock-take/create:
-    post:
-      consumes:
-      - application/json
-      description: Create one stock take form
-      parameters:
-      - description: List Action Record Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.StockTakes'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralCreateResponseBody'
-      summary: Create one stock take form
-      tags:
-      - Stock Take
-  /asset/stock-take/finish/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Finish stock take form
-      parameters:
-      - description: Stock Take Form ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralUpdateResponse'
-      summary: Finish stock take form
-      tags:
-      - Stock Take
-  /asset/stock-take/item-submit:
-    post:
-      consumes:
-      - application/json
-      description: Submit stock take item
-      parameters:
-      - description: Stock Take Item Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.StockTakeItems'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralCreateResponseBody'
-      summary: Submit stock take item
-      tags:
-      - Stock Take
-  /asset/stock-take/list:
-    post:
-      consumes:
-      - application/json
-      description: List stock take forms with pagination
-      parameters:
-      - description: List Action Record Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ListStockTakeDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.StockTakeResponseList'
-      summary: List stock take forms with pagination
-      tags:
-      - Stock Take
-  /asset/stock-take/one/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Get one stock take form by id
-      parameters:
-      - description: Stock Take Form ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GetStockTakeFormWithItemsResponse'
-      summary: Get one stock take form by id
-      tags:
-      - Stock Take
-  /asset/stock-take/void/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Void stock take form
-      parameters:
-      - description: Stock Take Form ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralCreateResponseBody'
-      summary: Void stock take form
-      tags:
-      - Stock Take
-  /asset/type/all:
-    get:
-      consumes:
-      - application/json
-      description: Get one Asset Type records
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.AssetTypes'
-            type: array
-      summary: Get one Asset Type records
-      tags:
-      - Asset Type
-  /asset/type/create:
-    post:
-      consumes:
-      - application/json
-      description: Create one Asset Type record
-      parameters:
-      - description: Asset Type Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.AssetTypes'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralCreateResponseBody'
-      summary: Create one Asset Type record
-      tags:
-      - Asset Type
-  /asset/type/filter/list:
-    post:
-      consumes:
-      - application/json
-      description: List Asset Types
-      parameters:
-      - description: List Asset Types Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.AssetTypeListDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.AssetTypes'
-            type: array
-      summary: List Asset Types
-      tags:
-      - Asset Type
   /asset/type/list:
     get:
       consumes:
@@ -1630,302 +1915,7 @@ paths:
       summary: Get user details by token
       tags:
       - Auth
-    post:
-      consumes:
-      - application/json
-      description: List Asset Types
-      parameters:
-      - description: List Asset Types Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.AssetTypeListDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.AssetTypeList'
-      summary: List Asset Types
-      tags:
-      - Asset Type
-  /asset/type/one/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Get one Asset Type record by id
-      parameters:
-      - description: Asset Type ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.AssetTypes'
-      summary: Get one Asset Type record by id
-      tags:
-      - Asset Type
-  /asset/type/update:
-    post:
-      consumes:
-      - application/json
-      description: Update one Asset Type record
-      parameters:
-      - description: Asset Type Request Body for update
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.AssetTypes'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralUpdateResponse'
-      summary: Update one Asset Type record
-      tags:
-      - Asset Type
-  /asset/type/void/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Void one Asset Type record by id
-      parameters:
-      - description: Asset Type ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralUpdateInactiveResponseBody'
-      summary: Void one Asset Type record by id
-      tags:
-      - Asset Type
-  /asset/write-off/create:
-    post:
-      consumes:
-      - application/json
-      description: Create one Write Off record
-      parameters:
-      - description: Write Off Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.CreateWriteOffRecrod'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralCreateResponseBody'
-      summary: Create one Write Off record
-      tags:
-      - Write Off
-  /asset/write-off/list:
-    post:
-      consumes:
-      - application/json
-      description: List Write Off Records
-      parameters:
-      - description: List Write Off Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.ListWriteOffReqDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.WriteOffList'
-      summary: List Write Off Records
-      tags:
-      - Write Off
-  /base/asset-list/code/{code}:
-    get:
-      consumes:
-      - application/json
-      description: Get one asset record by code
-      parameters:
-      - description: asset code
-        in: path
-        name: code
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.AssetLists'
-      summary: Get one asset record by code
-      tags:
-      - AssetList
-  /base/asset-list/load-file/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Get one asset file records by id
-      parameters:
-      - description: asset list ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.AssetListFiles'
-            type: array
-      summary: Get one asset file records by id
-      tags:
-      - AssetList
-  /base/asset-list/one/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Get one asset record by id
-      parameters:
-      - description: asset list ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.AssetLists'
-      summary: Get one asset record by id
-      tags:
-      - AssetList
-  /base/budget/create:
-    post:
-      consumes:
-      - application/json
-      description: Create one Budget record
-      parameters:
-      - description: Budget Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.Budgets'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralCreateResponseBody'
-      summary: Create one Budget record
-      tags:
-      - Budget
-  /base/budget/getBudgetSummary:
-    get:
-      consumes:
-      - application/json
-      description: Get budget summary
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.BudgetSummary'
-      summary: Get budget summary
-      tags:
-      - Budget
-  /base/budget/one/{id}:
-    get:
-      consumes:
-      - application/json
-      description: Get one budget record by id
-      parameters:
-      - description: budget ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Budgets'
-      summary: Get one budget record by id
-      tags:
-      - Budget
-  /base/budget/update:
-    post:
-      consumes:
-      - application/json
-      description: Update one budget record
-      parameters:
-      - description: Budget Request Body for update
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/models.Budgets'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralUpdateInactiveResponseBody'
-      summary: Update one budget record
-      tags:
-      - Budget
-  /base/budget/void/{id}:
-    delete:
-      consumes:
-      - application/json
-      description: Delete one budget record by id
-      parameters:
-      - description: Budget ID
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.GeneralUpdateInactiveResponseBody'
-      summary: Delete one budget record by id
-      tags:
-      - Budget
-  /base/code-type/batch-upload:
+  /base/code-type/batch-create:
     post:
       consumes:
       - application/json
@@ -1943,11 +1933,9 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: Batch upload Asset Type record
           schema:
-            items:
-              $ref: '#/definitions/models.CodeTypes'
-            type: array
+            type: string
       summary: Batch upload code type record
       tags:
       - Code Type
@@ -2104,6 +2092,52 @@ paths:
       summary: Delete one code type record by id
       tags:
       - Code Type
+  /base/department//create:
+    post:
+      consumes:
+      - application/json
+      description: Batch Create Department record
+      parameters:
+      - description: Department Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Department'
+          type: array
+      produces:
+      - application/json
+      responses: {}
+      summary: Batch Create Department record
+      tags:
+      - Department
+  /base/department/batch-upload:
+    post:
+      consumes:
+      - application/json
+      description: Batch upload department record
+      parameters:
+      - description: Department Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Department'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Department'
+            type: array
+      summary: Batch upload department record
+      tags:
+      - Department
   /base/location/all:
     get:
       description: Get all location record
@@ -2119,6 +2153,26 @@ paths:
       summary: Get all location record
       tags:
       - Location
+  /base/location/batch-create:
+    post:
+      consumes:
+      - application/json
+      description: Batch Create location record
+      parameters:
+      - description: Locations Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Locations'
+          type: array
+      produces:
+      - application/json
+      responses: {}
+      summary: Batch Create location record
+      tags:
+      - Tax Information
   /base/location/create:
     post:
       consumes:
@@ -2266,6 +2320,26 @@ paths:
       summary: Get all Tax Information record
       tags:
       - Tax Information
+  /base/tax-information/batch-create:
+    post:
+      consumes:
+      - application/json
+      description: Batch Create Tax Information record
+      parameters:
+      - description: Tax Information Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.TaxInformations'
+          type: array
+      produces:
+      - application/json
+      responses: {}
+      summary: Batch Create Tax Information record
+      tags:
+      - Tax Information
   /base/tax-information/create:
     post:
       consumes:
@@ -2286,6 +2360,30 @@ paths:
           schema:
             $ref: '#/definitions/dto.GeneralCreateResponseBody'
       summary: Create one Tax Information record
+      tags:
+      - Tax Information
+  /base/tax-information/filter/list:
+    post:
+      consumes:
+      - application/json
+      description: List Tax Information With filter
+      parameters:
+      - description: List Tax Information Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TaxInformationListDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.TaxInformations'
+            type: array
+      summary: List Tax Information With filter
       tags:
       - Tax Information
   /base/tax-information/list:
@@ -2387,6 +2485,26 @@ paths:
               $ref: '#/definitions/models.Vendors'
             type: array
       summary: Get all Vendor record
+      tags:
+      - Vendor
+  /base/vendor/batch-create:
+    post:
+      consumes:
+      - application/json
+      description: Batch create vendor record
+      parameters:
+      - description: Vendor Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.Vendors'
+          type: array
+      produces:
+      - application/json
+      responses: {}
+      summary: Batch create vendor record
       tags:
       - Vendor
   /base/vendor/create:
@@ -2497,18 +2615,86 @@ paths:
       summary: Delete one vendor record by id
       tags:
       - Vendor
-  /sys/budget/filter/list:
+  /inventory-record/filter/list:
     post:
       consumes:
       - application/json
-      description: List Budgets With Filter
+      description: List Inventory Records With Filter
       parameters:
-      - description: List Budget Request Body
+      - description: List Action Record Request Body
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.ListBudgetRecordsDto'
+          $ref: '#/definitions/dto.InvRecordListDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List Inventory Records
+          schema:
+            items:
+              $ref: '#/definitions/dto.InvRecordPureList'
+            type: array
+      summary: List Inventory Records With Filter
+      tags:
+      - Inventory Record
+  /inventory-record/list:
+    post:
+      consumes:
+      - application/json
+      description: List Inventory Records
+      parameters:
+      - description: List Action Record Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InvRecordListDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List Inventory Records
+          schema:
+            $ref: '#/definitions/dto.InvRecordListResponse'
+      summary: List Inventory Records
+      tags:
+      - Inventory Record
+  /inventory/check:
+    post:
+      consumes:
+      - application/json
+      description: List Product Locations
+      parameters:
+      - description: List Location Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CheckProductAndLocationDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CheckProductAndLocationResponse'
+      summary: List Product Locations
+      tags:
+      - Inventory
+  /inventory/filter/product-location-list:
+    post:
+      consumes:
+      - application/json
+      description: List Product Locations With Filter
+      parameters:
+      - description: List Location Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ListProductLocationtRequestDto'
       produces:
       - application/json
       responses:
@@ -2516,33 +2702,1137 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Budgets'
+              $ref: '#/definitions/dto.ProductLocationPureList'
             type: array
-      summary: List Budgets With Filter
+      summary: List Product Locations With Filter
       tags:
-      - Budget
-  /sys/budget/list:
+      - Inventory
+  /inventory/product-location-list:
     post:
       consumes:
       - application/json
-      description: List Budgets
+      description: List Product Locations
       parameters:
-      - description: List Budget Request Body
+      - description: List Location Request Body
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/dto.ListBudgetRecordsDto'
+          $ref: '#/definitions/dto.ListProductLocationtRequestDto'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/dto.BudgetList'
-      summary: List Budgets
+            $ref: '#/definitions/dto.ListProductLocationts'
+      summary: List Product Locations
       tags:
-      - Budget
+      - Inventory
+  /inventory/stock-in:
+    post:
+      consumes:
+      - application/json
+      description: Stock In
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockInOutProductLocationDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Stock In
+      tags:
+      - Inventory
+  /inventory/stock-move:
+    post:
+      consumes:
+      - application/json
+      description: Stock Move
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockMoveProductLocationDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Stock Move
+      tags:
+      - Inventory
+  /inventory/stock-out:
+    post:
+      consumes:
+      - application/json
+      description: Stock Out
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.StockInOutProductLocationDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Stock Out
+      tags:
+      - Inventory
+  /invoice/create:
+    post:
+      consumes:
+      - application/json
+      description: Create one Invoice record
+      parameters:
+      - description: Invoice Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InvoiceDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Create one Invoice record
+      tags:
+      - Invoice
+  /invoice/filter/list:
+    post:
+      consumes:
+      - application/json
+      description: List Invoice With Filter
+      parameters:
+      - description: List Code Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ListInvoiceRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.InvoicePureBody'
+            type: array
+      summary: List Invoice With Filter
+      tags:
+      - Invoice
+  /invoice/list:
+    post:
+      consumes:
+      - application/json
+      description: List Invoice
+      parameters:
+      - description: List Code Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ListInvoiceRequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListInvoices'
+      summary: List Invoice
+      tags:
+      - Invoice
+  /invoice/number/{number}:
+    get:
+      consumes:
+      - application/json
+      description: Get one Invoice record by number
+      parameters:
+      - description: Invoice Number
+        in: path
+        name: number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.InvoiceBody'
+      summary: Get one Invoice record by number
+      tags:
+      - Invoice
+  /invoice/one/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one Invoice record by id
+      parameters:
+      - description: Invoice ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.InvoiceBody'
+      summary: Get one Invoice record by id
+      tags:
+      - Invoice
+  /member/member-class/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all records
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.MemberClass'
+            type: array
+      summary: Get all records
+      tags:
+      - Member Class
+  /member/member-class/create:
+    post:
+      consumes:
+      - application/json
+      description: Create one Member Class record
+      parameters:
+      - description: Member Class Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.MemberClass'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Create one Member Class record
+      tags:
+      - Member Class
+  /member/member-class/list:
+    post:
+      consumes:
+      - application/json
+      description: List Member Class
+      parameters:
+      - description: List Member Class Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MemberClassListDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.MemberClassList'
+      summary: List Member Class
+      tags:
+      - Member Class
+  /member/member-class/one/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one Member Class record by id
+      parameters:
+      - description: Member Class ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MemberClass'
+      summary: Get one Member Class record by id
+      tags:
+      - Member Class
+  /member/member-class/update:
+    post:
+      consumes:
+      - application/json
+      description: Update one Member Class record
+      parameters:
+      - description: Member Class Request Body for update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.MemberClass'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Update one Member Class record
+      tags:
+      - Member Class
+  /member/member-class/void/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Void one Product Types record by id
+      parameters:
+      - description: Product Types ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateInactiveResponseBody'
+      summary: Void one Product Types record by id
+      tags:
+      - Product Types
+  /member/member-list/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one member record by id
+      parameters:
+      - description: member ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.MemberLists'
+      summary: Get one member record by id
+      tags:
+      - Member List
+  /member/member-list/create:
+    post:
+      consumes:
+      - application/json
+      description: Create one member record
+      parameters:
+      - description: Member List Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.MemberLists'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Create one member record
+      tags:
+      - Member List
+  /member/member-list/list:
+    post:
+      consumes:
+      - application/json
+      description: List Member Items
+      parameters:
+      - description: Asset List Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.MemberListsDto'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.MemberList'
+            type: array
+      summary: List Member Items
+      tags:
+      - Member List
+  /member/member-list/list-member:
+    post:
+      consumes:
+      - application/json
+      description: List Member by name
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.MemberListsByNameDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.MemberList'
+            type: array
+      summary: List Member by name
+      tags:
+      - Member List
+  /member/member-list/special-day/remove/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove member special day record
+      parameters:
+      - description: special day data ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Remove member special day record
+      tags:
+      - Member List
+  /member/member-list/update:
+    post:
+      consumes:
+      - application/json
+      description: Update member record
+      parameters:
+      - description: Member List Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductLists'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Update member record
+      tags:
+      - Member List
+  /member/member-list/void/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove member record
+      parameters:
+      - description: asset file ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Remove member record
+      tags:
+      - Member List
+  /product/load-file/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one product file records by id
+      parameters:
+      - description: product list ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ProductListFiles'
+            type: array
+      summary: Get one product file records by id
+      tags:
+      - Product List
+  /product/product-list/{code}:
+    get:
+      consumes:
+      - application/json
+      description: Get one product record by code
+      parameters:
+      - description: product code
+        in: path
+        name: code
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ProductLists'
+      summary: Get one product record by code
+      tags:
+      - ProductList
+  /product/product-list/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one product record by id
+      parameters:
+      - description: product list ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ProductLists'
+      summary: Get one product record by id
+      tags:
+      - Product List
+  /product/product-list/create:
+    post:
+      consumes:
+      - application/json
+      description: Create one Product List record
+      parameters:
+      - description: Product List Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductLists'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Create one Product List record
+      tags:
+      - Product List
+  /product/product-list/file-remove/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove Product File record
+      parameters:
+      - description: asset file ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Remove Product File record
+      tags:
+      - Product List
+  /product/product-list/filter/list:
+    post:
+      consumes:
+      - application/json
+      description: List Product Items with filters
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.ListProductReqDto'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ListProductDetailPure'
+            type: array
+      summary: List Product Items with filters
+      tags:
+      - Product List
+  /product/product-list/list:
+    post:
+      consumes:
+      - application/json
+      description: List Product Items
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/dto.ListProductReqDto'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ProductListList'
+            type: array
+      summary: List Product Items
+      tags:
+      - Product List
+  /product/product-list/update:
+    post:
+      consumes:
+      - application/json
+      description: Update Product Item record
+      parameters:
+      - description: Asset List Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductLists'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Update Product Item record
+      tags:
+      - Product List
+  /product/product-list/void/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Void one Product Items record by id
+      parameters:
+      - description: Product Items ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateInactiveResponseBody'
+      summary: Void one Product Items record by id
+      tags:
+      - Product Items
+  /product/product-type/all:
+    get:
+      consumes:
+      - application/json
+      description: Get all records
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.ProductTypes'
+            type: array
+      summary: Get all records
+      tags:
+      - Product Type
+  /product/product-type/batch-create:
+    post:
+      consumes:
+      - application/json
+      description: Batch upload Product Type record
+      parameters:
+      - description: Product Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          items:
+            $ref: '#/definitions/models.ProductTypes'
+          type: array
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Batch upload Product Type record
+          schema:
+            type: string
+      summary: Batch upload Product Type record
+      tags:
+      - Product Type
+  /product/product-type/create:
+    post:
+      consumes:
+      - application/json
+      description: Create one Product Type record
+      parameters:
+      - description: Product Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductTypes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Create one Product Type record
+      tags:
+      - Product Type
+  /product/product-type/list:
+    post:
+      consumes:
+      - application/json
+      description: List Product Types
+      parameters:
+      - description: List Product Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ProductTypeListDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ProductTypeList'
+      summary: List Product Types
+      tags:
+      - Product Type
+  /product/product-type/one/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one Product Type record by id
+      parameters:
+      - description: Product Type ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.ProductTypes'
+      summary: Get one Product Type record by id
+      tags:
+      - Product Type
+  /product/product-type/update:
+    post:
+      consumes:
+      - application/json
+      description: Update one Product Types record
+      parameters:
+      - description: Product Types Request Body for update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductTypes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Update one Product Types record
+      tags:
+      - Product Types
+  /product/product-type/void/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Void one Product Types record by id
+      parameters:
+      - description: Product Types ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateInactiveResponseBody'
+      summary: Void one Product Types record by id
+      tags:
+      - Product Types
+  /query/inventory_records:
+    post:
+      consumes:
+      - application/json
+      description: Get query for inventory by data type
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InvoiceDashboardReqDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Get query for inventory by data type
+      tags:
+      - Query
+  /query/invoice:
+    post:
+      consumes:
+      - application/json
+      description: Get query for invoice item by data type
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InvoiceDashboardReqDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Get query for invoice item by data type
+      tags:
+      - Query
+  /query/product-location:
+    post:
+      consumes:
+      - application/json
+      description: Get query for product location by data type
+      parameters:
+      - description: Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.InvoiceDashboardReqDto'
+      produces:
+      - application/json
+      responses: {}
+      summary: Get query for product location by data type
+      tags:
+      - Query
+  /return-invoice/create:
+    post:
+      consumes:
+      - application/json
+      description: Create one Return Invoice record
+      parameters:
+      - description: Code Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateReturnInvoiceDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Create one Return Invoice record
+      tags:
+      - Return Invoice
+  /return-invoice/filter/list:
+    post:
+      consumes:
+      - application/json
+      description: List Return Invoice records with filter
+      parameters:
+      - description: Code Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateReturnInvoiceDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.ReturnInvoicePureList'
+            type: array
+      summary: List Return Invoice records with filter
+      tags:
+      - Return Invoice
+  /return-invoice/list:
+    post:
+      consumes:
+      - application/json
+      description: List Return Invoice records
+      parameters:
+      - description: Code Type Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateReturnInvoiceDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: List Return Invoice records
+      tags:
+      - Return Invoice
+  /return-invoice/one/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one Return Invoice record by id
+      parameters:
+      - description: data ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ReturnInvoiceDetailResponse'
+      summary: Get one Return Invoicee record by id
+      tags:
+      - Return Invoice
+  /stock-take/create-form:
+    post:
+      consumes:
+      - application/json
+      description: Create one stock take form
+      parameters:
+      - description: List Action Record Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateStockTakeForm'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Create one stock take form
+      tags:
+      - Stock Take
+  /stock-take/finish/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Finish stock take form
+      parameters:
+      - description: Stock Take Form ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Finish stock take form
+      tags:
+      - Stock Take
+  /stock-take/item-submit:
+    post:
+      consumes:
+      - application/json
+      description: Submit stock take item
+      parameters:
+      - description: Stock Take Item Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockTakeItems'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Submit stock take item
+      tags:
+      - Stock Take
+  /stock-take/list:
+    post:
+      consumes:
+      - application/json
+      description: List stock take forms with pagination
+      parameters:
+      - description: List Action Record Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.ListStockTakeDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.StockTakeResponseList'
+      summary: List stock take forms with pagination
+      tags:
+      - Stock Take
+  /stock-take/one/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get one stock take form by id
+      parameters:
+      - description: Stock Take Form ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetStockTakeFormWithItemsResponse'
+      summary: Get one stock take form by id
+      tags:
+      - Stock Take
+  /stock-take/update:
+    post:
+      consumes:
+      - application/json
+      description: Update one stock take form
+      parameters:
+      - description: List Action Record Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.StockTakes'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralUpdateResponse'
+      summary: Update one stock take form
+      tags:
+      - Stock Take
+  /stock-take/void/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Void stock take form
+      parameters:
+      - description: Stock Take Form ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GeneralCreateResponseBody'
+      summary: Void stock take form
+      tags:
+      - Stock Take
   /sys/department/{id}:
     get:
       consumes:
@@ -2577,6 +3867,30 @@ paths:
               $ref: '#/definitions/models.Department'
             type: array
       summary: Get all Department record
+      tags:
+      - Department
+  /sys/department/filter/list:
+    post:
+      consumes:
+      - application/json
+      description: List Departments with filter
+      parameters:
+      - description: List Action Record Request Body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DepartmentPageDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Department'
+            type: array
+      summary: List Departments with filter
       tags:
       - Department
   /sys/department/list:
@@ -2774,28 +4088,6 @@ paths:
       summary: Void one ExcelFieldMatch record by id
       tags:
       - Excel Field Match
-  /sys/inv-record/list:
-    post:
-      consumes:
-      - application/json
-      description: List Inventory Records
-      parameters:
-      - description: List Action Record Request Body
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/dto.InvRecordListDto'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: List Inventory Records
-          schema:
-            $ref: '#/definitions/dto.InvRecordListResponse'
-      summary: List Inventory Records
-      tags:
-      - Inventory Record
   /sys/menu/all-menu:
     get:
       consumes:

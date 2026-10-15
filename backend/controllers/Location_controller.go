@@ -16,7 +16,6 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.Locations  true  "Locations Request Body"
-// @Success      200      string
 // @Router      /base/location/batch-create [post]
 func BatchCreateLocation(c *gin.Context) {
 	var locations []models.Locations
