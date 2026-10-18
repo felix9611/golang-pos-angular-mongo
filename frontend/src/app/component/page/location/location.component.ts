@@ -139,6 +139,8 @@ export class LocationComponent {
                 fax: '',
                 remark: ''
             }
+            
+            this.okText = 'Create'
         }
     }
 
