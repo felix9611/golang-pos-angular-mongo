@@ -173,6 +173,8 @@ export class TaxInformationComponent {
                 importRate: 0,
                 remark:  ''
             }
+            
+            this.okText = 'Create'
         }
     }
 

@@ -125,6 +125,8 @@ export class ProductTypeComponent {
                 typeOtherName: '',
                 remark: ''
             }
+            
+            this.okText = 'Create'
         }
     }
 

@@ -117,6 +117,8 @@ export class CodeTypeComponent {
                 valueName: '',
                 type: ''
             }
+
+            this.okText = 'Create'
         }
     }
 
