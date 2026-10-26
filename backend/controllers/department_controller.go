@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -19,21 +20,35 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.Department  true  "Department Request Body"
+// @Success      200      string
 // @Router      /base/department//create [post]
 func BatchCreateDepartment(c *gin.Context) {
-	var departments []models.Department
-	if err := c.ShouldBindJSON(&departments); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.BatchCreateDepartment(departments)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var departments []models.Department
+		if err := c.ShouldBindJSON(&departments); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.BatchCreateDepartment(departments)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get one Department record by id
@@ -45,13 +60,26 @@ func BatchCreateDepartment(c *gin.Context) {
 // @Success      200      {object}  models.Department
 // @Router       /sys/department/{id} [get]
 func GetOneDepartmentById(c *gin.Context) {
-	id := c.Param("id")
-	department, err := services.GetOneDepartment(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get department"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": department})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		department, err := services.GetOneDepartment(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get department"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": department})
+	}
 }
 
 // @Summary      Get all Department record
@@ -61,12 +89,25 @@ func GetOneDepartmentById(c *gin.Context) {
 // @Success      200      {object}  []models.Department
 // @Router       /sys/department/all [get]
 func GetAllDepartments(c *gin.Context) {
-	departments, err := services.GetAllDepartments()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get departments"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": departments})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		departments, err := services.GetAllDepartments()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get departments"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": departments})
+	}
 }
 
 // @Summary      Create one dpartment record
@@ -78,18 +119,31 @@ func GetAllDepartments(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralCreateResponseBody
 // @Router      /sys/dpartment/create [post]
 func CreateDepartment(c *gin.Context) {
-	var department models.Department
-	if err := c.ShouldBindJSON(&department); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	id, err := services.CreateDepartment(&department)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
-		return
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var department models.Department
+		if err := c.ShouldBindJSON(&department); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		id, err := services.CreateDepartment(&department)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"id": id})
 	}
-	c.JSON(http.StatusCreated, gin.H{"id": id})
 }
 
 // @Summary      Update one dpartment record
@@ -101,21 +155,34 @@ func CreateDepartment(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router      /sys/dpartment/update/{id} [post]
 func UpdateDepartment(c *gin.Context) {
-	id := c.Param("id")
-	log.Println("UpdateDepartment ID:", id)
-	var department models.Department
-	if err := c.ShouldBindJSON(&department); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.UpdateDeptById(id, &department)
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		log.Println("UpdateDepartment ID:", id)
+		var department models.Department
+		if err := c.ShouldBindJSON(&department); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update department"})
-		return
+		result, err := services.UpdateDeptById(id, &department)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update department"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Update Tongs by ID", "id": id, "data": result})
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Update Tongs by ID", "id": id, "data": result})
 }
 
 // @Summary      Delete one dpartment record by id
@@ -127,13 +194,26 @@ func UpdateDepartment(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
 // @Router      /sys/dpartment/void/{id} [delete]
 func VoidDepartmentById(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.VoidDepartmentById(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to void department"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Department voided successfully", "data": result})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.VoidDepartmentById(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to void department"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Department voided successfully", "data": result})
+	}
 }
 
 // @Summary      List Departments with filter
@@ -145,17 +225,30 @@ func VoidDepartmentById(c *gin.Context) {
 // @Success      200      {object}  []models.Department
 // @Router       /sys/department/filter/list [post]
 func ListPageDepartmentWithFilter(c *gin.Context) {
-	var deptPageDto dto.DepartmentPageDto
-	if err := c.ShouldBindJSON(&deptPageDto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	departments, err := services.DepartmentListWithFilters(&deptPageDto)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
-		return
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var deptPageDto dto.DepartmentPageDto
+		if err := c.ShouldBindJSON(&deptPageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		departments, err := services.DepartmentListWithFilters(&deptPageDto)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
+			return
+		}
+		c.JSON(http.StatusOK, departments)
 	}
-	c.JSON(http.StatusOK, departments)
 
 }
 
@@ -168,18 +261,30 @@ func ListPageDepartmentWithFilter(c *gin.Context) {
 // @Success      200      {object}  dto.DepartmentList
 // @Router       /sys/department/list [post]
 func ListPageDepartment(c *gin.Context) {
-	var deptPageDto dto.DepartmentPageDto
-	if err := c.ShouldBindJSON(&deptPageDto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	departments, err := services.DepartmentList(&deptPageDto)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"data": departments})
 
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var deptPageDto dto.DepartmentPageDto
+		if err := c.ShouldBindJSON(&deptPageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		departments, err := services.DepartmentList(&deptPageDto)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": departments})
+	}
 }
 
 // @Summary      Batch upload department record
@@ -191,19 +296,32 @@ func ListPageDepartment(c *gin.Context) {
 // @Success      200      {object}  []models.Department
 // @Router       /base/department/batch-upload [post]
 func BatchUploadDepartments(c *gin.Context) {
-	var departments []models.Department
-	if err := c.ShouldBindJSON(&departments); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.BatchCreateDepartments(departments)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var departments []models.Department
+		if err := c.ShouldBindJSON(&departments); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.BatchCreateDepartments(departments)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 func RegisterDepartmentRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
