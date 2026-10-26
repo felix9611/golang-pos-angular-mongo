@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -40,21 +41,35 @@ func GetOneVendorByIdGet(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.Vendors  true  "Vendor Request Body"
+// @Success      200      string
 // @Router      /base/vendor/batch-create [post]
 func BatchCreateVendorPost(c *gin.Context) {
-	var vendor []models.Vendors
-	if err := c.ShouldBindJSON(&vendor); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.BatchCreateVendors(vendor)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create vendor"})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var vendor []models.Vendors
+		if err := c.ShouldBindJSON(&vendor); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusCreated, gin.H{"id": result})
+		result, err := services.BatchCreateVendors(vendor)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create vendor"})
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{"id": result})
+	}
 }
 
 // @Summary      Create one vendor record
@@ -66,19 +81,32 @@ func BatchCreateVendorPost(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralCreateResponseBody
 // @Router      /base/vendor/create [post]
 func CreateVendorPost(c *gin.Context) {
-	var vendor models.Vendors
-	if err := c.ShouldBindJSON(&vendor); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.CreateVendor(&vendor)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create vendor"})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var vendor models.Vendors
+		if err := c.ShouldBindJSON(&vendor); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusCreated, gin.H{"id": result})
+		result, err := services.CreateVendor(&vendor)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create vendor"})
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{"id": result})
+	}
 }
 
 // @Summary      Delete one vendor record by id
@@ -90,20 +118,33 @@ func CreateVendorPost(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
 // @Router      /base/vendor/void/{id} [delete]
 func DeleteVendorById(c *gin.Context) {
-	id := c.Param("id")
-	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid vendor ID"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.InactiveVendorByID(id)
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		if id == "" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid vendor ID"})
+			return
+		}
 
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete vendor"})
-		return
+		result, err := services.InactiveVendorByID(id)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete vendor"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"result": result})
 	}
-
-	c.JSON(http.StatusOK, gin.H{"result": result})
 }
 
 // @Summary      List Vendors with pagination
@@ -163,19 +204,32 @@ func VendorList(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
 // @Router      /base/vendor/update/{id} [post]
 func UpdateVendor(c *gin.Context) {
-	var vendor models.Vendors
-	if err := c.ShouldBindJSON(&vendor); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.UpdateVendorById(&vendor)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update vendor"})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var vendor models.Vendors
+		if err := c.ShouldBindJSON(&vendor); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, gin.H{"result": result})
+		result, err := services.UpdateVendorById(&vendor)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update vendor"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"result": result})
+	}
 }
 
 // @Summary      Get all Vendor record
