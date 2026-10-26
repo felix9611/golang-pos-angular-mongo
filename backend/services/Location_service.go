@@ -29,11 +29,10 @@ func BatchCreateLocation(locations []models.Locations) (interface{}, error) {
 
 func CreateLocation(location *models.Locations) (interface{}, error) {
 	collection := config.GetCollection("locations")
-
-	filter := bson.M{"status": 1, "placeName": location.PlaceCode, "placeCode": location.PlaceName}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"status": 1, "placeName": location.PlaceCode, "placeCode": location.PlaceName}
 
 	count, err := collection.CountDocuments(ctx, filter)
 
@@ -71,6 +70,29 @@ func CreateLocation(location *models.Locations) (interface{}, error) {
 		CreateActionRecord("Location Create", "POST", "Location", location, "Failed")
 		return gin.H{"error": "Location already exists"}, nil
 	}
+}
+
+func GetLocationsByIds(ids []primitive.ObjectID) ([]models.Locations, error) {
+	collection := config.GetCollection("locations")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": bson.M{"$in": ids}, "status": 1}
+
+	var locations []models.Locations
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	err = cursor.All(ctx, &locations)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return locations, nil
 }
 
 func GetOneLocationById(id string) (interface{}, error) {

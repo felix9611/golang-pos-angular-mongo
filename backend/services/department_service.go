@@ -99,8 +99,34 @@ func GetAllDepartments() ([]*models.Department, error) {
 	return departments, nil
 }
 
+func GetDepartmentsByIds(ids []primitive.ObjectID) ([]models.Department, error) {
+	collection := config.GetCollection("departments")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": bson.M{"$in": ids}, "status": 1}
+
+	var department []models.Department
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	err = cursor.All(ctx, &department)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return department, nil
+}
+
 func GetOneDepartment(id string) (interface{}, error) {
 	collection := config.GetCollection("departments")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -110,9 +136,6 @@ func GetOneDepartment(id string) (interface{}, error) {
 	filter := bson.M{"_id": objectID}
 
 	var department models.Department
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	err = collection.FindOne(ctx, filter).Decode(&department)
 	if err != nil {

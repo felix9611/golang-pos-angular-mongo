@@ -17,6 +17,7 @@ import { Observable, Observer, Subscription } from 'rxjs'
 import { NzSelectModule } from 'ng-zorro-antd/select'
 import { findMenuItem } from '../../tool-function'
 import { UserStoreService } from '../../../../state/user.service'
+import { NzCheckboxModule } from 'ng-zorro-antd/checkbox'
 
 @Component({
     // selector: 'app-footer',
@@ -31,7 +32,8 @@ import { UserStoreService } from '../../../../state/user.service'
         NzInputModule, 
         NzPaginationModule,
         NzUploadModule,
-        NzSelectModule
+        NzSelectModule,
+        NzCheckboxModule,
     ],
     templateUrl: './users.component.html',
     styleUrl: './users.component.css',
@@ -78,7 +80,7 @@ export class UsersComponent {
         id: '',
         username: '',
         avatarBase64: '',
-        deptId: 0,
+        deptIds: [],
         email: '',
         roles: [],
     }
@@ -127,6 +129,7 @@ export class UsersComponent {
         this.loadUserLists()
         this.loadDeptLists()
         this.loadRoleLists()
+        this.loadLocationList()
     }
 
     async loadRoleLists() {
@@ -139,6 +142,12 @@ export class UsersComponent {
         this.deptLists = res.data
     }
 
+    placeLists: any[] = []
+    async loadLocationList() {
+        const res = await getApiWithAuth('/base/location/all')
+        this.placeLists = res.data
+    }
+
     async submitForm() {
         const url = this.editForm.id === '' ? '/sys/user/create' : `/sys/user/update`
 
@@ -148,8 +157,8 @@ export class UsersComponent {
         } : {
             key: '9@0UtWV:;}m@HkjHyVU=',
             userData: {
+                ...this.editForm,
                 avatarBase64: this.avatarUrl,
-                ...this.editForm
             }
         })
 
@@ -164,11 +173,11 @@ export class UsersComponent {
                 id: '',
                 username: '',
                 avatarBase64: '',
-                deptId: 0,
+                deptIds: [],
                 email: '',
                 roles: []
             }
-            
+
             this.okText = 'Create'
         }
     }
@@ -217,10 +226,14 @@ export class UsersComponent {
 
     async getOneData(id:string) {
         const res = await getApiWithAuth(`/sys/user/one/${id}`)
-        this.editForm = res
-        this.department = res.department
-        this.okText = 'Update'
-        this.showDialog()
+         if (res.error) {
+            this.message.error(res.error)
+        } else if (!res.error) {
+            this.editForm = res
+            this.department = res.department
+            this.okText = 'Update'
+            this.showDialog()
+        }
     }
 
     // upload
