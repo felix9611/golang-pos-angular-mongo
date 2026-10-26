@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -16,21 +17,35 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.TaxInformations  true  "Tax Information Request Body"
+// @Success      200      string
 // @Router      /base/tax-information/batch-create [post]
 func BatchCreateTaxInformation(c *gin.Context) {
-	var taxInfo []models.TaxInformations
-	if err := c.ShouldBindJSON(&taxInfo); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.BatchCreateTaxInformation(taxInfo)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var taxInfo []models.TaxInformations
+		if err := c.ShouldBindJSON(&taxInfo); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.BatchCreateTaxInformation(taxInfo)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Create one Tax Information record
@@ -42,19 +57,32 @@ func BatchCreateTaxInformation(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralCreateResponseBody
 // @Router      /base/tax-information/create [post]
 func CreateTaxInformation(c *gin.Context) {
-	var taxInfo models.TaxInformations
-	if err := c.ShouldBindJSON(&taxInfo); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.CreateTaxInformation(&taxInfo)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var taxInfo models.TaxInformations
+		if err := c.ShouldBindJSON(&taxInfo); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.CreateTaxInformation(&taxInfo)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get one tax information record by id
@@ -84,13 +112,26 @@ func GetOneTaxInformation(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
 // @Router       /base/tax-information/void/{id} [delete]
 func VoidOneTaxInformation(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.VoidOneTaxInformation(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Tax Information inactivated successfully", "data": result})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.VoidOneTaxInformation(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Tax Information inactivated successfully", "data": result})
+	}
 }
 
 // @Summary      List Tax Information
@@ -126,19 +167,32 @@ func ListTaxInformation(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router      /base/tax-information/update [post]
 func UpdateTaxInformationById(c *gin.Context) {
-	var taxInfo models.TaxInformations
-	if err := c.ShouldBindJSON(&taxInfo); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.UpdateTaxInformation(&taxInfo)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var taxInfo models.TaxInformations
+		if err := c.ShouldBindJSON(&taxInfo); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.UpdateTaxInformation(&taxInfo)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      List Tax Information With filter
