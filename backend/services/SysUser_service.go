@@ -6,24 +6,25 @@ import (
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/tools"
-	"log"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func GetSysUsersCollection() *mongo.Collection {
+	return config.GetCollection("sys_users")
+}
+
 func CreateSysUser(user *models.SysUsers) (interface{}, error) {
-	log.Printf("Insert SysUser: %+v\n", user)
-
-	filter := bson.M{"status": 1, "username": user.Username}
-
-	collection := config.GetCollection("sys_users")
-
+	collection := GetSysUsersCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"status": 1, "username": user.Username}
 
 	count, err := collection.CountDocuments(ctx, filter)
 
@@ -72,12 +73,11 @@ func CreateSysUser(user *models.SysUsers) (interface{}, error) {
 }
 
 func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
-	collection := config.GetCollection("sys_users")
-
-	filter := bson.M{"_id": updateData.ID, "status": 1}
-
+	collection := GetSysUsersCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"_id": updateData.ID, "status": 1}
 
 	var checkSysUser models.SysUsers
 	err := collection.FindOne(ctx, filter).Decode(&checkSysUser)
@@ -100,16 +100,16 @@ func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
 }
 
 func InactiveUserByID(id string) (interface{}, error) {
-	collection := config.GetCollection("sys_users")
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
 
 	filter := bson.M{"_id": objectID, "status": 1}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	var user models.SysUsers
 
@@ -136,17 +136,18 @@ func InactiveUserByID(id string) (interface{}, error) {
 }
 
 func GetOneSysUserById(id string) (interface{}, error) {
-	collection := config.GetCollection("sys_users")
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
 
 	filter := bson.M{"_id": objectID, "status": 1}
-	var user models.SysUsers
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
+	var user models.SysUsers
 	err = collection.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
 		return nil, err
@@ -160,12 +161,13 @@ func GetOneSysUserById(id string) (interface{}, error) {
 }
 
 func GetUserByUsername(username string) (*models.SysUsers, error) {
-	collection := config.GetCollection("sys_users")
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	filter := bson.M{"username": username, "status": 1}
 
 	var user models.SysUsers
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	err := collection.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
@@ -175,12 +177,13 @@ func GetUserByUsername(username string) (*models.SysUsers, error) {
 }
 
 func GetUserDetailByUsername(username string) (interface{}, error) {
-	collection := config.GetCollection("sys_users")
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	filter := bson.M{"username": username, "status": 1}
 
 	var user models.SysUsers
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	err := collection.FindOne(ctx, filter).Decode(&user)
 	if err != nil {
@@ -220,12 +223,11 @@ func GetUserDetailByUsername(username string) (interface{}, error) {
 }
 
 func UpdateUserPassword(Username string, NewPassword string) (interface{}, error) {
-	collection := config.GetCollection("sys_users")
-
-	filter := bson.M{"username": Username, "status": 1}
-
+	collection := GetSysUsersCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"username": Username, "status": 1}
 
 	var user models.SysUsers
 	err := collection.FindOne(ctx, filter).Decode(&user)
@@ -251,6 +253,9 @@ func UpdateUserPassword(Username string, NewPassword string) (interface{}, error
 }
 
 func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
@@ -259,10 +264,6 @@ func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
 	if pageDto.Limit < 1 {
 		pageDto.Limit = 10
 	}
-
-	collection := config.GetCollection("sys_users")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	filter := bson.M{"status": 1}
 
@@ -305,11 +306,11 @@ func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
 }
 
 func UserUpdateAvatar(Username string, PhotoBase string) (interface{}, error) {
-	collection := config.GetCollection("sys_users")
-	filter := bson.M{"username": Username, "status": 1}
-
+	collection := GetSysUsersCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"username": Username, "status": 1}
 
 	var user models.SysUsers
 	err := collection.FindOne(ctx, filter).Decode(&user)
