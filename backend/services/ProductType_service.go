@@ -10,8 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+func GetProductTypesCollection() *mongo.Collection {
+	return config.GetCollection("product_types")
+}
 
 func BatchCreateProductTypes(productTypes []models.ProductTypes) (interface{}, error) {
 	for _, productType := range productTypes {
@@ -31,7 +36,7 @@ func CreateProductType(productType *models.ProductTypes) (interface{}, error) {
 		"typeName": productType.TypeName,
 	}
 
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
 	count, err := collection.CountDocuments(context.Background(), filter)
 	if err != nil {
 		return nil, err
@@ -62,8 +67,7 @@ func CreateProductType(productType *models.ProductTypes) (interface{}, error) {
 }
 
 func GetOneProductType(id string) (interface{}, error) {
-
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -89,7 +93,9 @@ func GetOneProductType(id string) (interface{}, error) {
 }
 
 func VoidOneProductType(id string) (interface{}, error) {
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -99,8 +105,6 @@ func VoidOneProductType(id string) (interface{}, error) {
 	filter := bson.M{"_id": objectID}
 
 	var productType models.ProductTypes
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	err = collection.FindOne(ctx, filter).Decode(&productType)
 	if err != nil {
@@ -125,14 +129,13 @@ func VoidOneProductType(id string) (interface{}, error) {
 }
 
 func UpdateProductType(updateData *models.ProductTypes) (interface{}, error) {
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"_id": updateData.ID}
 
 	var productType models.ProductTypes
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
 	err := collection.FindOne(ctx, filter).Decode(&productType)
 	if err != nil {
 		return nil, err
@@ -154,7 +157,7 @@ func UpdateProductType(updateData *models.ProductTypes) (interface{}, error) {
 }
 
 func ListAlProductType() (interface{}, error) {
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -183,7 +186,7 @@ func ListAlProductType() (interface{}, error) {
 }
 
 func ListProductTypeWithFilter(pageDto *dto.ProductTypeListDto) (interface{}, error) {
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -226,7 +229,7 @@ func ListProductTypeWithFilter(pageDto *dto.ProductTypeListDto) (interface{}, er
 }
 
 func ListProductType(pageDto *dto.ProductTypeListDto) (interface{}, error) {
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -287,7 +290,7 @@ func ListProductType(pageDto *dto.ProductTypeListDto) (interface{}, error) {
 }
 
 func ProductTypeDataFinderReturn(typeCode string, typeName string) (models.ProductTypes, error) {
-	collection := config.GetCollection("product_types")
+	collection := GetProductTypesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
