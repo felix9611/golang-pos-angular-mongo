@@ -11,11 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func GetExcelFieldMatchsCollection() *mongo.Collection {
+	return config.GetCollection("excel_field_matchs")
+}
+
 func CreateExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error) {
-	collection := config.GetCollection("excel_field_matchs")
+	collection := GetExcelFieldMatchsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 
 	defer cancel()
@@ -58,7 +63,7 @@ func CreateExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error) {
 }
 
 func GetOneExcelFieldMatch(id string) (interface{}, error) {
-	collection := config.GetCollection("excel_field_matchs")
+	collection := GetExcelFieldMatchsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -84,7 +89,7 @@ func GetOneExcelFieldMatch(id string) (interface{}, error) {
 }
 
 func GetOneExcelFieldMatchByCode(code string) (interface{}, error) {
-	collection := config.GetCollection("excel_field_matchs")
+	collection := GetExcelFieldMatchsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -104,8 +109,7 @@ func GetOneExcelFieldMatchByCode(code string) (interface{}, error) {
 }
 
 func InactiveOneExcelFieldMatch(id string) (interface{}, error) {
-
-	collection := config.GetCollection("excel_field_matchs")
+	collection := GetExcelFieldMatchsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -140,8 +144,7 @@ func InactiveOneExcelFieldMatch(id string) (interface{}, error) {
 }
 
 func UpdateOneExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error) {
-
-	collection := config.GetCollection("excel_field_matchs")
+	collection := GetExcelFieldMatchsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -170,8 +173,9 @@ func UpdateOneExcelFieldMatch(data *models.ExcelFieldMatchs) (interface{}, error
 func ExcelFieldMatchListAndPage(
 	pageDto dto.ExcelFieldMatchPageDto,
 ) (interface{}, error) {
-
-	collection := config.GetCollection("excel_field_matchs")
+	collection := GetExcelFieldMatchsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	if pageDto.Page <= 0 {
 		pageDto.Page = 1
@@ -190,9 +194,6 @@ func ExcelFieldMatchListAndPage(
 		pageDto.Limit,
 		skip,
 	)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	filter := bson.M{"status": 1}
 
