@@ -16,7 +16,7 @@ import { UserStoreService } from '../../../../../state/user.service'
 import { findMenuItem } from '../../../tool-function'
 import { Subscription } from 'rxjs'
 import { NzMessageService } from 'ng-zorro-antd/message'
-import { InvoiceListRequestDto } from './interface'
+import { ReturnInvoiceListRequestDto } from './interface'
 import { DownloadExcelDataComponent } from '../../../components/download-excel-component/download-excel-data-component.component'
 
 @Component({
@@ -40,6 +40,7 @@ import { DownloadExcelDataComponent } from '../../../components/download-excel-c
 })
 export class ReturnInvoiceListComponent {
     private rightSubscription: Subscription
+    private userRightSubscription: Subscription
     constructor(
         private routeTo: Router,
         private userStoreService: UserStoreService,
@@ -60,6 +61,14 @@ export class ReturnInvoiceListComponent {
             this.excelFileSetting.code = answer?.excelFunctionCode ?? ''
             this.preLoadExcelSetting()
         })
+
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+            if (data.superAdmin !== true) {
+                this.placeLists = data.locations
+                this.searchForm.returnLocationIds = data.placeIds
+            }
+        })
     }
 
     ngOnDestroy() {
@@ -68,16 +77,30 @@ export class ReturnInvoiceListComponent {
         }
     }
 
+    superAdmin: boolean = false
+
     excelFileSetting: any = {
         code: ''
+    }
+
+    placeLists: any[] = []
+    async loadLocationList() {
+        if (this.superAdmin === true) {
+            const res = await getApiWithAuth('/base/location/all')
+            this.placeLists = res.data
+        }
     }
 
     dbFieldList: string[] = []
     excelFieldList: string[] = []
 
-    searchForm: InvoiceListRequestDto = {
+    searchForm: ReturnInvoiceListRequestDto = {
         page: 1,
-        limit: 10
+        limit: 10,
+        invoiceNumber: '',
+        caseNumber: '',
+        returnLocationIds: [],
+        dateRange: []
     }
 
     userRightInside: any = {
@@ -97,13 +120,6 @@ export class ReturnInvoiceListComponent {
     ngOnInit() {
         this.loadInvoiceLists()
         this.loadLocationList()
-    }
-
-    locationList: any[] = []
-
-    async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/all')
-        this.locationList = data.data
     }
 
     async loadInvoiceLists() {

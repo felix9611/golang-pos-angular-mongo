@@ -125,7 +125,13 @@
                         <nz-form-control [nzSpan]="14">
                           Will preset <span class="font-bold">888888</span>
                         </nz-form-control>
-                      </nz-form-item>
+                    </nz-form-item>
+                     <nz-form-item>
+                        <nz-form-label [nzSpan]="6" nzFor="email">Super Admin</nz-form-label>
+                        <nz-form-control>
+                            <label nz-checkbox name="superAdmin" [(ngModel)]="editForm.superAdmin"></label>
+                        </nz-form-control>
+                    </nz-form-item>
                     <nz-form-item>
                       <nz-form-label [nzSpan]="6" nzFor="email">Email</nz-form-label>
                       <nz-form-control [nzSpan]="14">
@@ -135,11 +141,17 @@
                     <nz-form-item>
                         <nz-form-label [nzSpan]="6" nzFor="email">Department</nz-form-label>
                         <nz-form-control [nzSpan]="14">
-                            <nz-select name="deptId" [(ngModel)]="editForm.deptId" nzAllowClear  nzShowArrow nzPlaceHolder="Please select">
+                            <nz-select 
+                                name="deptIdS" 
+                                [(ngModel)]="editForm.deptIds"
+                                nzPlaceHolder="Please select"  
+                                nzMode="multiple"  
+                                nzAllowClear  nzShowArrow
+                                [nzShowArrow]="true">
                                 @for (option of deptLists; track option) {
                                   <nz-option [nzLabel]="option.deptName" [nzValue]="option.id"></nz-option>
                                 }
-                              </nz-select>
+                            </nz-select>
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>
@@ -158,6 +170,22 @@
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
+                    <nz-form-item>
+                    <nz-form-label [nzSpan]="6" nzFor="email">Location</nz-form-label>
+                        <nz-form-control>
+                            <nz-select 
+                                    name="placeId"
+                                    [(ngModel)]="editForm.placeIds"  
+                                    nzPlaceHolder="Please select"  
+                                    nzMode="multiple"  
+                                    nzAllowClear  nzShowArrow
+                                    [nzShowArrow]="true">
+                                    @for (option of placeLists; track option) {
+                                        <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
+                                    }   
+                            </nz-select>
+                    </nz-form-control>
+                </nz-form-item>
                 </form>
             </ng-container>
            

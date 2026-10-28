@@ -34,6 +34,7 @@ import { findMenuItem } from '../../../tool-function'
 })
 export class ReturnInvoiceDetailComponent implements OnInit {
     private rightSubscription: Subscription
+    private userRightSubscription: Subscription
     constructor(
             private route: ActivatedRoute, 
             private routeTo: Router,
@@ -50,13 +51,24 @@ export class ReturnInvoiceDetailComponent implements OnInit {
                 upload: answer.upload ?? false
                      // keep default value
                 }
-         })
+        })
+
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+            if (data.superAdmin !== true) {
+                this.locationList = data.locations
+            }
+        })
     }
 
+    superAdmin: boolean = false
 
     ngOnDestroy() {
         if (this.userStoreService.menuRole$) {
             this.rightSubscription.unsubscribe()
+        }
+        if (this.userStoreService.user$) {
+            this.userRightSubscription.unsubscribe()
         }
     }
 
@@ -80,7 +92,11 @@ export class ReturnInvoiceDetailComponent implements OnInit {
 
     async getDetail(id: string) {
         const data = await getApiWithAuth(`/return-invoice/one/${id}`)
-        this.returnInvoiceForm = data
+        if (data.error) {
+            this.message.error(data.error) 
+        } else if (!data.error) {
+            this.returnInvoiceForm = data
+        }
     }
 
     goBackList() {
@@ -89,8 +105,10 @@ export class ReturnInvoiceDetailComponent implements OnInit {
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/getAll')
-        this.locationList = data
+        if (this.superAdmin === true) {
+            const data = await getApiWithAuth('/base/location/all')
+            this.locationList = data
+        }
     }
 
 }

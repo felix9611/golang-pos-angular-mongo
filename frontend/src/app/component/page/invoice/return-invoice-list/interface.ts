@@ -1,8 +1,8 @@
-export interface InvoiceListRequestDto {
+export interface ReturnInvoiceListRequestDto {
     page: number
     limit: number
-    dateRange?: string[]
-    invoiceNumber?: string
-    caseNumber?: string
-    locationId?: string[]
+    dateRange: string[]
+    invoiceNumber: string
+    caseNumber: string
+    returnLocationIds: string[]
 }

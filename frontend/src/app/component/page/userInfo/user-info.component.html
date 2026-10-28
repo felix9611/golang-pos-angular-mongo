@@ -36,15 +36,25 @@
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="username">Super Admin</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        {{ userInfo.superAdmin? 'Yes' : 'No' }}
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
                     <nz-form-label class="font-bold" nzFor="email">E-mail</nz-form-label>
                     <nz-form-control [nzSpan]="14">
                         {{ userInfo.email }}
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
-                    <nz-form-label class="font-bold" nzFor="department">Department</nz-form-label>
-                    <nz-form-control [nzSpan]="14">
-                        {{ userInfo.department?.deptName }}
+                    <nz-form-label class="font-bold" nzFor="roles">Departments</nz-form-label>
+                    <nz-form-control [nzSpan]="20">
+                        <div *ngFor="let location of userInfo.departments" class="flex  p-1">
+                            <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
+                                {{ location.deptName }}
+                            </div>
+                        </div>
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
@@ -53,6 +63,16 @@
                         <div *ngFor="let role of userInfo.roleLists" class="flex gap-3">
                             <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
                                 {{ role.name }}
+                            </div>
+                        </div>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="roles">Locatons</nz-form-label>
+                    <nz-form-control [nzSpan]="20">
+                        <div *ngFor="let location of userInfo.locations" class="flex  p-1">
+                            <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
+                                {{ location.placeName }}
                             </div>
                         </div>
                     </nz-form-control>
@@ -82,6 +102,7 @@
                                         [type]="passwordVisible ? 'text' : 'password'"
                                         nz-input
                                         placeholder="input password"
+                                        name="newPassword"
                                         [(ngModel)]="resetPwForm.newPassword"
                                     />
                                 </nz-input-group>
@@ -104,6 +125,7 @@
                                        [type]="passwordVisible ? 'text' : 'password'"
                                        nz-input
                                        placeholder="input password"
+                                       name="againNewPassword"
                                        [(ngModel)]="resetPwForm.againNewPassword"
                                    />
                                </nz-input-group>

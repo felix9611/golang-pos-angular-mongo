@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"fmt"
 	"strconv"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -80,4 +81,38 @@ func GetFloat64(item interface{}, parentKey, childKey string) interface{} {
 	}
 
 	return float64(0)
+}
+
+func ConvertStringsToObjectIDs(idStrings []string) ([]primitive.ObjectID, error) {
+	objectIDs := make([]primitive.ObjectID, len(idStrings))
+
+	for i, idStr := range idStrings {
+		objID, err := primitive.ObjectIDFromHex(idStr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid ObjectID at index %d (%s): %w", i, idStr, err)
+		}
+		objectIDs[i] = objID
+	}
+
+	return objectIDs, nil
+}
+
+func ClaimStrings(value interface{}) []primitive.ObjectID {
+	result := []primitive.ObjectID{}
+
+	values, ok := value.([]interface{})
+	if !ok {
+		return result
+	}
+
+	for _, v := range values {
+		if s, ok := v.(string); ok {
+			id, err := primitive.ObjectIDFromHex(s)
+			if err == nil {
+				result = append(result, id)
+			}
+		}
+	}
+
+	return result
 }

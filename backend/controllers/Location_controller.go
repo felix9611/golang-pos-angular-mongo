@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -16,21 +17,35 @@ import (
 // @Accept       json
 // @Produce      json
 // @Param        request  body      []models.Locations  true  "Locations Request Body"
+// @Success      200      string
 // @Router      /base/location/batch-create [post]
 func BatchCreateLocation(c *gin.Context) {
-	var locations []models.Locations
-	if err := c.ShouldBindJSON(&locations); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.BatchCreateLocation(locations)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var locations []models.Locations
+		if err := c.ShouldBindJSON(&locations); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.BatchCreateLocation(locations)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Create one Location record
@@ -42,19 +57,32 @@ func BatchCreateLocation(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralCreateResponseBody
 // @Router      /base/location/create [post]
 func CreateLocation(c *gin.Context) {
-	var location models.Locations
-	if err := c.ShouldBindJSON(&location); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.CreateLocation(&location)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var location models.Locations
+		if err := c.ShouldBindJSON(&location); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.CreateLocation(&location)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get one location record by id
@@ -66,13 +94,26 @@ func CreateLocation(c *gin.Context) {
 // @Success      200      {object}  models.Locations
 // @Router       /base/location/one/{id} [get]
 func GetLocationById(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.GetOneLocationById(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, result)
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.GetOneLocationById(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Delete one location record by id
@@ -84,13 +125,26 @@ func GetLocationById(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
 // @Router       /base/location/void/{id} [delete]
 func InactiveLocationByID(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.InactiveLocationByID(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Location deactivated successfully", "id": id, "data": result})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.InactiveLocationByID(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Role deactivated successfully", "id": id, "data": result})
+	}
 }
 
 // @Summary      Update one Location record
@@ -102,19 +156,32 @@ func InactiveLocationByID(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router      /base/location/update/{id} [post]
 func UpdateLocationById(c *gin.Context) {
-	var location models.Locations
-	if err := c.ShouldBindJSON(&location); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.UpdateLocationById(&location)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var location models.Locations
+		if err := c.ShouldBindJSON(&location); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.UpdateLocationById(&location)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      List Locations
@@ -126,19 +193,32 @@ func UpdateLocationById(c *gin.Context) {
 // @Success      200      {object}  dto.LocationList
 // @Router       /base/location/list [post]
 func ListLocations(c *gin.Context) {
-	var locationPageDto dto.LocationPageDto
-	if err := c.ShouldBindJSON(&locationPageDto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.LocationList(&locationPageDto)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var locationPageDto dto.LocationPageDto
+		if err := c.ShouldBindJSON(&locationPageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.LocationList(&locationPageDto)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      List Locations Without pagination
@@ -150,19 +230,32 @@ func ListLocations(c *gin.Context) {
 // @Success      200      {object}  []models.Locations
 // @Router       /base/location/filter/list [post]
 func LocationListWithFilter(c *gin.Context) {
-	var locationPageDto dto.LocationPageDto
-	if err := c.ShouldBindJSON(&locationPageDto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.LocationListWithFilter(&locationPageDto)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var locationPageDto dto.LocationPageDto
+		if err := c.ShouldBindJSON(&locationPageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.LocationListWithFilter(&locationPageDto)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get all location record

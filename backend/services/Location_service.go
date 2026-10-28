@@ -9,11 +9,16 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	// "go.mongodb.org/mongo-driver/mongo"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+func GetLocationCollection() *mongo.Collection {
+	return config.GetCollection("locations")
+}
 
 func BatchCreateLocation(locations []models.Locations) (interface{}, error) {
 	for _, location := range locations {
@@ -28,12 +33,11 @@ func BatchCreateLocation(locations []models.Locations) (interface{}, error) {
 }
 
 func CreateLocation(location *models.Locations) (interface{}, error) {
-	collection := config.GetCollection("locations")
-
-	filter := bson.M{"status": 1, "placeName": location.PlaceCode, "placeCode": location.PlaceName}
-
+	collection := GetLocationCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"status": 1, "placeName": location.PlaceCode, "placeCode": location.PlaceName}
 
 	count, err := collection.CountDocuments(ctx, filter)
 
@@ -73,11 +77,34 @@ func CreateLocation(location *models.Locations) (interface{}, error) {
 	}
 }
 
-func GetOneLocationById(id string) (interface{}, error) {
+func GetLocationsByIds(ids []primitive.ObjectID) ([]models.Locations, error) {
+	collection := GetLocationCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	collection := config.GetCollection("locations")
+	filter := bson.M{"_id": bson.M{"$in": ids}, "status": 1}
+
+	var locations []models.Locations
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	err = cursor.All(ctx, &locations)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return locations, nil
+}
+
+func GetOneLocationById(id string) (interface{}, error) {
+	collection := GetLocationCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	objectID, err := primitive.ObjectIDFromHex(id)
 
 	if err != nil {
@@ -100,7 +127,7 @@ func GetOneLocationById(id string) (interface{}, error) {
 }
 
 func UpdateLocationById(updateData *models.Locations) (interface{}, error) {
-	collection := config.GetCollection("locations")
+	collection := GetLocationCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -130,16 +157,16 @@ func UpdateLocationById(updateData *models.Locations) (interface{}, error) {
 }
 
 func InactiveLocationByID(id string) (interface{}, error) {
-	collection := config.GetCollection("locations")
+	collection := GetLocationCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
 
 	filter := bson.M{"_id": objectID, "status": 1}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	var existingLocation models.Locations
 	err = collection.FindOne(ctx, filter).Decode(&existingLocation)
@@ -168,7 +195,10 @@ func InactiveLocationByID(id string) (interface{}, error) {
 }
 
 func LocationListWithFilter(pageDto *dto.LocationPageDto) ([]models.Locations, error) {
-	collection := config.GetCollection("locations")
+	collection := GetLocationCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	filter := bson.M{
 		"status": 1,
 		"$or": []bson.M{
@@ -176,9 +206,6 @@ func LocationListWithFilter(pageDto *dto.LocationPageDto) ([]models.Locations, e
 			{"placeName": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 		},
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
@@ -207,7 +234,7 @@ func LocationListWithFilter(pageDto *dto.LocationPageDto) ([]models.Locations, e
 }
 
 func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
-	collection := config.GetCollection("locations")
+	collection := GetLocationCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -241,7 +268,7 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 	findOptions := options.Find()
 	findOptions.SetSkip(int64(skip))
 	findOptions.SetLimit(int64(limit))
-	findOptions.SetSort(bson.D{{"created_at", -1}})
+	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
 	cursor, err := collection.Find(ctx, filter, findOptions)
 
 	if err != nil {
@@ -265,7 +292,7 @@ func LocationList(pageDto *dto.LocationPageDto) (interface{}, error) {
 }
 
 func ListAllLocation() (interface{}, error) {
-	collection := config.GetCollection("locations")
+	collection := GetLocationCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -294,7 +321,7 @@ func ListAllLocation() (interface{}, error) {
 }
 
 func LocationDataFinder(placeCode string, placeName string) (models.Locations, error) {
-	collection := config.GetCollection("locations")
+	collection := GetLocationCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

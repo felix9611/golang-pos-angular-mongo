@@ -10,12 +10,17 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
-	// "go.mongodb.org/mongo-driver/mongo"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	// "errors"
 	// "log"
 )
+
+func GetDepartmentCollection() *mongo.Collection {
+	collection := config.GetCollection("departments")
+	return collection
+}
 
 func BatchCreateDepartment(departments []models.Department) (interface{}, error) {
 	for _, department := range departments {
@@ -30,13 +35,11 @@ func BatchCreateDepartment(departments []models.Department) (interface{}, error)
 }
 
 func CreateDepartment(department *models.Department) (interface{}, error) {
-
-	filter := bson.M{"status": 1, "deptCode": department.DeptCode, "deptName": department.DeptName}
-
-	// Check if a Department with the same name already exists
-	collection := config.GetCollection("departments")
+	collection := GetDepartmentCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"status": 1, "deptCode": department.DeptCode, "deptName": department.DeptName}
 
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
@@ -74,10 +77,8 @@ func CreateDepartment(department *models.Department) (interface{}, error) {
 }
 
 func GetAllDepartments() ([]*models.Department, error) {
-	collection := config.GetCollection("departments")
-
+	collection := GetDepartmentCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
 	defer cancel()
 
 	var departments []*models.Department
@@ -99,8 +100,34 @@ func GetAllDepartments() ([]*models.Department, error) {
 	return departments, nil
 }
 
+func GetDepartmentsByIds(ids []primitive.ObjectID) ([]models.Department, error) {
+	collection := GetDepartmentCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"_id": bson.M{"$in": ids}, "status": 1}
+
+	var department []models.Department
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	err = cursor.All(ctx, &department)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return department, nil
+}
+
 func GetOneDepartment(id string) (interface{}, error) {
-	collection := config.GetCollection("departments")
+	collection := GetDepartmentCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -110,9 +137,6 @@ func GetOneDepartment(id string) (interface{}, error) {
 	filter := bson.M{"_id": objectID}
 
 	var department models.Department
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	err = collection.FindOne(ctx, filter).Decode(&department)
 	if err != nil {
@@ -127,7 +151,9 @@ func GetOneDepartment(id string) (interface{}, error) {
 }
 
 func VoidDepartmentById(id string) (interface{}, error) {
-	collection := config.GetCollection("departments")
+	collection := GetDepartmentCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -137,9 +163,6 @@ func VoidDepartmentById(id string) (interface{}, error) {
 	filter := bson.M{"_id": objectID}
 
 	var dept models.Department
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	err = collection.FindOne(ctx, filter).Decode(&dept)
 
@@ -170,7 +193,9 @@ func VoidDepartmentById(id string) (interface{}, error) {
 }
 
 func UpdateDeptById(id string, updateData *models.Department) (interface{}, error) {
-	collection := config.GetCollection("departments")
+	collection := GetDepartmentCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -178,9 +203,6 @@ func UpdateDeptById(id string, updateData *models.Department) (interface{}, erro
 	}
 
 	filter := bson.M{"_id": objectID, "status": 1}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	var checkDept models.Department
 	err = collection.FindOne(ctx, filter).Decode(&checkDept)
@@ -208,7 +230,7 @@ func UpdateDeptById(id string, updateData *models.Department) (interface{}, erro
 }
 
 func DepartmentListWithFilters(pageDto *dto.DepartmentPageDto) (interface{}, error) {
-	collection := config.GetCollection("departments")
+	collection := GetDepartmentCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -250,6 +272,9 @@ func DepartmentListWithFilters(pageDto *dto.DepartmentPageDto) (interface{}, err
 }
 
 func DepartmentList(pageDto *dto.DepartmentPageDto) (interface{}, error) {
+	collection := GetDepartmentCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
@@ -258,10 +283,6 @@ func DepartmentList(pageDto *dto.DepartmentPageDto) (interface{}, error) {
 	if pageDto.Limit < 1 {
 		pageDto.Limit = 10
 	}
-
-	collection := config.GetCollection("departments")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	filter := bson.M{"status": 1}
 	if pageDto.Name != "" {
@@ -323,7 +344,7 @@ func BatchCreateDepartments(departments []models.Department) (interface{}, error
 }
 
 func DepartmentDataFinder(deptCode string, deptName string) (models.Department, error) {
-	collection := config.GetCollection("departments")
+	collection := GetDepartmentCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 

@@ -30,7 +30,7 @@ export class HeaderComponent implements OnInit{
         username: '',
         accessToken: '',
         avatarBase64: '',
-        deptId: 0,
+        deptIds: [],
         roles: [],
         roleLists: [],
         email: '', 

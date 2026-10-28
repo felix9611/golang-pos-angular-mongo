@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -19,24 +20,37 @@ import (
 // @Success      200      {object}  dto.ExcelFieldMatchList
 // @Router       /sys/excel-field-match/list [post]
 func ListPageExcelFieldMatch(c *gin.Context) {
-	var param dto.ExcelFieldMatchPageDto
-
-	if err := c.ShouldBindJSON(&param); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.ExcelFieldMatchListAndPage(param)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": err.Error(),
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
 		})
-		return
-	}
+	} else {
+		var param dto.ExcelFieldMatchPageDto
 
-	c.JSON(http.StatusOK, result)
+		if err := c.ShouldBindJSON(&param); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		result, err := services.ExcelFieldMatchListAndPage(param)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Create ExcelFieldMatch record
@@ -48,17 +62,30 @@ func ListPageExcelFieldMatch(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralCreateResponseBody
 // @Router       /sys/excel-field-match/create [post]
 func CreateExcelFieldMatch(c *gin.Context) {
-	var param models.ExcelFieldMatchs
-	if err := c.ShouldBindJSON(&param); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	result, err := services.CreateExcelFieldMatch(&param)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var param models.ExcelFieldMatchs
+		if err := c.ShouldBindJSON(&param); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		result, err := services.CreateExcelFieldMatch(&param)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
 	}
-	c.JSON(http.StatusOK, result)
 }
 
 // @Summary      Get one ExcelFieldMatch record by id
@@ -70,13 +97,26 @@ func CreateExcelFieldMatch(c *gin.Context) {
 // @Success      200      {object}  models.ExcelFieldMatchs
 // @Router       /sys/excel-field-match/one/{id} [get]
 func GetOneExcelFieldMatchById(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.GetOneExcelFieldMatch(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, result)
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.GetOneExcelFieldMatch(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get one ExcelFieldMatch record by code
@@ -106,13 +146,26 @@ func GetOneExcelFieldMatchByCode(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router       /sys/excel-field-match/void/{id} [delete]
 func VoidOneExcelFieldMatchById(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.InactiveOneExcelFieldMatch(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, result)
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.InactiveOneExcelFieldMatch(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Update ExcelFieldMatch record
@@ -124,17 +177,30 @@ func VoidOneExcelFieldMatchById(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router       /sys/excel-field-match/update [post]
 func UpdateExcelFieldMatchById(c *gin.Context) {
-	var param models.ExcelFieldMatchs
-	if err := c.ShouldBindJSON(&param); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	result, err := services.UpdateOneExcelFieldMatch(&param)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var param models.ExcelFieldMatchs
+		if err := c.ShouldBindJSON(&param); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		result, err := services.UpdateOneExcelFieldMatch(&param)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
 	}
-	c.JSON(http.StatusOK, result)
 }
 
 func RegisterExcelFieldMatchRoutes(r *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {

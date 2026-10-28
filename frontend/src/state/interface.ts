@@ -2,11 +2,15 @@ export interface UserInfo {
     _id?: string
     username: string
     accessToken: string
-    roles?: number[],
-    deptId?: number,
+    roles?: any[],
+    deptIds?: any[],
+    department?: any[],
     avatarBase64?: string
     email: string
     lastLogin?: string
     roleLists?: any[]
-    loginRecords?: any[]
+    loginRecords?: any[],
+    superAdmin?: boolean
+    placeIds?: string[],
+    locations?: any[]
 }

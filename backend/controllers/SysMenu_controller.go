@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -19,17 +20,30 @@ import (
 // @Success      200      {object}  dto.SysUserCreateResponseDto
 // @Router       /sys/menu/create [post]
 func CreateSysMenu(c *gin.Context) {
-	var data models.SysMenus
-	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	result, err := services.CreateSysMenu(&data)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
-		return
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var data models.SysMenus
+		if err := c.ShouldBindJSON(&data); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		result, err := services.CreateSysMenu(&data)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
+			return
+		}
+		c.JSON(http.StatusOK, result)
 	}
-	c.JSON(http.StatusOK, result)
 }
 
 // @Summary      List all sys Menu records
@@ -41,18 +55,31 @@ func CreateSysMenu(c *gin.Context) {
 // @Success      200      {object}  []models.SysMenus
 // @Router       /sys/menu/list [post]
 func ListAllSysMenu(c *gin.Context) {
-	var query dto.SysMenuList
-	if err := c.ShouldBindQuery(&query); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.ListAllMenu(&query)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch menu items"})
-		return
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var query dto.SysMenuList
+		if err := c.ShouldBindQuery(&query); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		result, err := services.ListAllMenu(&query)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch menu items"})
+			return
+		}
+		c.JSON(http.StatusOK, result)
 	}
-	c.JSON(http.StatusOK, result)
 }
 
 // @Summary      List all sys Menu main IDs
@@ -63,12 +90,25 @@ func ListAllSysMenu(c *gin.Context) {
 // @Success      200      {object}  []string
 // @Router       /sys/menu/main-item [get]
 func GetSysMenuMainIdList(c *gin.Context) {
-	result, err := services.ListAllMainIdMenu()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch menu main IDs"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, result)
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		result, err := services.ListAllMainIdMenu()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch menu main IDs"})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get one Sys Menu record by id
@@ -80,13 +120,26 @@ func GetSysMenuMainIdList(c *gin.Context) {
 // @Success      200      {object}  models.SysMenus
 // @Router       /sys/menu/one/{id} [get]
 func GetMenuItemById(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.GetOneMenuItemById(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, result)
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.GetOneMenuItemById(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Update one sys Menu
@@ -98,17 +151,30 @@ func GetMenuItemById(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router       /sys/menu/update [post]
 func UpdateMenuItemById(c *gin.Context) {
-	var data models.SysMenus
-	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	result, err := services.UpdateMenuItem(&data)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Update failed"})
-		return
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var data models.SysMenus
+		if err := c.ShouldBindJSON(&data); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		result, err := services.UpdateMenuItem(&data)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Update failed"})
+			return
+		}
+		c.JSON(http.StatusOK, result)
 	}
-	c.JSON(http.StatusOK, result)
 }
 
 // @Summary      Get all sys Menu items
@@ -119,12 +185,25 @@ func UpdateMenuItemById(c *gin.Context) {
 // @Success      200      {object}  []models.SysMenus
 // @Router       /sys/menu/all-menu [get]
 func GetAllMenuItems(c *gin.Context) {
-	result, err := services.GetAllMenuItems()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch menu items"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, result)
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		result, err := services.GetAllMenuItems()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch menu items"})
+			return
+		}
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get menus by IDs

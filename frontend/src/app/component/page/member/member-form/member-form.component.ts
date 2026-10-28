@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { getApiWithAuth, postApiWithAuth } from '../../../../../tool/httpRequest-auth'
+import { deleteApiWithAuth, getApiWithAuth, postApiWithAuth } from '../../../../../tool/httpRequest-auth'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { NzInputModule } from 'ng-zorro-antd/input'
@@ -112,13 +112,15 @@ export class MemberFormComponent implements OnInit {
 
     async removeRowSpecialDay(index: number, id?: string) {
         if (id) {
-            const res = await getApiWithAuth(`/member/member-list/special-day/remove/${id}`)
-            if (res) {
-                this.message.info(res.msg)
+            const res = await deleteApiWithAuth(`/member/member-list/special-day/remove/${id}`)
+            if (res.message) {
+                this.message.info(res.message)
+                this.editForm.memberSpecialDays.splice(index, 1)
+            } else {
+                this.message.error(res.error)
             }
-            this.editForm.memberSpecialDays.splice(index, 1)
         } else {
-            this.editForm.memberSpecialDays.splice(index, 1)
+            this.message.error('Invalid data')
         }
     }
 

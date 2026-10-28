@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -19,18 +20,31 @@ import (
 // @Success      200      {object}  dto.GeneralCreateResponseBody
 // @Router       /sys/role/create [post]
 func CreateSysRoleApi(c *gin.Context) {
-	var role models.SysRoles
-	if err := c.ShouldBindJSON(&role); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	id, err := services.CreateSysRole(&role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
-		return
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var role models.SysRoles
+		if err := c.ShouldBindJSON(&role); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		id, err := services.CreateSysRole(&role)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Create failed"})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"id": id})
 	}
-	c.JSON(http.StatusCreated, gin.H{"id": id})
 }
 
 // @Summary      Get one sys role record by id
@@ -42,13 +56,26 @@ func CreateSysRoleApi(c *gin.Context) {
 // @Success      200      {object}  models.SysRoles
 // @Router       /sys/role/one/{id} [get]
 func GetRoleById(c *gin.Context) {
-	id := c.Param("id")
-	role, err := services.GetOneSysRoleById(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get role"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": role})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		role, err := services.GetOneSysRoleById(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get role"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": role})
+	}
 }
 
 // @Summary      Get all sys role
@@ -59,12 +86,25 @@ func GetRoleById(c *gin.Context) {
 // @Success      200      {object}  []dto.ListAllSysRoleDto
 // @Router       /sys/role/all [get]
 func GetAllRoles(c *gin.Context) {
-	roles, err := services.GetAllRoles()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get roles"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": roles})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		roles, err := services.GetAllRoles()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get roles"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": roles})
+	}
 }
 
 // @Summary      Update sys role
@@ -76,19 +116,32 @@ func GetAllRoles(c *gin.Context) {
 // @Success      200      {object}  models.SysRoles
 // @Router       /sys/role/update [post]
 func UpdateSysRole(c *gin.Context) {
-	// id := c.Param("id")
-	var role models.SysRoles
-	if err := c.ShouldBindJSON(&role); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.UpdateRoleById(&role)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update role"})
-		return
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		// id := c.Param("id")
+		var role models.SysRoles
+		if err := c.ShouldBindJSON(&role); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		result, err := services.UpdateRoleById(&role)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update role"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Role updated successfully", "id": role.ID, "data": result})
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Role updated successfully", "id": role.ID, "data": result})
 }
 
 // @Summary      Delete one sys role record by id
@@ -100,13 +153,26 @@ func UpdateSysRole(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router       /sys/role/void/{id} [delete]
 func InactiveSysRoleByID(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.VoidRoleById(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Role deactivated successfully", "id": id, "data": result})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.VoidRoleById(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Role deactivated successfully", "id": id, "data": result})
+	}
 }
 
 // @Summary      List sys roles with pagination
@@ -118,17 +184,30 @@ func InactiveSysRoleByID(c *gin.Context) {
 // @Success      200      {object}  dto.RolesList
 // @Router       /sys/role/list [post]
 func ListPageRoles(c *gin.Context) {
-	var rolePageDto dto.RolesPageDto
-	if err := c.ShouldBindJSON(&rolePageDto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	result, err := services.RolesList(&rolePageDto)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list roles"})
-		return
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var rolePageDto dto.RolesPageDto
+		if err := c.ShouldBindJSON(&rolePageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		result, err := services.RolesList(&rolePageDto)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list roles"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"data": result})
 	}
-	c.JSON(http.StatusOK, gin.H{"data": result})
 }
 
 // @Summary      Update sys role menu permission

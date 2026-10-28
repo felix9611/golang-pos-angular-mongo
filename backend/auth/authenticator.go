@@ -1,10 +1,13 @@
 package auth
 
 import (
-	jwt "github.com/appleboy/gin-jwt/v2"
-	"time"		
-	"github.com/gin-gonic/gin"
+	"golang-pos-mongo-backend/backend/tools"
 	"log"
+	"os"
+	"time"
+
+	jwt "github.com/appleboy/gin-jwt/v2"
+	"github.com/gin-gonic/gin"
 )
 
 var (
@@ -13,7 +16,6 @@ var (
 )
 
 func HandlerMiddleWare(authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc {
-	// 確保中介軟體已初始化
 	if err := authMiddleware.MiddlewareInit(); err != nil {
 		log.Fatal("authMiddleware.MiddlewareInit() Error:" + err.Error())
 	}
@@ -23,23 +25,40 @@ func HandlerMiddleWare(authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc {
 func InitAuthParams() *jwt.GinJWTMiddleware {
 	return &jwt.GinJWTMiddleware{
 		Realm:       "test zone",
-		Key:         []byte("secret key"),
-		Timeout:     time.Hour * 24 * 3,
-		MaxRefresh:  time.Hour * 24 * 3,
+		Key:         []byte(os.Getenv("JWT_SECRET_KEY")),
+		Timeout:     time.Hour * 24 * 1,
+		MaxRefresh:  time.Hour * 24 * 1,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*AuthUser); ok {
 				return jwt.MapClaims{
-					identityKey: v.Username,
+					identityKey:  v.Username,
+					"roleIds":    v.RoleIds,
+					"placeIds":   v.PlaceIds,
+					"deptIds":    v.DeptIds,
+					"superAdmin": v.SuperAdmin,
 				}
 			}
 			return jwt.MapClaims{}
 		},
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
-			return &AuthUser{
-				Username: claims[identityKey].(string),
+			username, ok := claims[identityKey].(string)
+			if !ok {
+				return nil
 			}
+			user := &AuthUser{
+				Username: username,
+			}
+			if v, ok := claims["superAdmin"].(bool); ok {
+				user.SuperAdmin = v
+			}
+
+			user.RoleIds = tools.ClaimStrings(claims["roleIds"])
+			user.PlaceIds = tools.ClaimStrings(claims["placeIds"])
+			user.DeptIds = tools.ClaimStrings(claims["deptIds"])
+
+			return user
 		},
 		Authenticator: LoginAuthenticator(),
 		Authorizator:  Authorizator(),

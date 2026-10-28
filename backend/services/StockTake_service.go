@@ -13,9 +13,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func CreateStockTakeForm(stockTakeForm dto.CreateStockTakeForm) (interface{}, error) {
+func GetStockTakesCollection() *mongo.Collection {
+	return config.GetCollection("stock_takes")
+}
 
-	collection := config.GetCollection("stock_takes")
+func CreateStockTakeForm(stockTakeForm dto.CreateStockTakeForm) (interface{}, error) {
+	collection := GetStockTakesCollection()
 
 	filter := bson.M{"actionName": stockTakeForm.ActionName, "actionPlaceId": stockTakeForm.ActionPlaceId}
 
@@ -46,7 +49,7 @@ func CreateStockTakeForm(stockTakeForm dto.CreateStockTakeForm) (interface{}, er
 }
 
 func GetOneStockTakeFormByID(id string) (interface{}, error) {
-	collection := config.GetCollection("stock_takes")
+	collection := GetStockTakesCollection()
 	var stockTakeForm models.StockTakes
 
 	objectID, err := primitive.ObjectIDFromHex(id)
@@ -104,7 +107,9 @@ func ListStockTakeForms(pageDto *dto.ListStockTakeDto) (interface{}, error) {
 		filters["actionPlaceId"] = bson.M{"$in": pageDto.PlaceIds}
 	}
 
-	collection := config.GetCollection("stock_takes")
+	collection := GetStockTakesCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: filters}},
@@ -137,9 +142,6 @@ func ListStockTakeForms(pageDto *dto.ListStockTakeDto) (interface{}, error) {
 		{{Key: "$limit", Value: limit}},
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -160,7 +162,7 @@ func ListStockTakeForms(pageDto *dto.ListStockTakeDto) (interface{}, error) {
 }
 
 func UpdateStockTakeForm(updateData *models.StockTakes) (interface{}, error) {
-	collection := config.GetCollection("stock_takes")
+	collection := GetStockTakesCollection()
 
 	filter := bson.M{"_id": updateData.ID}
 
@@ -190,7 +192,9 @@ func UpdateStockTakeForm(updateData *models.StockTakes) (interface{}, error) {
 }
 
 func GetStockTakeItem(stockTakeId string) (interface{}, error) {
-	collection := config.GetCollection("stock_take_items")
+	collection := GetStockTakesCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(stockTakeId)
 
@@ -199,9 +203,6 @@ func GetStockTakeItem(stockTakeId string) (interface{}, error) {
 	}
 
 	filter := bson.M{"stockTakeId": objectID}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: filter}},
@@ -329,8 +330,7 @@ func GetStockTakeItem(stockTakeId string) (interface{}, error) {
 }
 
 func StockTakeItemSubmit(stockTakeItem *models.StockTakeItems) (interface{}, error) {
-
-	collection := config.GetCollection("stock_take_items")
+	collection := GetStockTakesCollection()
 
 	stockTakeItem.CheckTime = time.Now().Format("2006-01-02 15:04:05")
 
@@ -344,17 +344,16 @@ func StockTakeItemSubmit(stockTakeItem *models.StockTakeItems) (interface{}, err
 }
 
 func FinishOrVoidStockTakeForm(_id string, status int, username string) (interface{}, error) {
-	collection := config.GetCollection("stock_takes")
-	objectID, err := primitive.ObjectIDFromHex(_id)
+	collection := GetStockTakesCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
+	objectID, err := primitive.ObjectIDFromHex(_id)
 	if err != nil {
 		return nil, err
 	}
 
 	filter := bson.M{"_id": objectID, "status": 1}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	var existingStockTake models.StockTakes
 	err = collection.FindOne(ctx, filter).Decode(&existingStockTake)

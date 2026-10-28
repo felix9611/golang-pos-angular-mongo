@@ -31,7 +31,8 @@ export class UserInfoComponent implements OnInit {
         roleIds: [],
         roleLists: [],
         email: '', 
-        loginRecords: []
+        loginRecords: [],
+        departments: []
     }
 
     resetPwForm: any = {
@@ -61,10 +62,10 @@ export class UserInfoComponent implements OnInit {
 
     async submitForm() {
         if (this.resetPwForm.newPassword === this.resetPwForm.againNewPassword) {
-            const res = await postApiWithAuth('/sys/user/user-self/update-password', {  password: this.resetPwForm.newPassword })
+            const res = await postApiWithAuth('/sys/user/user-self/update-password', {   username: this.userInfo.username, newPassword: this.resetPwForm.newPassword })
 
-            if (res.renew === true) {
-                this.message.info(res.msg)
+            if (res.ModifiedCount === 1) {
+                this.message.info('Reset password successfully!')
                 this.closeResetPWDialog()
             } else {
                 this.message.error(res.msg)
@@ -108,9 +109,9 @@ export class UserInfoComponent implements OnInit {
 
 
     async handleUpdateAvatar() {
-        const response = await postApiWithAuth('/sys/user/user-self/update-avatar', { photo: this.avatarUrl})
+        const response = await postApiWithAuth('/sys/user/user-self/update-avatar', { photo: this.avatarUrl, username: this.userInfo.username })
 
-        if (response.matchedCount) {
+        if (response.result.ModifiedCount === 1) {
             this.message.success('Update success!')
             this.userService.loadUserInfo()
             this.avatarUrl = ''

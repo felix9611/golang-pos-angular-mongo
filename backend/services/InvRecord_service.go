@@ -12,8 +12,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetInvRecordsCollection() *mongo.Collection {
+	return config.GetCollection("inventory_records")
+}
+
 func ListInvRecordsWithFilter(dtoData *dto.InvRecordListDto) ([]dto.InvRecordPureList, error) {
-	collection := config.GetCollection("inventory_records")
+	collection := GetInvRecordsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	filters := bson.M{}
 
@@ -107,9 +113,6 @@ func ListInvRecordsWithFilter(dtoData *dto.InvRecordListDto) ([]dto.InvRecordPur
 		{{Key: "$sort", Value: bson.D{{Key: "createdAt", Value: 1}}}},
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -159,7 +162,9 @@ func ListInvRecordsWithFilter(dtoData *dto.InvRecordListDto) ([]dto.InvRecordPur
 }
 
 func ListInvRecords(req *dto.InvRecordListDto) (interface{}, error) {
-	collection := config.GetCollection("inventory_records")
+	collection := GetInvRecordsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
 	filters := bson.M{}
 
@@ -268,9 +273,6 @@ func ListInvRecords(req *dto.InvRecordListDto) (interface{}, error) {
 		{{Key: "$limit", Value: limit}},
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -292,8 +294,7 @@ func ListInvRecords(req *dto.InvRecordListDto) (interface{}, error) {
 }
 
 func InsertInventoryRecord(dto dto.InsertInvRecordDto) (interface{}, error) {
-
-	collection := config.GetCollection("inventory_records")
+	collection := GetInvRecordsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

@@ -44,8 +44,8 @@ export interface StockInOutProductLocationDto {
 export interface ListProductLocationtRequestDto {
     page: number
     limit: number
-    locationIds?: string[]
-    assetCode?: string
+    locationIds: string[]
+    assetCode: string
 }
 
 export interface ListInvRecordDto {

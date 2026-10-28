@@ -11,6 +11,9 @@ import { NzTableModule } from 'ng-zorro-antd/table'
 import { MatIconModule } from '@angular/material/icon'
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker'
 import moment from 'moment'
+import { UserStoreService } from '../../../../../state/user.service'
+import { NzMessageService } from 'ng-zorro-antd/message'
+import { Subscription } from 'rxjs'
 
 
 @Component({
@@ -28,10 +31,27 @@ import moment from 'moment'
     templateUrl: './invoice-detail.component.html'
 })
 export class InvoiceDetailComponent implements OnInit {
+    private userRightSubscription: Subscription
     constructor(
         private route: ActivatedRoute,
-        private routeTo: Router
-    ) {}
+        private routeTo: Router,
+        private userStoreService: UserStoreService,
+        private message: NzMessageService,
+    ) {
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+            if (data.superAdmin !== true) {
+                this.locationList = data.locations
+            }
+        })
+    }
+
+    ngOnDestroy() {
+        if (this.userStoreService.user$) {
+            this.userRightSubscription.unsubscribe()
+        }
+    }
+
     ngOnInit(): void {
         this.loadLocationList()
         this.route.queryParams.subscribe((x: any) => {
@@ -41,11 +61,17 @@ export class InvoiceDetailComponent implements OnInit {
         })
     }
 
+    superAdmin: boolean = false
+
     async getDetail(id: string) {
-        const data = await getApiWithAuth(`/invoice/one/${id}`)
-        this.invoiceDetail = data
-        this.invoiceDetail.discount = this.invoiceDetail.discountType === '%' ? this.invoiceDetail.discount * 100 : this.invoiceDetail.discount
-    }
+        const res = await getApiWithAuth(`/invoice/one/${id}`)
+        if (res.error) {
+            this.message.error(res.error)
+        } else {
+            this.invoiceDetail = res
+            this.invoiceDetail.discount = this.invoiceDetail.discountType === '%' ? this.invoiceDetail.discount * 100 : this.invoiceDetail.discount
+        }
+     }
 
     locationList: any[] = []
     async loadLocationList() {

@@ -7,17 +7,26 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type AuthUser struct {
-	Username string `json:"username"`
+	Username   string               `json:"username"`
+	RoleIds    []primitive.ObjectID `json:"roleIds"`
+	PlaceIds   []primitive.ObjectID `json:"placeIds"`
+	DeptIds    []primitive.ObjectID `json:"deptIds"`
+	SuperAdmin bool                 `json:"superAdmin"`
 }
 
 func AuthPayloadFunc() func(data interface{}) jwt.MapClaims {
 	return func(data interface{}) jwt.MapClaims {
 		if v, ok := data.(*AuthUser); ok {
 			return jwt.MapClaims{
-				"username": v.Username,
+				"username":   v.Username,
+				"roleIds":    v.RoleIds,
+				"placeIds":   v.PlaceIds,
+				"deptIds":    v.DeptIds,
+				"superAdmin": v.SuperAdmin,
 			}
 		}
 		return jwt.MapClaims{}
@@ -72,7 +81,11 @@ func LoginAuthenticator() func(c *gin.Context) (interface{}, error) {
 		} else {
 			services.AddLoginRecord(user.Username, loginVals.IpAddress, "success")
 			return &AuthUser{
-				Username: user.Username,
+				Username:   user.Username,
+				RoleIds:    user.Roles,
+				PlaceIds:   user.PlaceIds,
+				DeptIds:    user.DeptIds,
+				SuperAdmin: user.SuperAdmin,
 			}, nil
 		}
 	}

@@ -2,6 +2,11 @@ package dto
 
 import "golang-pos-mongo-backend/backend/models"
 
+type CreateUserBody struct {
+	Key      string          `json:"key"`
+	UserData models.SysUsers `json:"userData"`
+}
+
 type SysUserPageDto struct {
 	RoleIds []string `json:"roleIds"`
 	Name    string   `json:"name"`
