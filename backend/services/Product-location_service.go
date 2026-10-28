@@ -13,8 +13,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetProductLocationsCollection() *mongo.Collection {
+	return config.GetCollection("product_location")
+}
+
 func ProductLocationListWithFilter(req dto.ListProductLocationtRequestDto) ([]dto.ProductLocationPureList, error) {
-	collection := config.GetCollection("product_location")
+	collection := GetProductLocationsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -128,7 +132,7 @@ func ProductLocationList(req dto.ListProductLocationtRequestDto) (interface{}, e
 	skip := int64((req.Page - 1) * req.Limit)
 	limit := int64(req.Limit)
 
-	collection := config.GetCollection("product_location")
+	collection := GetProductLocationsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -230,7 +234,7 @@ func StockIn(entryData dto.StockInOutProductLocationDto) (interface{}, error) {
 		return gin.H{"error": "Location not found!"}, err
 	}
 
-	collection := config.GetCollection("product_location")
+	collection := GetProductLocationsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -329,7 +333,7 @@ func StockMove(entryData dto.StockMoveProductLocationDto) (interface{}, error) {
 		return gin.H{"error": "Product or Location not found!"}, err
 	}
 
-	collection := config.GetCollection("product_location")
+	collection := GetProductLocationsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -470,7 +474,7 @@ func StockOut(entryData dto.StockInOutProductLocationDto) (interface{}, error) {
 		return gin.H{"error": "Invalid data!"}, err
 	}
 
-	collection := config.GetCollection("product_location")
+	collection := GetProductLocationsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -527,7 +531,7 @@ func StockOut(entryData dto.StockInOutProductLocationDto) (interface{}, error) {
 }
 
 func CheckProductAndLocation(req dto.CheckProductAndLocationDto) (dto.CheckProductAndLocationResponse, error) {
-	collection := config.GetCollection("product_location")
+	collection := GetProductLocationsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
