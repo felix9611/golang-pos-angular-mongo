@@ -7,10 +7,15 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetLoginRecordsCollection() *mongo.Collection {
+	return config.GetCollection("login_records")
+}
+
 func AddLoginRecord(username string, ip string, loginStatus string) (interface{}, error) {
-	collection := config.GetCollection("login_records")
+	collection := GetLoginRecordsCollection()
 
 	saveData := bson.M{
 		"username":    username,
@@ -30,7 +35,7 @@ func AddLoginRecord(username string, ip string, loginStatus string) (interface{}
 }
 
 func GetLoginRecords(username string) ([]models.LoginRecords, error) {
-	collection := config.GetCollection("login_records")
+	collection := GetLoginRecordsCollection()
 
 	filter := bson.M{"username": username}
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
