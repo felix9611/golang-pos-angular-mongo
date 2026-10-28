@@ -15,17 +15,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func GetSysMenusCollection() (*mongo.Collection, context.Context) {
+func GetSysMenusCollection() *mongo.Collection {
 	collection := config.GetCollection("sys_menus")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	return collection, ctx
+	return collection
 }
 
 func CreateSysMenu(data *models.SysMenus) (interface{}, error) {
 	filter := bson.M{"status": 1, "name": data.Name, "path": data.Path}
 
-	collection, ctx := GetSysMenusCollection()
+	collection := GetSysMenusCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
@@ -63,7 +63,9 @@ func CreateSysMenu(data *models.SysMenus) (interface{}, error) {
 }
 
 func GetOneMenuItemById(id string) (interface{}, error) {
-	collection, ctx := GetSysMenusCollection()
+	collection := GetSysMenusCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	var menuItem models.SysMenus
 
@@ -86,7 +88,9 @@ func GetOneMenuItemById(id string) (interface{}, error) {
 }
 
 func VoidMenuItemById(id string) (interface{}, error) {
-	collection, ctx := GetSysMenusCollection()
+	collection := GetSysMenusCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -125,7 +129,9 @@ func VoidMenuItemById(id string) (interface{}, error) {
 }
 
 func UpdateMenuItem(data *models.SysMenus) (interface{}, error) {
-	collection, ctx := GetSysMenusCollection()
+	collection := GetSysMenusCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"_id": data.ID}
 
@@ -154,7 +160,9 @@ func UpdateMenuItem(data *models.SysMenus) (interface{}, error) {
 }
 
 func ListAllMainIdMenu() (interface{}, error) {
-	collection, ctx := GetSysMenusCollection()
+	collection := GetSysMenusCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	// Aggregation pipeline
 	pipeline := mongo.Pipeline{
@@ -191,7 +199,9 @@ func ListAllMainIdMenu() (interface{}, error) {
 }
 
 func GetAllMenuItems() (interface{}, error) {
-	collection, ctx := GetSysMenusCollection()
+	collection := GetSysMenusCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.M{"status": 1}}},
@@ -214,7 +224,9 @@ func GetAllMenuItems() (interface{}, error) {
 
 // ListAllMenu fetch menus by name and build hierarchical tree
 func ListAllMenu(query *dto.SysMenuList) (interface{}, error) {
-	collection, ctx := GetSysMenusCollection()
+	collection := GetSysMenusCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{}
 	if query.Name != "" {

@@ -15,15 +15,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetSysUsersCollection() (*mongo.Collection, context.Context) {
+func GetSysUsersCollection() *mongo.Collection {
 	collection := config.GetCollection("sys_users")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	return collection, ctx
+	return collection
 }
 
 func CreateSysUser(user *models.SysUsers) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"status": 1, "username": user.Username}
 
@@ -74,7 +74,9 @@ func CreateSysUser(user *models.SysUsers) (interface{}, error) {
 }
 
 func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"_id": updateData.ID, "status": 1}
 
@@ -99,7 +101,9 @@ func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
 }
 
 func InactiveUserByID(id string) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -133,7 +137,9 @@ func InactiveUserByID(id string) (interface{}, error) {
 }
 
 func GetOneSysUserById(id string) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -156,7 +162,9 @@ func GetOneSysUserById(id string) (interface{}, error) {
 }
 
 func GetUserByUsername(username string) (*models.SysUsers, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"username": username, "status": 1}
 
@@ -170,7 +178,9 @@ func GetUserByUsername(username string) (*models.SysUsers, error) {
 }
 
 func GetUserDetailByUsername(username string) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"username": username, "status": 1}
 
@@ -214,7 +224,9 @@ func GetUserDetailByUsername(username string) (interface{}, error) {
 }
 
 func UpdateUserPassword(Username string, NewPassword string) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"username": Username, "status": 1}
 
@@ -242,7 +254,9 @@ func UpdateUserPassword(Username string, NewPassword string) (interface{}, error
 }
 
 func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
@@ -293,7 +307,9 @@ func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
 }
 
 func UserUpdateAvatar(Username string, PhotoBase string) (interface{}, error) {
-	collection, ctx := GetSysUsersCollection()
+	collection := GetSysUsersCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"username": Username, "status": 1}
 
