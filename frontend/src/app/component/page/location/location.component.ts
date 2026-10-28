@@ -106,9 +106,7 @@ export class LocationComponent {
     removeDialog: boolean = false
     handleRemoveId: string = ''
 
-    ngOnInit() {
-        this.loadLocationLists()
-    }
+    ngOnInit() {}
 
     async submitForm() {
         const url = this.editForm.id === '' ? '/base/location/create' : `/base/location/update`
@@ -143,13 +141,7 @@ export class LocationComponent {
             this.okText = 'Create'
         }
     }
-
-    async loadLocationLists() {
-        const res = await postApiWithAuth('/base/location/list', this.searchForm)
-        this.dataLists = res.lists
-        this.totals = res.total
-    }
-
+    
     showDialog() {
         this.editFormDialog = true
     }
