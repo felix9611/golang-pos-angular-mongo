@@ -13,8 +13,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetMemberListsCollection() *mongo.Collection {
+	return config.GetCollection("member_lists")
+}
+
+func GetMemberSpecialDaysCollection() *mongo.Collection {
+	return config.GetCollection("member_special_days")
+}
+
 func CreateMember(member *models.MemberLists) (interface{}, error) {
-	collection := config.GetCollection("member_lists")
+	collection := GetMemberListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -87,7 +95,7 @@ func CreateMember(member *models.MemberLists) (interface{}, error) {
 }
 
 func CreateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) {
-	collection := config.GetCollection("member_special_days")
+	collection := GetMemberSpecialDaysCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -100,7 +108,7 @@ func CreateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) 
 }
 
 func UpdateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) {
-	collection := config.GetCollection("member_special_days")
+	collection := GetMemberSpecialDaysCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -114,7 +122,7 @@ func UpdateMemberSpecialDay(data models.MemberSpecialDays) (interface{}, error) 
 }
 
 func VoidMemberSpecialDay(id string) (interface{}, error) {
-	collection := config.GetCollection("member_special_days")
+	collection := GetMemberSpecialDaysCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -153,7 +161,7 @@ func VoidMemberSpecialDay(id string) (interface{}, error) {
 }
 
 func GetOneMemberById(id string) (interface{}, error) {
-	collection := config.GetCollection("member_lists")
+	collection := GetMemberListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -191,11 +199,11 @@ func GetOneMemberById(id string) (interface{}, error) {
 }
 
 func GetSpecialDayByMemberId(id string) ([]models.MemberSpecialDays, error) {
-	collection := config.GetCollection("member_special_days")
+	collection := GetMemberSpecialDaysCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{"memberId": id}
+	filter := bson.M{"memberId": id, "status": 1}
 
 	var specialDay []models.MemberSpecialDays
 	cursor, err := collection.Find(ctx, filter)
@@ -220,7 +228,7 @@ func GetSpecialDayByMemberId(id string) ([]models.MemberSpecialDays, error) {
 }
 
 func VoidOneMember(id string) (interface{}, error) {
-	collection := config.GetCollection("member_lists")
+	collection := GetMemberListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -257,7 +265,7 @@ func VoidOneMember(id string) (interface{}, error) {
 }
 
 func UpdateMember(updateDto *models.MemberLists) (interface{}, error) {
-	collection := config.GetCollection("member_lists")
+	collection := GetMemberListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -316,7 +324,7 @@ func UpdateMember(updateDto *models.MemberLists) (interface{}, error) {
 }
 
 func CreateNewMemberNumber() (string, error) {
-	collection := config.GetCollection("member_lists")
+	collection := GetMemberListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -370,7 +378,7 @@ func CreateNewMemberNumber() (string, error) {
 }
 
 func ListMemberLists(pageDto dto.MemberListsDto) (dto.MemberList, error) {
-	collection := config.GetCollection("member_lists")
+	collection := GetMemberListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -453,7 +461,7 @@ func ListMemberLists(pageDto dto.MemberListsDto) (dto.MemberList, error) {
 }
 
 func FindMembersByName(data dto.MemberListsByNameDto) ([]models.MemberLists, error) {
-	collection := config.GetCollection("member_lists")
+	collection := GetMemberListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
