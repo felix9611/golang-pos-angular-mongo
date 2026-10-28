@@ -14,14 +14,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetSysRolesCollection() *mongo.Collection {
-	return config.GetCollection("sys_roles")
+func GetSysRolesCollection() (*mongo.Collection, context.Context) {
+	collection := config.GetCollection("sys_roles")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return collection, ctx
 }
 
 func CreateSysRole(role *models.SysRoles) (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	filter := bson.M{"status": 1, "name": role.Name}
 
@@ -59,9 +60,7 @@ func CreateSysRole(role *models.SysRoles) (interface{}, error) {
 }
 
 func GetAllRoles() (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	var roles []*models.SysRoles
 
@@ -84,9 +83,7 @@ func GetAllRoles() (interface{}, error) {
 }
 
 func GetOneSysRoleById(id string) (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -107,9 +104,7 @@ func GetOneSysRoleById(id string) (interface{}, error) {
 }
 
 func UpdateRoleById(updateData *models.SysRoles) (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	filter := bson.M{"_id": updateData.ID, "status": 1}
 
@@ -136,9 +131,7 @@ func UpdateRoleById(updateData *models.SysRoles) (interface{}, error) {
 }
 
 func VoidRoleById(id string) (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -174,9 +167,7 @@ func VoidRoleById(id string) (interface{}, error) {
 }
 
 func RolesList(pageDto *dto.RolesPageDto) (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
@@ -228,9 +219,7 @@ func RolesList(pageDto *dto.RolesPageDto) (interface{}, error) {
 }
 
 func findRoleListByUser(ids []primitive.ObjectID) ([]models.SysRoles, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	filter := bson.M{"_id": bson.M{"$in": ids}, "status": 1}
 
@@ -257,9 +246,7 @@ func findRoleListByUser(ids []primitive.ObjectID) ([]models.SysRoles, error) {
 }
 
 func HandleMenuPermission(data *dto.MenuItemPermissionBody) (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	objectID, err := primitive.ObjectIDFromHex(data.ID)
 	if err != nil {
@@ -296,9 +283,7 @@ func HandleMenuPermission(data *dto.MenuItemPermissionBody) (interface{}, error)
 }
 
 func LoadRoleWithMenu(data *dto.RoleIdsBody) (interface{}, error) {
-	collection := GetSysRolesCollection()
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysRolesCollection()
 
 	var objectIDs []primitive.ObjectID
 
