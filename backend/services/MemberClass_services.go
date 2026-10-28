@@ -10,11 +10,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+func GetMemberClassCollection() *mongo.Collection {
+	return config.GetCollection("member_class")
+}
+
 func CreateMemberClass(memberClass *models.MemberClass) (interface{}, error) {
-	collection := config.GetCollection("member_class")
+	collection := GetMemberClassCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -58,7 +63,7 @@ func CreateMemberClass(memberClass *models.MemberClass) (interface{}, error) {
 }
 
 func GetOneMemberClassById(id string) (interface{}, error) {
-	collection := config.GetCollection("member_class")
+	collection := GetMemberClassCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -84,7 +89,7 @@ func GetOneMemberClassById(id string) (interface{}, error) {
 }
 
 func VoidOneMemberClass(id string) (interface{}, error) {
-	collection := config.GetCollection("member_class")
+	collection := GetMemberClassCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -121,7 +126,7 @@ func VoidOneMemberClass(id string) (interface{}, error) {
 }
 
 func ListMemberClass(pageDto *dto.MemberClassListDto) (interface{}, error) {
-	collection := config.GetCollection("member_class")
+	collection := GetMemberClassCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -179,7 +184,7 @@ func ListMemberClass(pageDto *dto.MemberClassListDto) (interface{}, error) {
 }
 
 func ListAllMemberClass() (interface{}, error) {
-	collection := config.GetCollection("member_class")
+	collection := GetMemberClassCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -203,7 +208,7 @@ func ListAllMemberClass() (interface{}, error) {
 }
 
 func UpdateMemberClass(updateDto *models.MemberClass) (interface{}, error) {
-	collection := config.GetCollection("member_class")
+	collection := GetMemberClassCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
