@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/models"
 	"golang-pos-mongo-backend/backend/services"
@@ -19,19 +20,32 @@ import (
 // @Success      200      {object}  dto.GeneralCreateResponseBody
 // @Router      /product/product-list/create [post]
 func CreateProductList(c *gin.Context) {
-	var productList models.ProductLists
-	if err := c.ShouldBindJSON(&productList); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	result, err := services.CreateProductItem(&productList)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var productList models.ProductLists
+		if err := c.ShouldBindJSON(&productList); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, result)
+		result, err := services.CreateProductItem(&productList)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
+	}
 }
 
 // @Summary      Get one product record by id
@@ -79,20 +93,33 @@ func GetOneProductItemByCode(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router       /product/product-list/update [post]
 func UpdateProductItem(c *gin.Context) {
-	var updateData models.ProductLists
-	if err := c.ShouldBindJSON(&updateData); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
 
-	// Call the service to update the asset item
-	updatedAsset, err := services.UpdateProductItem(&updateData)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		var updateData models.ProductLists
+		if err := c.ShouldBindJSON(&updateData); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 
-	c.JSON(http.StatusOK, updatedAsset)
+		// Call the service to update the asset item
+		updatedAsset, err := services.UpdateProductItem(&updateData)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, updatedAsset)
+	}
 }
 
 // @Summary      Get one product file records by id
@@ -122,13 +149,26 @@ func LoadFilesByProductId(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateResponse
 // @Router       /product/product-list/file-remove/{id} [delete]
 func RemoveProductFile(c *gin.Context) {
-	id := c.Param("id")
-	res, err := services.DeleteProductFile(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, res)
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		res, err := services.DeleteProductFile(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, res)
+	}
 }
 
 // @Summary      List Product Items
@@ -190,13 +230,26 @@ func ListProductItemsWithFilter(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
 // @Router      /product/product-list/void/{id} [delete]
 func InactiveProductItems(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.InactiveProductItemsByID(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Asset Type inactivated successfully", "data": result})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.InactiveProductItemsByID(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Asset Type inactivated successfully", "data": result})
+	}
 }
 
 func RegisterProductListRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
