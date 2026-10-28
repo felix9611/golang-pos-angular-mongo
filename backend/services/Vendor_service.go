@@ -10,8 +10,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+func GetVendorsCollection() *mongo.Collection {
+	return config.GetCollection("vendors")
+}
 
 func BatchCreateVendors(Vendors []models.Vendors) (interface{}, error) {
 	for _, vendor := range Vendors {
@@ -26,12 +31,11 @@ func BatchCreateVendors(Vendors []models.Vendors) (interface{}, error) {
 }
 
 func CreateVendor(vendor *models.Vendors) (interface{}, error) {
-	collection := config.GetCollection("vendors")
-
-	filter := bson.M{"status": 1, "vendorName": vendor.VendorName, "vendorCode": vendor.VendorCode}
-
+	collection := GetVendorsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
+
+	filter := bson.M{"status": 1, "vendorName": vendor.VendorName, "vendorCode": vendor.VendorCode}
 
 	count, err := collection.CountDocuments(ctx, filter)
 
@@ -71,16 +75,15 @@ func CreateVendor(vendor *models.Vendors) (interface{}, error) {
 }
 
 func GetOneVendorById(id string) (interface{}, error) {
-
+	collection := GetVendorsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	collection := config.GetCollection("vendors")
 	objectID, err := primitive.ObjectIDFromHex(id)
-
 	if err != nil {
 		return nil, err
 	}
+
 	filter := bson.M{"_id": objectID, "status": 1}
 
 	var vendor models.Vendors
@@ -99,11 +102,10 @@ func GetOneVendorById(id string) (interface{}, error) {
 }
 
 func UpdateVendorById(updateData *models.Vendors) (interface{}, error) {
-
+	collection := GetVendorsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	collection := config.GetCollection("vendors")
 	filter := bson.M{"_id": updateData.ID, "status": 1}
 
 	var existingVendor models.Vendors
@@ -130,16 +132,16 @@ func UpdateVendorById(updateData *models.Vendors) (interface{}, error) {
 }
 
 func InactiveVendorByID(id string) (interface{}, error) {
-	collection := config.GetCollection("vendors")
+	collection := GetVendorsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
 
 	filter := bson.M{"_id": objectID, "status": 1}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	var vendor models.Vendors
 
@@ -166,8 +168,7 @@ func InactiveVendorByID(id string) (interface{}, error) {
 }
 
 func GetAllVendors() ([]models.Vendors, error) {
-	collection := config.GetCollection("vendors")
-
+	collection := GetVendorsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -194,8 +195,10 @@ func GetAllVendors() ([]models.Vendors, error) {
 }
 
 func VendorListwithFilter(pageDto *dto.VendorPageDto) (interface{}, error) {
+	collection := GetVendorsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	collection := config.GetCollection("vendors")
 	filter := bson.M{
 		"status": 1,
 		"$or": []bson.M{
@@ -204,8 +207,6 @@ func VendorListwithFilter(pageDto *dto.VendorPageDto) (interface{}, error) {
 			{"phone": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 		},
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	findOptions := options.Find()
 	findOptions.SetSort(bson.D{{"created_at", -1}})
@@ -233,6 +234,10 @@ func VendorListwithFilter(pageDto *dto.VendorPageDto) (interface{}, error) {
 }
 
 func VendorList(pageDto *dto.VendorPageDto) (interface{}, error) {
+	collection := GetVendorsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
 	}
@@ -243,7 +248,6 @@ func VendorList(pageDto *dto.VendorPageDto) (interface{}, error) {
 	skip := (pageDto.Page - 1) * pageDto.Limit
 	limit := pageDto.Limit
 
-	collection := config.GetCollection("vendors")
 	filter := bson.M{
 		"status": 1,
 		"$or": []bson.M{
@@ -252,8 +256,6 @@ func VendorList(pageDto *dto.VendorPageDto) (interface{}, error) {
 			{"phone": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 		},
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	count, errCount := collection.CountDocuments(ctx, filter)
 	if errCount != nil {
