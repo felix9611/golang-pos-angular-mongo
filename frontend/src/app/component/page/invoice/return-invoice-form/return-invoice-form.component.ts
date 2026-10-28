@@ -34,13 +34,14 @@ import { findMenuItem } from '../../../tool-function'
 })
 export class ReturnInvoiceFormComponent implements OnInit {
     private rightSubscription: Subscription
+    private userRightSubscription: Subscription
     constructor(
             private route: ActivatedRoute, 
             private routeTo: Router,
             private message: NzMessageService,
             private userStoreService: UserStoreService
     ) {
-         this.rightSubscription = this.userStoreService.menuRole$.subscribe((data: any) => {
+        this.rightSubscription = this.userStoreService.menuRole$.subscribe((data: any) => {
             const answer = findMenuItem(data, 'Create Return', 'create-return-invoice')
             this.userRightInside = {
                 read: answer?.read ?? false,
@@ -50,15 +51,23 @@ export class ReturnInvoiceFormComponent implements OnInit {
                 upload: answer.upload ?? false
                      // keep default value
                 }
-         })
-    }
-    
+        })
 
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+            if (data.superAdmin !== true) {
+                this.locationList = data.locations
+            }
+        })
+    }
 
     ngOnDestroy() {
         if (this.userStoreService.menuRole$) {
             this.rightSubscription.unsubscribe()
-       }
+        }
+        if (this.userStoreService.user$) {
+            this.userRightSubscription.unsubscribe()
+        }
     }
 
     userRightInside: any = {
@@ -101,7 +110,7 @@ export class ReturnInvoiceFormComponent implements OnInit {
     }
 
     oldQtys: number = 0
-
+    superAdmin: boolean = false
     invoiceDetail: any = {}
 
     goBackList() {
@@ -117,8 +126,10 @@ export class ReturnInvoiceFormComponent implements OnInit {
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/all')
-        this.locationList = data.data
+        if (this.superAdmin === true) {
+            const data = await getApiWithAuth('/base/location/all')
+            this.locationList = data
+        }
     }
 
     searchInvoiceItem() {
