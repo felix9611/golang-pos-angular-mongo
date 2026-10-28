@@ -40,6 +40,7 @@ import { DownloadExcelDataComponent } from '../../../components/download-excel-c
 })
 export class InvoiceListComponent {
     private rightSubscription: Subscription
+    private userRightSubscription: Subscription
     constructor(
         private routeTo: Router,
         private userStoreService: UserStoreService,
@@ -59,7 +60,26 @@ export class InvoiceListComponent {
             this.excelFileSetting.code = answer?.excelFunctionCode ?? ''
             this.preLoadExcelSetting()
         })
+
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+            if (data.superAdmin !== true) {
+                this.locationList = data.locations
+                this.searchForm.locationId = data.placeIds
+            }
+        })
     }
+
+    ngOnDestroy() {
+        if (this.userStoreService.menuRole$) {
+            this.rightSubscription.unsubscribe()
+        }
+        if (this.userStoreService.user$) {
+            this.userRightSubscription.unsubscribe()
+        }
+    }
+
+    superAdmin: boolean = false
 
     excelFileSetting: any = {
         code: ''
@@ -68,15 +88,12 @@ export class InvoiceListComponent {
     dbFieldList: string[] = []
     excelFieldList: string[] = []
 
-    ngOnDestroy() {
-        if (this.userStoreService.menuRole$) {
-            this.rightSubscription.unsubscribe()
-        }
-    }
-
     searchForm: InvoiceListRequestDto = {
         page: 1,
-        limit: 10
+        limit: 10,
+        number: '',
+        dateRange: [],
+        locationId: []
     }
 
     userRightInside: any = {
@@ -101,14 +118,26 @@ export class InvoiceListComponent {
     locationList: any[] = []
 
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/all')
-        this.locationList = data.data
+        if (this.superAdmin === true) {
+            const data = await getApiWithAuth('/base/location/all')
+            this.locationList = data
+        }
     }
 
     async loadInvoiceLists() {
-        const res = await postApiWithAuth('/invoice/list', this.searchForm)
-        this.dataLists = res.lists
-        this.totals = res.total
+        if (this.superAdmin === true) {
+            const res = await postApiWithAuth('/invoice/list', this.searchForm)
+            this.dataLists = res.lists
+            this.totals = res.total
+        } else {
+            if (this.searchForm.locationId.length === 0) {
+                this.message.error('Please select least one location')
+            } else {
+                const res = await postApiWithAuth('/invoice/list', this.searchForm)
+                this.dataLists = res.lists
+                this.totals = res.total
+            }
+        }
     }
 
     handleRomeve(id: string) {
