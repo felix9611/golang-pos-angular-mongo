@@ -67,6 +67,9 @@ export class ProductLocationListComponent {
 
     ngOnInit() {
         this.loadLocationList()
+        if (this.superAdmin === true) {
+            this.loadProductLocationLists()
+        }
     }
 
     superAdmin: boolean = false
