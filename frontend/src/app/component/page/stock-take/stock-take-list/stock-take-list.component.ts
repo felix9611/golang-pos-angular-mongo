@@ -63,8 +63,8 @@ export class StockTakeListComponent implements OnInit {
             if (data.superAdmin !== true) {
                 this.placeLists = data.locations
                 this.searchForm.placeIds = data.placeIds
-                if (this.searchForm.placeIds.length === 1) {
-                    this.editForm.actionPlaceId = this.searchForm.placeIds[0].id
+                if (this.placeLists.length === 1) {
+                    this.editForm.actionPlaceId = this.placeLists[0].id
                 }
             }
         })
