@@ -77,7 +77,10 @@ export class ReturnInvoiceListComponent {
 
     searchForm: InvoiceListRequestDto = {
         page: 1,
-        limit: 10
+        limit: 10,
+        invoiceNumber: '',
+        caseNumber: '',
+        locationId: []
     }
 
     userRightInside: any = {
