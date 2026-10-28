@@ -119,9 +119,6 @@ export class TaxInformationComponent {
 
     ngOnInit() {
         this.loadTaxInfoLists()
-        this.loadDeptLists()
-        this.loadPlaceLists()
-        
     }
 
     excelFileSetting: any = {
@@ -135,13 +132,6 @@ export class TaxInformationComponent {
         this.excelFieldList = res.fieldLists.map((item: any) => item.excelFieldName)
     }
 
-    async loadPlaceLists() {
-        this.placeLists = await getApiWithAuth('/base/location/getAll')
-    }
-
-    async loadDeptLists() {
-        this.deptLists = await getApiWithAuth('/base/budget/getBudgetSummary')
-    }
 
     async submitForm() {
         const url = this.editForm.id === '' ? '/base/tax-information/create' : `/base/tax-information/update`

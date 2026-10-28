@@ -14,11 +14,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetTaxInformationsCollection() (*mongo.Collection, context.Context) {
+func GetTaxInformationsCollection() *mongo.Collection {
 	collection := config.GetCollection("tax_informations")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	return collection, ctx
+	return collection
 }
 
 func BatchCreateTaxInformation(TaxInfos []models.TaxInformations) (interface{}, error) {
@@ -34,7 +32,7 @@ func BatchCreateTaxInformation(TaxInfos []models.TaxInformations) (interface{}, 
 }
 
 func CreateTaxInformation(taxInfo *models.TaxInformations) (interface{}, error) {
-	collection, _ := GetTaxInformationsCollection()
+	collection := GetTaxInformationsCollection()
 
 	filter := bson.M{
 		"status":      1,
@@ -75,7 +73,9 @@ func CreateTaxInformation(taxInfo *models.TaxInformations) (interface{}, error) 
 }
 
 func GetOneTaxInformation(id string) (interface{}, error) {
-	collection, ctx := GetTaxInformationsCollection()
+	collection := GetTaxInformationsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -98,7 +98,9 @@ func GetOneTaxInformation(id string) (interface{}, error) {
 }
 
 func VoidOneTaxInformation(id string) (interface{}, error) {
-	collection, ctx := GetTaxInformationsCollection()
+	collection := GetTaxInformationsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -134,7 +136,9 @@ func VoidOneTaxInformation(id string) (interface{}, error) {
 }
 
 func UpdateTaxInformation(updateData *models.TaxInformations) (interface{}, error) {
-	collection, ctx := GetTaxInformationsCollection()
+	collection := GetTaxInformationsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"_id": updateData.ID, "status": 1}
 
@@ -161,7 +165,9 @@ func UpdateTaxInformation(updateData *models.TaxInformations) (interface{}, erro
 }
 
 func TaxInformationListWithoutPagination(pageDto *dto.TaxInformationListDTO) (interface{}, error) {
-	collection, ctx := GetTaxInformationsCollection()
+	collection := GetTaxInformationsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"status": 1}
 
@@ -215,7 +221,9 @@ func TaxInformationListWithoutPagination(pageDto *dto.TaxInformationListDTO) (in
 }
 
 func TaxInformationList(pageDto *dto.TaxInformationListDTO) (interface{}, error) {
-	collection, ctx := GetTaxInformationsCollection()
+	collection := GetTaxInformationsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	if pageDto.Page < 1 {
 		pageDto.Page = 1
@@ -288,7 +296,9 @@ func TaxInformationList(pageDto *dto.TaxInformationListDTO) (interface{}, error)
 }
 
 func ListAllTaxInformation() (interface{}, error) {
-	collection, ctx := GetTaxInformationsCollection()
+	collection := GetTaxInformationsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"status": 1}
 

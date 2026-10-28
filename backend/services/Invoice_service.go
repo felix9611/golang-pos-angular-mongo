@@ -17,11 +17,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func GetInvoiceListsCollection() (*mongo.Collection, context.Context) {
+func GetInvoiceListsCollection() *mongo.Collection {
 	collection := config.GetCollection("invoices")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	return collection, ctx
+	return collection
 }
 
 func CreateInvoice(data dto.InvoiceDto) (interface{}, error) {

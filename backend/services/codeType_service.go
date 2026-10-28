@@ -14,17 +14,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func GetCodeTypeCollection() (*mongo.Collection, context.Context) {
+func GetCodeTypeCollection() *mongo.Collection {
 	collection := config.GetCollection("code_types")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	return collection, ctx
+	return collection
 }
 
 func CreateCodeType(codeType *models.CodeTypes) (interface{}, error) {
 	filter := bson.M{"status": 1, "valueCode": codeType.ValueCode, "valueName": codeType.ValueName}
 
-	collection, _ := GetCodeTypeCollection()
+	collection := GetCodeTypeCollection()
 
 	count, err := collection.CountDocuments(context.Background(), filter)
 	if err != nil {
@@ -61,7 +59,9 @@ func CreateCodeType(codeType *models.CodeTypes) (interface{}, error) {
 }
 
 func GetOneCodeType(id string) (interface{}, error) {
-	collection, ctx := GetCodeTypeCollection()
+	collection := GetCodeTypeCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -85,7 +85,9 @@ func GetOneCodeType(id string) (interface{}, error) {
 }
 
 func VoidOneCodeType(id string) (interface{}, error) {
-	collection, ctx := GetCodeTypeCollection()
+	collection := GetCodeTypeCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -123,7 +125,9 @@ func VoidOneCodeType(id string) (interface{}, error) {
 }
 
 func UpdateCodeType(updateData *models.CodeTypes) (interface{}, error) {
-	collection, ctx := GetCodeTypeCollection()
+	collection := GetCodeTypeCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"_id": updateData.ID, "status": 1}
 
@@ -152,7 +156,9 @@ func UpdateCodeType(updateData *models.CodeTypes) (interface{}, error) {
 }
 
 func CodeTypeListWithoutPagination(pageDto *dto.CodeTypeListDto) (interface{}, error) {
-	collection, ctx := GetCodeTypeCollection()
+	collection := GetCodeTypeCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"status": 1}
 
@@ -203,7 +209,9 @@ func CodeTypeList(pageDto *dto.CodeTypeListDto) (interface{}, error) {
 		pageDto.Limit = 10
 	}
 
-	collection, ctx := GetCodeTypeCollection()
+	collection := GetCodeTypeCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"status": 1}
 
@@ -255,7 +263,9 @@ func CodeTypeList(pageDto *dto.CodeTypeListDto) (interface{}, error) {
 }
 
 func ListCodeTypeByType(typeString string) (interface{}, error) {
-	collection, ctx := GetCodeTypeCollection()
+	collection := GetCodeTypeCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
 	filter := bson.M{"type": typeString, "status": 1}
 
