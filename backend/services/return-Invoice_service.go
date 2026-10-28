@@ -16,6 +16,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetReturnInvoicesCollection() *mongo.Collection {
+	return config.GetCollection("return_invoices")
+}
+
+func GetReturnInvoiceItemsCollection() *mongo.Collection {
+	return config.GetCollection("return_invoice_items")
+}
+
 // CreateReturnInvoice creates a return invoice along with its items atomically.
 func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (interface{}, error) {
 
@@ -61,7 +69,7 @@ func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (interface{}, error) {
 	}
 
 	// ReturnInvoice
-	collection := config.GetCollection("return_invoices")
+	collection := GetReturnInvoicesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -91,7 +99,7 @@ func CreateReturnInvoice(req dto.CreateReturnInvoiceDto) (interface{}, error) {
 			}
 		}
 
-		itemCollection := config.GetCollection("return_invoice_items")
+		itemCollection := GetReturnInvoiceItemsCollection()
 		_, err = itemCollection.InsertMany(ctx, itemsToInsert)
 		if err != nil {
 			CreateActionRecord("Create Return Invoice", "POST", "Return Invoice", returnInvoice, "Failed")
@@ -109,7 +117,7 @@ func GetReturnCaseNumber() string {
 }
 
 func GetReturnInvoiceById(id string) (interface{}, error) {
-	collection := config.GetCollection("return_invoices")
+	collection := GetReturnInvoicesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -204,7 +212,7 @@ func GetReturnInvoiceById(id string) (interface{}, error) {
 }
 
 func GetReturnItemList(id string) ([]dto.ReturnInvoiceItemDetail, error) {
-	collection := config.GetCollection("return_invoice_items")
+	collection := GetReturnInvoiceItemsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -257,7 +265,7 @@ func GetReturnItemList(id string) ([]dto.ReturnInvoiceItemDetail, error) {
 }
 
 func ListReturnInvoice(req dto.InvoiceListRequestDto) (dto.ReturnInvoiceList, error) {
-	collection := config.GetCollection("return_invoices")
+	collection := GetReturnInvoicesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -358,7 +366,7 @@ func ListReturnInvoice(req dto.InvoiceListRequestDto) (dto.ReturnInvoiceList, er
 }
 
 func ListReturnInvoiceWithFilter(req dto.InvoiceListRequestDto) ([]dto.ReturnInvoicePureList, error) {
-	collection := config.GetCollection("return_invoices")
+	collection := GetReturnInvoicesCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
