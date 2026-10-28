@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"golang-pos-mongo-backend/backend/auth"
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/services"
 	"net/http"
@@ -126,13 +127,26 @@ func GetInvoiceByNo(c *gin.Context) {
 // @Success      200      {object}  dto.GeneralUpdateInactiveResponseBody
 // @Router       /base/location/void/{id} [delete]
 func VoidInvoiceByID(c *gin.Context) {
-	id := c.Param("id")
-	result, err := services.VoidOneInvoice(id)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "Void Invoice successfully", "id": id, "data": result})
+
+	if !user.SuperAdmin {
+		c.JSON(403, gin.H{
+			"error": "Access denied",
+		})
+	} else {
+		id := c.Param("id")
+		result, err := services.VoidOneInvoice(id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to deactivate role"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Void Invoice successfully", "id": id, "data": result})
+	}
 }
 
 func RegisterInvoiceRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
