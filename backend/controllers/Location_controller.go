@@ -265,25 +265,12 @@ func LocationListWithFilter(c *gin.Context) {
 // @Success      200      {object}  []models.Locations
 // @Router       /base/location/all [get]
 func GetAllLocations(c *gin.Context) {
-	value, _ := c.Get(identityKey)
-	user, ok := value.(*auth.AuthUser)
-	if !ok || user == nil {
-		c.JSON(401, gin.H{"error": "Invalid user"})
+	locations, err := services.ListAllLocation()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get locations"})
 		return
 	}
-
-	if !user.SuperAdmin {
-		c.JSON(403, gin.H{
-			"error": "Access denied",
-		})
-	} else {
-		locations, err := services.ListAllLocation()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get locations"})
-			return
-		}
-		c.JSON(http.StatusOK, locations)
-	}
+	c.JSON(http.StatusOK, locations)
 }
 
 func RegisterLocationRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {

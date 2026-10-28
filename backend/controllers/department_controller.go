@@ -89,25 +89,12 @@ func GetOneDepartmentById(c *gin.Context) {
 // @Success      200      {object}  []models.Department
 // @Router       /sys/department/all [get]
 func GetAllDepartments(c *gin.Context) {
-	value, _ := c.Get(identityKey)
-	user, ok := value.(*auth.AuthUser)
-	if !ok || user == nil {
-		c.JSON(401, gin.H{"error": "Invalid user"})
+	departments, err := services.GetAllDepartments()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get departments"})
 		return
 	}
-
-	if !user.SuperAdmin {
-		c.JSON(403, gin.H{
-			"error": "Access denied",
-		})
-	} else {
-		departments, err := services.GetAllDepartments()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get departments"})
-			return
-		}
-		c.JSON(http.StatusOK, gin.H{"data": departments})
-	}
+	c.JSON(http.StatusOK, gin.H{"data": departments})
 }
 
 // @Summary      Create one dpartment record
