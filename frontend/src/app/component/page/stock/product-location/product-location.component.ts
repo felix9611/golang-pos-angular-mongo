@@ -34,14 +34,25 @@ import { findMenuItem } from '../../../tool-function'
 })
 export class ProductLocationListComponent {
     private rightSubscription: Subscription
-
+    private userRightSubscription: Subscription
     constructor(
         private userStoreService: UserStoreService,
+        private message: NzMessageService,
     ) {
         this.rightSubscription = this.userStoreService.menuRole$.subscribe((data: any) => {
             const answer = findMenuItem(data, 'Product Location', 'product-location-lists')
             this.excelFileSetting.code = answer?.excelFunctionCode ?? ''
             this.preLoadExcelSetting()
+        })
+
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+            if (data.superAdmin !== true) {
+                this.locationList = data.locations
+                this.searchForm.locationIds = data.placeIds
+
+                this.loadProductLocationLists()
+            }
         })
     }
 
@@ -49,12 +60,16 @@ export class ProductLocationListComponent {
         if (this.userStoreService.menuRole$) {
             this.rightSubscription.unsubscribe()
         }
+        if (this.userStoreService.user$) {
+            this.userRightSubscription.unsubscribe()
+        }
     }
 
     ngOnInit() {
         this.loadLocationList()
-        this.loadProductLocationLists()
     }
+
+    superAdmin: boolean = false
 
     excelFileSetting: any = {
         code: ''
@@ -62,7 +77,9 @@ export class ProductLocationListComponent {
     
     searchForm: ListProductLocationtRequestDto = {
         page: 1,
-        limit: 10
+        limit: 10,
+        locationIds: [],
+        assetCode: ''
     }
 
     totals: number = 0
@@ -70,15 +87,27 @@ export class ProductLocationListComponent {
     dataLists: any[] = []
 
     async loadProductLocationLists() {
-        const res = await postApiWithAuth('/inventory/product-location-list', this.searchForm)
-        this.dataLists = res.lists
-        this.totals = res.total
+        if (this.superAdmin === true) {
+            const res = await postApiWithAuth('/inventory/product-location-list', this.searchForm)
+            this.dataLists = res.lists
+            this.totals = res.total
+        } else {
+            if (this.searchForm.locationIds.length === 0) {
+                this.message.error('Please select least one location')
+            } else {
+                const res = await postApiWithAuth('/inventory/product-location-list', this.searchForm)
+                this.dataLists = res.lists
+                this.totals = res.total
+            }
+        }
     }
 
     locationList: any[] = []
     async loadLocationList() {
-        const data = await getApiWithAuth('/base/location/all')
-        this.locationList = data.data
+        if (this.superAdmin === true) {
+            const data = await getApiWithAuth('/base/location/all')
+            this.locationList = data.data
+        }
     }
 
     dbFieldList: string[] = []
