@@ -3,6 +3,7 @@ package auth
 import (
 	"golang-pos-mongo-backend/backend/tools"
 	"log"
+	"os"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -24,7 +25,7 @@ func HandlerMiddleWare(authMiddleware *jwt.GinJWTMiddleware) gin.HandlerFunc {
 func InitAuthParams() *jwt.GinJWTMiddleware {
 	return &jwt.GinJWTMiddleware{
 		Realm:       "test zone",
-		Key:         []byte("secret key"),
+		Key:         []byte(os.Getenv("JWT_SECRET_KEY")),
 		Timeout:     time.Hour * 24 * 1,
 		MaxRefresh:  time.Hour * 24 * 1,
 		IdentityKey: identityKey,
