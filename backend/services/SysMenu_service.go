@@ -15,13 +15,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetSysMenusCollection() (*mongo.Collection, context.Context) {
+	collection := config.GetCollection("sys_menus")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	return collection, ctx
+}
+
 func CreateSysMenu(data *models.SysMenus) (interface{}, error) {
 	filter := bson.M{"status": 1, "name": data.Name, "path": data.Path}
 
-	collection := config.GetCollection("sys_menus")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-
-	defer cancel()
+	collection, ctx := GetSysMenusCollection()
 
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
@@ -59,8 +63,9 @@ func CreateSysMenu(data *models.SysMenus) (interface{}, error) {
 }
 
 func GetOneMenuItemById(id string) (interface{}, error) {
+	collection, ctx := GetSysMenusCollection()
+
 	var menuItem models.SysMenus
-	collection := config.GetCollection("sys_menus")
 
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
@@ -68,9 +73,6 @@ func GetOneMenuItemById(id string) (interface{}, error) {
 	}
 
 	filter := bson.M{"_id": objectID}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 	err = collection.FindOne(ctx, filter).Decode(&menuItem)
 	if err != nil {
 		return nil, err
@@ -84,21 +86,16 @@ func GetOneMenuItemById(id string) (interface{}, error) {
 }
 
 func VoidMenuItemById(id string) (interface{}, error) {
-	collection := config.GetCollection("sys_menus")
+	collection, ctx := GetSysMenusCollection()
 
 	objectID, err := primitive.ObjectIDFromHex(id)
-
 	if err != nil {
 		return nil, err
 	}
 
-	filter := bson.M{"_id": objectID}
-
 	var menuItem models.SysMenus
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
+	filter := bson.M{"_id": objectID}
 	err = collection.FindOne(ctx, filter).Decode(&menuItem)
 
 	if err != nil {
@@ -128,13 +125,11 @@ func VoidMenuItemById(id string) (interface{}, error) {
 }
 
 func UpdateMenuItem(data *models.SysMenus) (interface{}, error) {
-	collection := config.GetCollection("sys_menus")
+	collection, ctx := GetSysMenusCollection()
 
 	filter := bson.M{"_id": data.ID}
 
 	var menuItem models.SysMenus
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	err := collection.FindOne(ctx, filter).Decode(&menuItem)
 	if err != nil {
@@ -159,10 +154,7 @@ func UpdateMenuItem(data *models.SysMenus) (interface{}, error) {
 }
 
 func ListAllMainIdMenu() (interface{}, error) {
-	collection := config.GetCollection("sys_menus")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysMenusCollection()
 
 	// Aggregation pipeline
 	pipeline := mongo.Pipeline{
@@ -199,10 +191,7 @@ func ListAllMainIdMenu() (interface{}, error) {
 }
 
 func GetAllMenuItems() (interface{}, error) {
-	collection := config.GetCollection("sys_menus")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+	collection, ctx := GetSysMenusCollection()
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.M{"status": 1}}},
@@ -225,15 +214,12 @@ func GetAllMenuItems() (interface{}, error) {
 
 // ListAllMenu fetch menus by name and build hierarchical tree
 func ListAllMenu(query *dto.SysMenuList) (interface{}, error) {
-	collection := config.GetCollection("sys_menus")
+	collection, ctx := GetSysMenusCollection()
 
 	filter := bson.M{}
 	if query.Name != "" {
 		filter["name"] = bson.M{"$regex": primitive.Regex{Pattern: fmt.Sprintf(".*%s.*", query.Name), Options: "i"}}
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
