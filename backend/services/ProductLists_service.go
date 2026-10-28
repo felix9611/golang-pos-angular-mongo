@@ -15,8 +15,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetProductListsCollection() *mongo.Collection {
+	return config.GetCollection("product_lists")
+}
+
+func GetProductFileListsCollection() *mongo.Collection {
+	return config.GetCollection("product_file_lists")
+}
+
 func CreateProductItem(productItem *models.ProductLists) (interface{}, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 
 	filter := bson.M{"productName": productItem.ProductName, "status": 1}
 
@@ -61,7 +69,7 @@ func CreateProductItem(productItem *models.ProductLists) (interface{}, error) {
 }
 
 func UploadProductFile(files []models.ProductListFiles, id string) (interface{}, error) {
-	collection := config.GetCollection("product_item_lists")
+	collection := GetProductFileListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -94,7 +102,7 @@ func formatNumberNew(num int, digits int) string {
 }
 
 func CreateNewProductCode() (string, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -148,7 +156,7 @@ func CreateNewProductCode() (string, error) {
 }
 
 func GetOneProductItemByID(id string) (interface{}, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 	var productItem models.ProductLists
 
 	objectID, err := primitive.ObjectIDFromHex(id)
@@ -169,7 +177,7 @@ func GetOneProductItemByID(id string) (interface{}, error) {
 }
 
 func GetOneProductItemByCode(code string) (interface{}, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 
 	var productItem models.ProductLists
 
@@ -186,7 +194,7 @@ func GetOneProductItemByCode(code string) (interface{}, error) {
 }
 
 func UpdateProductItem(updateData *models.ProductLists) (interface{}, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 
 	// Check if the product item exists
 	var existingProduct models.ProductLists
@@ -223,7 +231,7 @@ func UpdateProductItem(updateData *models.ProductLists) (interface{}, error) {
 }
 
 func GetListProductFiles(id string) ([]models.ProductListFiles, error) {
-	collection := config.GetCollection("product_list_files")
+	collection := GetProductFileListsCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -246,7 +254,7 @@ func DeleteProductFile(fileId string) (interface{}, error) {
 
 	objectID, err := primitive.ObjectIDFromHex(fileId)
 
-	collectionFiles := config.GetCollection("product_list_files")
+	collectionFiles := GetProductFileListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -280,7 +288,7 @@ func DeleteProductFile(fileId string) (interface{}, error) {
 }
 
 func ListProductItemsWithFilters(req *dto.ListProductReqDto) ([]dto.ListProductDetailPure, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -412,7 +420,7 @@ func ListProductItemsWithFilters(req *dto.ListProductReqDto) ([]dto.ListProductD
 }
 
 func ListProductItems(req *dto.ListProductReqDto) (interface{}, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -536,7 +544,7 @@ func ListProductItems(req *dto.ListProductReqDto) (interface{}, error) {
 }
 
 func InactiveProductItemsByID(id string) (interface{}, error) {
-	collection := config.GetCollection("product_lists")
+	collection := GetProductListsCollection()
 	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
