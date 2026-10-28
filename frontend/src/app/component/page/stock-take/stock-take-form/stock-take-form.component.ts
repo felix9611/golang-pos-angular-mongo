@@ -47,6 +47,7 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number'
 })
 export class StockTakeFormComponent implements OnInit {
     private rightSubscription: Subscription
+    private userRightSubscription: Subscription
 await: any
     constructor(
         private route: ActivatedRoute, 
@@ -65,13 +66,25 @@ await: any
                  // keep default value
             }
         })
+
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+            if (data.superAdmin !== true) {
+                this.placeLists = data.locations
+            }
+        })
     }
 
     ngOnDestroy() {
         if (this.userStoreService.menuRole$) {
             this.rightSubscription.unsubscribe()
         }
+        if (this.userStoreService.user$) {
+            this.userRightSubscription.unsubscribe()
+        }
     }
+
+    superAdmin: boolean = false
 
     userRightInside: any = {
         read: false,
@@ -123,8 +136,10 @@ await: any
 
     placeLists: any[] = []
     async loadLocationList() {
-        const res = await getApiWithAuth('/base/location/all')
-        this.placeLists = res.data
+        if (this.superAdmin === true) {
+            const res = await getApiWithAuth('/base/location/all')
+            this.placeLists = res.data
+        }
     }
 
     async updateForm() {
@@ -172,9 +187,9 @@ await: any
 
         if (res.error) {
             this.message.error(res.error)
-            this.getOne()
         } else {
             this.message.success('Added!')
+            this.getOne()
         }
 
     }
