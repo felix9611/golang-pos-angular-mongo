@@ -22,8 +22,18 @@ func GetInvoiceListsCollection() *mongo.Collection {
 	return collection
 }
 
+func GetInvoicePaymentsCollection() *mongo.Collection {
+	collection := config.GetCollection("invoice_payments")
+	return collection
+}
+
+func GetInvoiceItemsCollection() *mongo.Collection {
+	collection := config.GetCollection("invoice_items")
+	return collection
+}
+
 func CreateInvoice(data dto.InvoiceDto) (interface{}, error) {
-	collection := config.GetCollection("invoices")
+	collection := GetInvoiceListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -79,7 +89,7 @@ func CreateInvoice(data dto.InvoiceDto) (interface{}, error) {
 				TaxAmount:    item.TaxAmount,
 			}
 
-			_, err = config.GetCollection("invoice_items").InsertOne(ctx, &newItem)
+			_, err = GetInvoiceItemsCollection().InsertOne(ctx, &newItem)
 			if err != nil {
 				return gin.H{"error": "Invoice not created!"}, err
 			}
@@ -113,7 +123,7 @@ func CreateInvoice(data dto.InvoiceDto) (interface{}, error) {
 				PaymentTime: item.PaymentTime,
 			}
 
-			_, err = config.GetCollection("invoice_payments").InsertOne(ctx, &newItem)
+			_, err = GetInvoicePaymentsCollection().InsertOne(ctx, &newItem)
 			if err != nil {
 				return gin.H{"error": "Invoice not created!"}, err
 			}
@@ -131,7 +141,7 @@ func randomNumber() string {
 }
 
 func CreateNewInvoiceNumber() (string, error) {
-	collection := config.GetCollection("invoices")
+	collection := GetInvoiceListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -202,7 +212,7 @@ func CreateNewInvoiceNumber() (string, error) {
 }
 
 func GetOneInvoiceDetailByInvNo(invoiceNumber string) (interface{}, error) {
-	collection := config.GetCollection("invoices")
+	collection := GetInvoiceListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -218,7 +228,7 @@ func GetOneInvoiceDetailByInvNo(invoiceNumber string) (interface{}, error) {
 	InvoiceDataId := invoice.ID.Hex()
 
 	var invoiceItems []dto.InvoiceItemListBody
-	invoiceItemCollection := config.GetCollection("invoice_items")
+	invoiceItemCollection := GetInvoiceItemsCollection()
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.M{"invoiceId": InvoiceDataId}}},
@@ -262,7 +272,7 @@ func GetOneInvoiceDetailByInvNo(invoiceNumber string) (interface{}, error) {
 	}
 
 	var invoicePayments []models.InvoicePayment
-	invoicePaymentCollection := config.GetCollection("invoice_payments")
+	invoicePaymentCollection := GetInvoicePaymentsCollection()
 
 	pipeline = mongo.Pipeline{
 		{{Key: "$match", Value: bson.M{"invoiceId": InvoiceDataId}}},
@@ -300,7 +310,7 @@ func GetOneInvoiceDetailByInvNo(invoiceNumber string) (interface{}, error) {
 }
 
 func GetOneInvoiceDetailById(id string) (interface{}, error) {
-	collection := config.GetCollection("invoices")
+	collection := GetInvoiceListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -318,7 +328,7 @@ func GetOneInvoiceDetailById(id string) (interface{}, error) {
 	}
 
 	var invoiceItems []dto.InvoiceItemListBody
-	invoiceItemCollection := config.GetCollection("invoice_items")
+	invoiceItemCollection := GetInvoiceItemsCollection()
 
 	pipeline := mongo.Pipeline{
 		{{Key: "$match", Value: bson.M{"invoiceId": objectID.Hex()}}},
@@ -362,7 +372,7 @@ func GetOneInvoiceDetailById(id string) (interface{}, error) {
 	}
 
 	var invoicePayments []models.InvoicePayment
-	invoicePaymentCollection := config.GetCollection("invoice_payments")
+	invoicePaymentCollection := GetInvoicePaymentsCollection()
 
 	pipeline = mongo.Pipeline{
 		{{Key: "$match", Value: bson.M{"invoiceId": objectID.Hex()}}},
@@ -400,7 +410,7 @@ func GetOneInvoiceDetailById(id string) (interface{}, error) {
 }
 
 func ListInvoicesWithFilter(req dto.ListInvoiceRequestDto) ([]dto.InvoicePureBody, error) {
-	collection := config.GetCollection("invoices")
+	collection := GetInvoiceListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -486,7 +496,7 @@ func ListInvoicesWithFilter(req dto.ListInvoiceRequestDto) ([]dto.InvoicePureBod
 }
 
 func ListInvoices(req dto.ListInvoiceRequestDto) (dto.ListInvoices, error) {
-	collection := config.GetCollection("invoices")
+	collection := GetInvoiceListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -568,7 +578,7 @@ func ListInvoices(req dto.ListInvoiceRequestDto) (dto.ListInvoices, error) {
 }
 
 func VoidOneInvoice(invoiceId string) (interface{}, error) {
-	collection := config.GetCollection("invoices")
+	collection := GetInvoiceListsCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
