@@ -33,8 +33,8 @@ export interface InvoicePaymentDto {
     method: string
     amount: number
     paymentTime?: string
-    balance: number
-    findRedemption: number
+    balance: string
+    findRedemption: string
 }
 
 export interface CreateInvoiceForm {

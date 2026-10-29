@@ -165,17 +165,17 @@ export class SalePointComponent implements OnInit {
 
     qtyChanged(event: any) {
         this.enterProductForm.qty = event
-        this.enterProductForm.allTotalPrice = event * this.enterProductForm.retailPrice
-        this.enterProductForm.taxAmount =  event * (1 + this.enterProductForm.taxRate) * this.enterProductForm.retailPrice
+        this.enterProductForm.allTotalPrice = (event * this.enterProductForm.retailPrice).toFixed(2)
+        this.enterProductForm.taxAmount =  (event * (1 + this.enterProductForm.taxRate) * this.enterProductForm.retailPrice).toFixed(2)
     }
 
     typeChanged(event: any) {
         if (event === '%') {
-            this.enterProductForm.allTotalPrice = this.enterProductForm.retailPrice * (1 - this.enterProductForm.discount /100) * this.enterProductForm.qty
-            this.enterProductForm.taxAmount =  (1 + this.enterProductForm.taxRate) * this.enterProductForm.retailPrice * (1 - this.enterProductForm.discount /100) * this.enterProductForm.qty
+            this.enterProductForm.allTotalPrice = (this.enterProductForm.retailPrice * (1 - this.enterProductForm.discount /100) * this.enterProductForm.qty).toFixed(2)
+            this.enterProductForm.taxAmount =  (this.enterProductForm.retailPrice * (1 - this.enterProductForm.discount /100) * (1 + this.enterProductForm.taxRate) * this.enterProductForm.qty).toFixed(2)
         } else if (event === '$') {
-            this.enterProductForm.allTotalPrice = (this.enterProductForm.retailPrice - this.enterProductForm.discount) * this.enterProductForm.qty
-            this.enterProductForm.taxAmount = (this.enterProductForm.retailPrice  - this.enterProductForm.discount) * (1 + this.enterProductForm.taxRate) * this.enterProductForm.qty
+            this.enterProductForm.allTotalPrice = ((this.enterProductForm.retailPrice - this.enterProductForm.discount) * this.enterProductForm.qty).toFixed(2)
+            this.enterProductForm.taxAmount = ((this.enterProductForm.retailPrice  - this.enterProductForm.discount) * (1 + this.enterProductForm.taxRate) * this.enterProductForm.qty).toFixed(2)
         }
     }
 
@@ -185,17 +185,18 @@ export class SalePointComponent implements OnInit {
             productId,
             productCode,
             qty,
-            price: allTotalPrice,
-            discount,
+            price: Number(allTotalPrice),
+            discount: Number(discount),
             discountType,
-            taxAmount, 
-            taxRate,
+            taxAmount: Number(taxAmount), 
+            taxRate: Number(taxRate),
             taxCode, 
             taxType
         }
 
         this.inputedProductList.push(addToList)
-        this.orgTotal += Number(taxAmount)
+        this.orgTotalAfterTax += Number(taxAmount)
+        this.orgTotal += Number(allTotalPrice)
 
         this.enterProductForm = {
             productCode: '',
@@ -216,7 +217,7 @@ export class SalePointComponent implements OnInit {
     }
 
     orgTotal: number = 0
-      
+      orgTotalAfterTax: number = 0
 
     // RIGHT
 
@@ -246,9 +247,11 @@ export class SalePointComponent implements OnInit {
 
     totalTypeChnage(event: any) {
         if (event === '%') {
-            this.invoiceForm.totalAmount = this.orgTotal * (1 - this.invoiceForm.discount /100)
-        } else if (event === '$') {
-            this.invoiceForm.totalAmount =this.orgTotal - this.enterProductForm.disscount
+            this.invoiceForm.totalAmount = parseFloat((this.orgTotal).toFixed(2))
+            this.invoiceForm.taxTotal = parseFloat((this.orgTotalAfterTax * (1 - this.invoiceForm.discount /100)).toFixed(2))
+        } else {
+            this.invoiceForm.totalAmount = parseFloat((this.orgTotal).toFixed(2))
+            this.invoiceForm.taxTotal = parseFloat((Number(this.orgTotalAfterTax) - Number(this.invoiceForm.discount)).toFixed(2))
         }
     }
 
@@ -256,8 +259,8 @@ export class SalePointComponent implements OnInit {
     paymentForm: InvoicePaymentDto = {
         method: '',
         amount: 0,
-        balance: 0,
-        findRedemption: 0
+        balance: '',
+        findRedemption: ''
     }
 
     addPaymentList() {
@@ -270,17 +273,15 @@ export class SalePointComponent implements OnInit {
 
         this.inputedPaymentList.push(addToList)
         
-        this.paymentForm.findRedemption = amount > this.paymentForm.balance ? amount - this.paymentForm.balance : 0
-        this.paymentForm.balance = this.invoiceForm.totalAmount - amount
-        
-
+        this.paymentForm.findRedemption = (Number(amount) > this.invoiceForm.taxTotal ? Number(amount) - Number(this.invoiceForm.taxTotal) : 0).toFixed(2)
+        this.paymentForm.balance = (this.invoiceForm.taxTotal - amount).toFixed(2)
     }
 
     lastPaymentDialogOpen: boolean = false
 
     openPaymentDialg() {
-        this.invoiceForm.totalAmount = this.invoiceForm.totalAmount ? this.invoiceForm.totalAmount : this.orgTotal
-        this.paymentForm.balance = this.invoiceForm.totalAmount ? this.invoiceForm.totalAmount : this.orgTotal
+        this.invoiceForm.totalAmount = this.invoiceForm.totalAmount ? this.invoiceForm.totalAmount : this.orgTotalAfterTax
+        this.paymentForm.balance = (this.invoiceForm.taxTotal ? this.invoiceForm.taxTotal : this.orgTotalAfterTax).toFixed(2)
         this.lastPaymentDialogOpen = true
     }
 
@@ -290,7 +291,7 @@ export class SalePointComponent implements OnInit {
 
     removePayItem(index: number, amount: any) {
         this.paymentForm.balance = this.paymentForm.balance + amount.amount
-        this.paymentForm.findRedemption = this.paymentForm.findRedemption - amount.amount
+        this.paymentForm.findRedemption = (Number(this.paymentForm.findRedemption) - Number(amount.amount)).toFixed(2)
         this.inputedPaymentList.splice(index, 1)
     }
 
@@ -298,7 +299,7 @@ export class SalePointComponent implements OnInit {
 
         const finalDataSubmit = {
             ...this.invoiceForm,
-            discount: this.invoiceForm.discount ? this.invoiceForm.discount / 100 : 0,
+            discount: this.invoiceForm.discount ? (this.invoiceForm.discountType === '%' ? this.invoiceForm.discount / 100 : this.invoiceForm.discount) : 0,
             invoiceItems: this.inputedProductList,
             invoicePayments: this.inputedPaymentList
         }
@@ -314,14 +315,15 @@ export class SalePointComponent implements OnInit {
         }
     }
 
-    
-
     async findTaxInfoForSalePoint() {
         const res = await postApiWithAuth('/base/tax-information/sales-point', this.taxInfoFilter)
-        this.enterProductForm.taxRate = res.taxRate
-        this.enterProductForm.taxRateDisplay = res.taxRate * 100
-        this.enterProductForm.taxCode = res.taxCode
-        this.enterProductForm.taxType = res.taxType
+        if (res.error) {
+            this.message.error(res.error)
+        } else {
+            this.enterProductForm.taxRate = res.taxRate
+            this.enterProductForm.taxRateDisplay = res.taxRate * 100
+            this.enterProductForm.taxCode = res.taxCode
+            this.enterProductForm.taxType = res.taxType
+        }
     }
-    
 }
