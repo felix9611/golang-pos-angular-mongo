@@ -258,6 +258,30 @@ func ListAllTaxInformation(c *gin.Context) {
 	c.JSON(http.StatusOK, result)
 }
 
+// @Summary      Find Tax Information for Sale Point
+// @Description  Find Tax Information for Sale Point
+// @Tags         Tax Information
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.TaxInfoForSalePointDto  true  "Request Body"
+// @Success      200      {object}  models.TaxInformations
+// @Router       /base/tax-information/sales-point [post]
+func findTaxInfoForSalePoint(c *gin.Context) {
+	var req dto.TaxInfoForSalePointDto
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	result, err := services.FindTaxInfoForSalePoint(req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
 func RegisterTaxInformationRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddleware) {
 	TaxInformationRoute := rg.Group("/base/tax-information", handle.MiddlewareFunc())
 	{
@@ -269,6 +293,7 @@ func RegisterTaxInformationRoutes(rg *gin.RouterGroup, handle *jwt.GinJWTMiddlew
 		TaxInformationRoute.GET("/all", ListAllTaxInformation)
 		TaxInformationRoute.POST("/filter/list", ListTaxInformationsWithoutPagination)
 		TaxInformationRoute.POST("/batch-create", BatchCreateTaxInformation)
+		TaxInformationRoute.POST("/sales-point", findTaxInfoForSalePoint)
 	}
 
 }
