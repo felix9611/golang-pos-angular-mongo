@@ -185,17 +185,25 @@
                                 <input nz-input type="text" name="email" [(ngModel)]="memberForm.email" [disabled]="true"/>
                               </nz-form-control>
                         </nz-form-item>
+                        <nz-form-item>
+                        <div class="px-1 w-[105px] flex items-center">Total</div>
+                            <nz-form-control class="w-full">
+                                <nz-input-number [style.width.%]="100" name="orgTotal" [(ngModel)]="orgTotal">
+                                    <span nzInputPrefix>$</span>
+                                </nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <div class="px-1 w-[105px] flex items-center">After Tax</div>
+                            <nz-form-control class="w-full">
+                                <nz-input-number [style.width.%]="100" name="orgTotalAfterTax" [(ngModel)]="orgTotalAfterTax">
+                                    <span nzInputPrefix>$</span>
+                                </nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
                     </form>
                 </div>
                 <form nz-form class="">
-                    <nz-form-item>
-                        <div class="px-1 w-[105px] flex items-center">Total</div>
-                        <nz-form-control class="w-full">
-                            <nz-input-number [style.width.%]="100" name="orgTotal" [(ngModel)]="orgTotal">
-                                <span nzInputPrefix>$</span>
-                            </nz-input-number>
-                        </nz-form-control>
-                    </nz-form-item>
                     <nz-form-item>
                         <div class="px-1 w-[105px] flex items-center">Disscount</div>
                         <nz-form-control class="w-full">
@@ -215,10 +223,20 @@
                             </nz-select>
                         </nz-form-control>
                     </nz-form-item>
+                </form>
+                <form nz-form class="grid grid-cols-2 p-2 gap-2">
                     <nz-form-item>
-                            <div class="px-1 w-[105px] flex items-center">Total Amount</div>
+                        <div class="px-1 w-[105px] flex items-center">Total</div>
                             <nz-form-control class="w-full">
-                                <nz-input-number [style.width.%]="100" name="finalTotalAmount" [(ngModel)]="invoiceForm.totalAmount">
+                                <nz-input-number [style.width.%]="100" name="orgTotal" [(ngModel)]="invoiceForm.totalAmount">
+                                    <span nzInputPrefix>$</span>
+                                </nz-input-number>
+                            </nz-form-control>
+                        </nz-form-item>
+                        <nz-form-item>
+                            <div class="px-1 w-[105px] flex items-center">After Tax</div>
+                            <nz-form-control class="w-full">
+                                <nz-input-number [style.width.%]="100" name="orgTotalAfterTax" [(ngModel)]="invoiceForm.taxTotal">
                                     <span nzInputPrefix>$</span>
                                 </nz-input-number>
                             </nz-form-control>
@@ -246,7 +264,7 @@
                     <nz-form-item>
                         <div class="px-1 w-[105px] flex items-center">Total Amount</div>
                         <nz-form-control class="w-full">
-                            <nz-input-number [style.width.%]="100" name="totalAmount" [(ngModel)]="invoiceForm.totalAmount">
+                            <nz-input-number [style.width.%]="100" name="taxTotal" [(ngModel)]="invoiceForm.taxTotal">
                                 <span nzInputPrefix>$</span>
                             </nz-input-number>
                         </nz-form-control>
