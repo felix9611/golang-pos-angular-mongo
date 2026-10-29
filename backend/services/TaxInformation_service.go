@@ -323,3 +323,28 @@ func ListAllTaxInformation() (interface{}, error) {
 
 	return TaxInfoList, nil
 }
+
+func FindTaxInfoForSalePoint(req dto.TaxInfoForSalePointDto) (interface{}, error) {
+	collection := GetTaxInformationsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{
+		"status":      1,
+		"countryCode": req.CountryCode,
+		"taxType":     req.TaxType,
+	}
+
+	var taxInfo models.TaxInformations
+	err := collection.FindOne(ctx, filter).Decode(&taxInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	if taxInfo.Status == 0 {
+		return gin.H{"error": "Not found tax information!"}, nil
+	} else {
+		return &taxInfo, nil
+	}
+
+}

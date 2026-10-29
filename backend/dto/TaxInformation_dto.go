@@ -15,3 +15,8 @@ type TaxInformationList struct {
 	Page  int                      `json:"page"`
 	Limit int                      `json:"limit"`
 }
+
+type TaxInfoForSalePointDto struct {
+	CountryCode string `json:"countryCode"`
+	TaxType     string `json:"taxType"`
+}
