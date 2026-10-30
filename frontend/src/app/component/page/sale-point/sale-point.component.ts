@@ -59,7 +59,6 @@ export class SalePointComponent implements OnInit {
 
     ngOnInit(): void {
         this.loadLocationList()
-        this.orgTotal = 0
     }
 
     locationList: any[] = []
@@ -149,9 +148,18 @@ export class SalePointComponent implements OnInit {
             const data = await getApiWithAuth(`/product/product-list/code/${event}`)
             this.enterProductForm.productId = data.id
             this.enterProductForm.retailPrice = data.retailPrice
+            this.enterProductForm.disscount = 0 
             this.productForm = data
 
+            if (data.id) {
+                this.qtyChanged(1)
+            }
+            
             this.taxInfoFilter.taxType = data.taxType
+            if (this.locationList.length === 1) {
+                this.taxInfoFilter.countryCode = this.invoiceForm.locationCode
+                this.findTaxInfoForSalePoint()
+            }
         }
     }
 
@@ -222,8 +230,14 @@ export class SalePointComponent implements OnInit {
     // RIGHT
 
     removeItem(index: number) {
-        this.orgTotal -= Number(this.inputedProductList[index].taxAmount)
+        this.orgTotal -= Number(this.inputedProductList[index].price)
+        this.orgTotalAfterTax -= Number(this.inputedProductList[index].taxAmount)
         this.inputedProductList.splice(index, 1)
+        
+        if (this.inputedProductList.length === 0) {
+            this.orgTotal = 0
+            this.orgTotalAfterTax = 0
+        }
     }
 
     memberLists: any[] = []
