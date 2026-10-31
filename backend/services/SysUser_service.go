@@ -87,7 +87,7 @@ func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
 	}
 
 	if checkSysUser.Status == 1 {
-
+		updateData.Password = checkSysUser.Password
 		updateData.UpdatedAt = time.Now()
 
 		result, err := collection.UpdateOne(ctx, filter, bson.M{"$set": updateData})
@@ -155,8 +155,9 @@ func GetOneSysUserById(id string) (interface{}, error) {
 	}
 
 	if user.Status == 0 {
-		return gin.H{"error": "User not found or already inactive"}, nil
+		return gin.H{"error": "User is voided"}, nil
 	} else {
+		user.Password = ""
 		return &user, nil
 	}
 }
@@ -278,6 +279,7 @@ func SysUserList(pageDto *dto.SysUserPageDto) (interface{}, error) {
 	limit := int64(pageDto.Limit)
 
 	findOptions := options.Find()
+	findOptions.SetProjection(bson.M{"password": 0})
 	findOptions.SetSkip(skip)
 	findOptions.SetLimit(limit)
 	findOptions.SetSort(bson.D{{Key: "created_at", Value: -1}})
