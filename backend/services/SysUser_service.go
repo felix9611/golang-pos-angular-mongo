@@ -87,7 +87,7 @@ func UpdateSysUserByID(updateData *models.SysUsers) (interface{}, error) {
 	}
 
 	if checkSysUser.Status == 1 {
-
+		updateData.Password = checkSysUser.Password
 		updateData.UpdatedAt = time.Now()
 
 		result, err := collection.UpdateOne(ctx, filter, bson.M{"$set": updateData})
