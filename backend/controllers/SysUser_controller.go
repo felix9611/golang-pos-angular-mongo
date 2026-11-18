@@ -163,32 +163,19 @@ func InactiveUserByID(c *gin.Context) {
 // @Success      200      {object}  dto.SysUserList
 // @Router       /sys/user/list [post]
 func SysUserLists(c *gin.Context) {
-	value, _ := c.Get(identityKey)
-	user, ok := value.(*auth.AuthUser)
-	if !ok || user == nil {
-		c.JSON(401, gin.H{"error": "Invalid user"})
+	var pageDto dto.SysUserPageDto
+	if err := c.ShouldBindJSON(&pageDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	if !user.SuperAdmin {
-		c.JSON(403, gin.H{
-			"error": "Access denied",
-		})
-	} else {
-		var pageDto dto.SysUserPageDto
-		if err := c.ShouldBindJSON(&pageDto); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-
-		result, err := services.SysUserList(&pageDto)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user list"})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"data": result})
+	result, err := services.SysUserList(&pageDto)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get user list"})
+		return
 	}
+
+	c.JSON(http.StatusOK, gin.H{"data": result})
 }
 
 // @Summary      Update one Sys User Avatar
