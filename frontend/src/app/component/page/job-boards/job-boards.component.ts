@@ -253,8 +253,8 @@ export class JobBoardsComponent  {
     try {
       const res = await postApiWithAuth(url, payload);
 
-      this.depts = res.data.lists ?? [];
-      this.deptTotal = res.data.total ?? 0;
+      this.depts = res ?? [];
+      this.deptTotal = this.depts.length ?? 0;
 
       this.deptOptions = this.depts.map((a: any) => ({
         value: a.deptCode,
