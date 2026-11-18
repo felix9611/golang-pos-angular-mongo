@@ -47,13 +47,18 @@ export class LoginComponent implements OnInit{
             this.userStoreService.setAccessToken(res.token)
             const checkpoint = await this.userStoreService.isAuthenticated()
             if (checkpoint) {
-                this.router.navigate(['/'])
+                this.userStoreService.user$.subscribe((data: any) => {
+                    if (data.superAdmin || data.manager) {
+                        this.router.navigate(['/tasks'])
+                    } else if (!(data.superAdmin || data.manager)) {
+                        this.router.navigate(['/sale-point'])
+                    }
+                })
+                // this.router.navigate(['/sale-point'])
             }
         } else {
             this.message.error(res.msg)
         }
-        
-       
     }
 
     cleanForm() {
