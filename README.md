@@ -43,6 +43,7 @@
   <li><strong>Real-Time Inventory Tracking</strong></li>
   <li><strong>Member System Integration</strong></li>
   <li><strong>Secure Authentication & Authorization:</strong> Utilizes <strong>JWT tokens</strong> for data protection.</li>
+  <li><strong>Provide sync api for other service to access basic information,like store location & products and support, for example Online Store</li>
 </ul>
 
 <h2>⚙️ Tech Stack</h2>
@@ -129,6 +130,6 @@ http://localhost:4200
 
 <h2>Version Update Note</h2>
 <ul>
-  <li><strong>Node updated to version 22 at 24 Sep 2026</strong></li>
-  <li><strong>Please remove package lock files and folder node_modules both Backend & Frontend folder, and reinstall node_modules</li>
+  <li><strong>Node updated to version 24 at 18 Nov 2026</strong></li>
+  <li><strong>Please remove package lock files and folder node_modules in Frontend folder, and reinstall node_modules</li>
 </ul>
