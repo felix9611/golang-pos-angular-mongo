@@ -24,7 +24,7 @@ type ProductLists struct {
 	CreatedAt              time.Time          `bson:"created_at" json:"createdAt"`
 	UpdatedAt              time.Time          `bson:"updated_at" json:"updatedAt"`
 	Status                 int                `bson:"status" json:"status"`
-	UploadProductListFiles []ProductListFiles `bson:"uploadProductListFiles" json:"uploadProductListFiles"`
+	UploadProductListFiles []ProductListFiles `bson:"uploadProductFiles" json:"uploadProductFiles"`
 }
 
 type ProductListFiles struct {

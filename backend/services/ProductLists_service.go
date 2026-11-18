@@ -81,7 +81,7 @@ func UploadProductFile(files []models.ProductListFiles, id string) (interface{},
 			"productId": id,
 			"fileName":  item.FileName,
 			"fileType":  item.FileType,
-			"base64":    item,
+			"base64":    item.Base64,
 			"status":    1,
 			"createdAt": now,
 			"updatedAt": now,
@@ -207,8 +207,9 @@ func UpdateProductItem(updateData *models.ProductLists) (interface{}, error) {
 		// Update the product item
 		updateData.UpdatedAt = time.Now()
 
-		updateFiles := updateData.UploadProductListFiles
-		updateData.UploadProductListFiles = nil
+		var updateFiles []models.ProductListFiles
+		updateFiles = updateData.UploadProductListFiles
+		// updateData.UploadProductListFiles = nil
 
 		res, err2 := collection.UpdateOne(context.Background(), bson.M{"_id": updateData.ID}, bson.M{"$set": updateData})
 		if err2 != nil {
