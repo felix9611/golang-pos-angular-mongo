@@ -22,9 +22,11 @@
                             </nz-upload>
                             <img class="w-[128px]" [src]="avatarUrl" />
                             <div class="w-[100px] flex items-center justify-center">
-                                <div *ngIf="avatarUrl" (click)="handleUpdateAvatar()" class="hover:bg-[#71CAD8] bg-[#7FEFFF] border-1 border-[#71CAD8] text-[#4F909A] text-center p-1 rounded-lg">
-                                    Confirm Update
-                                </div>
+                                @if (avatarUrl){
+                                    <div (click)="handleUpdateAvatar()" class="hover:bg-[#71CAD8] bg-[#7FEFFF] border-1 border-[#71CAD8] text-[#4F909A] text-center p-1 rounded-lg">
+                                        Confirm Update
+                                    </div>
+                                }
                             </div>
                         </div>
                     </nz-form-control>
@@ -33,6 +35,12 @@
                     <nz-form-label class="font-bold" nzFor="username">Usernane</nz-form-label>
                     <nz-form-control [nzSpan]="14">
                         {{ userInfo.username }}
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                    <nz-form-label class="font-bold" nzFor="username">Manager</nz-form-label>
+                    <nz-form-control [nzSpan]="14">
+                        {{ userInfo.manager? 'Yes' : 'No' }}
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
@@ -50,31 +58,37 @@
                 <nz-form-item>
                     <nz-form-label class="font-bold" nzFor="roles">Departments</nz-form-label>
                     <nz-form-control [nzSpan]="20">
-                        <div *ngFor="let location of userInfo.departments" class="flex  p-1">
-                            <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
-                                {{ location.deptName }}
+                        @for (location of userInfo.departments; track location._id) {
+                            <div class="flex  p-1">
+                                <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
+                                    {{ location.deptName }}
+                                </div>
                             </div>
-                        </div>
+                        }
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
                     <nz-form-label class="font-bold" nzFor="roles">Roles</nz-form-label>
                     <nz-form-control [nzSpan]="20">
-                        <div *ngFor="let role of userInfo.roleLists" class="flex gap-3">
-                            <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
-                                {{ role.name }}
+                        @for (role of userInfo.roleLists; track role._id) {
+                            <div class="flex gap-3">
+                                <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
+                                    {{ role.name }}
+                                </div>
                             </div>
-                        </div>
+                        }
                     </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
                     <nz-form-label class="font-bold" nzFor="roles">Locatons</nz-form-label>
                     <nz-form-control [nzSpan]="20">
-                        <div *ngFor="let location of userInfo.locations" class="flex  p-1">
-                            <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
-                                {{ location.placeName }}
+                        @for (location of userInfo.locations; track location._id) {
+                            <div *ngFor="let location of userInfo.locations" class="flex  p-1">
+                                <div class="border-1 border-[#21b700] rounded-lg p-1 text-[#21b700] bg-[#bfffb1]">
+                                    {{ location.placeName }}
+                                </div>
                             </div>
-                        </div>
+                        }
                     </nz-form-control>
                 </nz-form-item>
             </form>
@@ -158,11 +172,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let data of userInfo.loginRecords">
-                        <td>{{ data.ipAddress }}</td>
-                        <td>{{ data.loginStatus }}</td>
-                        <td>{{ dateFormat(data.loginTime) }}</td>
-                    </tr>
+                     @for (data of userInfo.loginRecords; track data._id) {
+                        <tr>
+                            <td>{{ data.ipAddress }}</td>
+                            <td>{{ data.loginStatus }}</td>
+                            <td>{{ dateFormat(data.loginTime) }}</td>
+                        </tr>
+                    }
                 </tbody>
             </nz-table>
         </div>

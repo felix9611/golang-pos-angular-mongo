@@ -82,6 +82,7 @@ func main() {
 	controllers.RegisterInvoiceRoutes(api, authServiceMiddleware)
 	controllers.RegisterReturnInvoiceRoutes(api, authServiceMiddleware)
 	controllers.RegisterQueryRoutes(api, authServiceMiddleware)
+	controllers.RegisterTaskBoardsRoutes(api, authServiceMiddleware)
 
 	router.Run(":6600")
 }

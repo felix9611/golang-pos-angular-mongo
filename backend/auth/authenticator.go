@@ -8,6 +8,7 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var (
@@ -37,6 +38,8 @@ func InitAuthParams() *jwt.GinJWTMiddleware {
 					"placeIds":   v.PlaceIds,
 					"deptIds":    v.DeptIds,
 					"superAdmin": v.SuperAdmin,
+					"manager":    v.Manager,
+					"id":         v.ID,
 				}
 			}
 			return jwt.MapClaims{}
@@ -52,6 +55,15 @@ func InitAuthParams() *jwt.GinJWTMiddleware {
 			}
 			if v, ok := claims["superAdmin"].(bool); ok {
 				user.SuperAdmin = v
+			}
+
+			if v, ok := claims["manager"].(bool); ok {
+				user.Manager = v
+			}
+
+			if v, ok := claims["id"].(string); ok {
+				objectID, _ := primitive.ObjectIDFromHex(v)
+				user.ID = objectID
 			}
 
 			user.RoleIds = tools.ClaimStrings(claims["roleIds"])

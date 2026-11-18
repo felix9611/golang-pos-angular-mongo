@@ -21,12 +21,13 @@ export class UserStoreService {
         accessToken: '',
         avatarBase64: '',
         deptIds: [],
-        department: [],
+        departments: [],
         roles: [],
         roleLists: [],
         email: '', 
         loginRecords: [],
         superAdmin: false,
+        manager: false,
         placeIds: [],
         locations: []
     }
@@ -80,7 +81,6 @@ export class UserStoreService {
     setMenuRole(menuRole: any[]): void {
         this.menuRoleSubject.next(menuRole)
     }
-    
 
     logout(): void {
         this.userSubject.next({ 
@@ -95,7 +95,9 @@ export class UserStoreService {
             placeIds: [],
             locations: [],
             deptIds: [],
-            department: [],
+            departments: [],
+            superAdmin: false,
+            manager: false
         })
         this.menuSubject.next([])
         this.menuRoleSubject.next([])

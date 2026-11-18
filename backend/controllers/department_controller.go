@@ -212,31 +212,17 @@ func VoidDepartmentById(c *gin.Context) {
 // @Success      200      {object}  []models.Department
 // @Router       /sys/department/filter/list [post]
 func ListPageDepartmentWithFilter(c *gin.Context) {
-	value, _ := c.Get(identityKey)
-	user, ok := value.(*auth.AuthUser)
-	if !ok || user == nil {
-		c.JSON(401, gin.H{"error": "Invalid user"})
+	var deptPageDto dto.DepartmentPageDto
+	if err := c.ShouldBindJSON(&deptPageDto); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	if !user.SuperAdmin {
-		c.JSON(403, gin.H{
-			"error": "Access denied",
-		})
-	} else {
-		var deptPageDto dto.DepartmentPageDto
-		if err := c.ShouldBindJSON(&deptPageDto); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			return
-		}
-		departments, err := services.DepartmentListWithFilters(&deptPageDto)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
-			return
-		}
-		c.JSON(http.StatusOK, departments)
+	departments, err := services.DepartmentListWithFilters(&deptPageDto)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
+		return
 	}
-
+	c.JSON(http.StatusOK, departments)
 }
 
 // @Summary      List Departments

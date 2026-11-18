@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common'
 import { Component, ComponentFactoryResolver, EventEmitter, HostListener, Input, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core'
 import { NzButtonModule } from 'ng-zorro-antd/button'
 import { NzModalModule } from 'ng-zorro-antd/modal'
-import { getApiWithAuth } from '../../../../tool/httpRequest-auth'
+import { deleteApiWithAuth, getApiWithAuth } from '../../../../tool/httpRequest-auth'
 import { NzMessageService } from 'ng-zorro-antd/message'
 import { MatIconModule } from '@angular/material/icon'
 
@@ -40,7 +40,7 @@ export class FileViewComponent implements OnInit{
 
     async removeFile(id: string) {
         const finalApi = this.removeFileApi.replace(':id', id)
-        const res = await getApiWithAuth(finalApi)
+        const res = await deleteApiWithAuth(finalApi)
 
         if (res.finished) {
             this.message.success('Remove file success')

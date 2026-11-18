@@ -13,6 +13,7 @@ import { Observable, Observer } from 'rxjs'
 import { getBase64, uploadImgToBase64 } from '../../../../tool/imageUpload'
 import { NzTableModule } from 'ng-zorro-antd/table'
 import moment from 'moment'
+import { UserInfo } from '../../../../state/interface'
 @Component({
     // selector: 'app-footer',
     imports: [CommonModule, NzFormModule, NzInputModule, FormsModule, NzModalModule, NzIconModule, NzUploadModule, NzTableModule],
@@ -26,13 +27,18 @@ export class UserInfoComponent implements OnInit {
         _id: '',
         username: '',
         accessToken: '',
+        roles: [],
+        deptIds: [],
+        departments: [],
         avatarBase64: '',
-        deptId: 0,
-        roleIds: [],
+        email: '',
+        lastLogin: '',
         roleLists: [],
-        email: '', 
         loginRecords: [],
-        departments: []
+        superAdmin: false,
+        manager: false,
+        placeIds: [],
+        locations: [],
     }
 
     resetPwForm: any = {

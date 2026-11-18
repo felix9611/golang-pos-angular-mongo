@@ -5,14 +5,16 @@
                 <mat-icon cl aria-hidden="false" fontIcon="chevron_left"></mat-icon>
             </div>
             <div class="text-center text-[2rem] font-bold">Product Form</div>
-            <div *ngIf="editForm.productListFiles && editForm.productListFiles.length > 0" class="py-3">
-              <div 
-                (click)="openFileDialog()"
-                class="rounded-lg border-2 font-bold text-[#00709F] border-[#0085BF] bg-[#54CCFF] hover:bg-[#38BAF2] p-1 w-[100px] text-center"
-              >
-                File viewer
+            @if (editForm.productListFiles && editForm.productListFiles.length > 0) {
+              <div class="py-3">
+                <div 
+                  (click)="openFileDialog()"
+                  class="rounded-lg border-2 font-bold text-[#00709F] border-[#0085BF] bg-[#54CCFF] hover:bg-[#38BAF2] p-1 w-[100px] text-center"
+                >
+                  File viewer
+                </div>
               </div>
-            </div>
+            }
         </div>
        <!-- <div class="grid lg:grid-cols-5" *ngFor="let file of editForm.assetListFiles">
           <div class="">
@@ -158,8 +160,8 @@
           [fileList]="editForm.productListFiles" 
           fileNameKey="fileName" 
           filePathKey="base64"
-          removeFileApi="/asset/asset-list/file-remove/:id"
-          [loadFileApi]="'/asset/asset-list/load-file/' + theId"
+          removeFileApi="/product/product-list/file-remove/:id"
+          [loadFileApi]="'/product/product-list/load-file/' + theId"
         />
     </div>
 </div>

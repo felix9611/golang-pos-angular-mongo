@@ -32,6 +32,7 @@ import { StockTakeFormComponent } from './page/stock-take/stock-take-form/stock-
 import { ReturnInvoiceFormComponent } from './page/invoice/return-invoice-form/return-invoice-form.component'
 import { ReturnInvoiceListComponent } from './page/invoice/return-invoice-list/return-invoice-list.component'
 import { ReturnInvoiceDetailComponent } from './page/invoice/return-invoice-detail/return-invoice-detail.component'
+import { JobBoardsComponent } from './page/job-boards/job-boards.component'
 
 export const pagesRoutes: Routes = [
     {
@@ -207,6 +208,11 @@ export const pagesRoutes: Routes = [
     {
         path: 'stock-take-form',
         component: StockTakeFormComponent,
+        canActivate: [AuthGuard]
+    },
+    {
+        path: 'tasks',
+        component: JobBoardsComponent,
         canActivate: [AuthGuard]
     }
 ]

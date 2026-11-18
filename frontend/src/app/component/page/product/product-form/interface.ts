@@ -18,7 +18,7 @@ export interface CreateProduct {
     description: string
     remark: string
     taxType: string
-    uploaProductFiles?: ProductFileDto[]
+    uploadProductFiles?: ProductFileDto[]
     productListFiles?: any[]
 }
 

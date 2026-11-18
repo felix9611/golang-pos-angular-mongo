@@ -7,5 +7,6 @@ export interface UserForm {
     email: string
     roles?: string[],
     superAdmin?: boolean
+    manager?: boolean
     placeIds?: string[]
 }

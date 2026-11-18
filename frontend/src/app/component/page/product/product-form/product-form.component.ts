@@ -108,7 +108,7 @@ export class ProductFormComponent implements OnInit {
         description:  '',
         remark:  '',
         taxType: '',
-        uploaProductFiles: [],
+        uploadProductFiles: [],
         productListFiles: []
     }
 
@@ -199,7 +199,7 @@ export class ProductFormComponent implements OnInit {
 
     async submitForm() {
         const url = this.editForm.id ? '/product/product-list/update' : '/product/product-list/create'
-        this.editForm.uploaProductFiles = this.finalFileList
+        this.editForm.uploadProductFiles = this.finalFileList
 
         const res = await postApiWithAuth(url, this.editForm)
 
@@ -230,7 +230,7 @@ export class ProductFormComponent implements OnInit {
             description:  '',
             remark:  '',
             taxType: '',
-            uploaProductFiles: [],
+            uploadProductFiles: [],
             productListFiles: []
         }
     }
