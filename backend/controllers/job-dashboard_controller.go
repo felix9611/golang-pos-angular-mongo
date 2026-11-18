@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-	"golang-fixedasset-mongo-backend/backend/auth"
-	"golang-fixedasset-mongo-backend/backend/dto"
-	"golang-fixedasset-mongo-backend/backend/models"
-	"golang-fixedasset-mongo-backend/backend/services"
+	"golang-pos-mongo-backend/backend/auth"
+	"golang-pos-mongo-backend/backend/dto"
+	"golang-pos-mongo-backend/backend/models"
+	"golang-pos-mongo-backend/backend/services"
 	"net/http"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
