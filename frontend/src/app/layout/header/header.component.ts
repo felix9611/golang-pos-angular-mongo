@@ -1,15 +1,22 @@
 import { Component, HostListener, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterLink, RouterModule } from '@angular/router'
-
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
 import { UserStoreService } from '../../../state/user.service'
 import { UserInfo } from '../../../state/interface'
+import { TasksNoticeComponent } from '../../component/components/task-notice/task-notice.component'
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, RouterLink, RouterModule, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule, 
+    RouterLink, 
+    RouterModule, 
+    MatIconModule, 
+    MatButtonModule,
+    TasksNoticeComponent
+],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
