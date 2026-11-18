@@ -191,7 +191,7 @@ func LoadFilesByProductId(id string) ([]models.ProductListFiles, error) {
 
 	var files []models.ProductListFiles
 
-	filter := bson.M{"productId": id}
+	filter := bson.M{"productId": id, "status": 1}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -247,7 +247,7 @@ func UpdateProductItem(updateData *models.ProductLists) (interface{}, error) {
 
 		var updateFiles []models.ProductListFiles
 		updateFiles = updateData.UploadProductListFiles
-		// updateData.UploadProductListFiles = nil
+		updateData.UploadProductListFiles = nil
 
 		res, err2 := collection.UpdateOne(context.Background(), bson.M{"_id": updateData.ID}, bson.M{"$set": updateData})
 		if err2 != nil {
