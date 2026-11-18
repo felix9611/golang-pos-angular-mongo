@@ -168,12 +168,50 @@ func GetOneProductItemByID(id string) (interface{}, error) {
 	if err2 != nil {
 		return nil, err2
 	}
+
+	files, err := LoadFilesByProductId(id)
+
+	if err != nil {
+		return nil, err
+	} else {
+		productItem.ProductListFiles = files
+	}
+
 	if productItem.Status == 0 {
 		return "This Product item was write off", nil
 	} else {
-
 		return &productItem, nil
 	}
+}
+
+func LoadFilesByProductId(id string) ([]models.ProductListFiles, error) {
+	collection := GetProductFileListsCollection()
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var files []models.ProductListFiles
+
+	filter := bson.M{"productId": id}
+
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	for cursor.Next(ctx) {
+		var file models.ProductListFiles
+		if err := cursor.Decode(&file); err != nil {
+			return nil, err
+		}
+		files = append(files, file)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return files, nil
 }
 
 func GetOneProductItemByCode(code string) (interface{}, error) {

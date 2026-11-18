@@ -25,6 +25,7 @@ type ProductLists struct {
 	UpdatedAt              time.Time          `bson:"updated_at" json:"updatedAt"`
 	Status                 int                `bson:"status" json:"status"`
 	UploadProductListFiles []ProductListFiles `bson:"uploadProductFiles" json:"uploadProductFiles"`
+	ProductListFiles       []ProductListFiles `json:"productListFiles" bson:"productListFiles"`
 }
 
 type ProductListFiles struct {
@@ -34,6 +35,6 @@ type ProductListFiles struct {
 	FileType  string             `bson:"fileType" json:"fileType"`
 	Base64    string             `bson:"base64" json:"base64"`
 	Status    int                `bson:"status" json:"status"`
-	CreatedAt string             `bson:"createdAt,omitempty" json:"createdAt"`
-	UpdatedAt string             `bson:"updatedAt,omitempty" json:"updatedAt"`
+	CreatedAt time.Time          `bson:"createdAt,omitempty" json:"createdAt"`
+	UpdatedAt time.Time          `bson:"updatedAt,omitempty" json:"updatedAt"`
 }
