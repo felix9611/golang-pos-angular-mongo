@@ -194,7 +194,7 @@ func InactiveLocationByID(id string) (interface{}, error) {
 	}
 }
 
-func LocationListWithFilter(pageDto *dto.LocationPageDto) ([]models.Locations, error) {
+func LocationListWithFilter(pageDto *dto.LocationPageDto, ids []primitive.ObjectID) ([]models.Locations, error) {
 	collection := GetLocationCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -205,6 +205,10 @@ func LocationListWithFilter(pageDto *dto.LocationPageDto) ([]models.Locations, e
 			{"placeCode": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 			{"placeName": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 		},
+	}
+
+	if len(ids) > 0 {
+		filter["_id"] = bson.M{"$in": ids}
 	}
 
 	findOptions := options.Find()

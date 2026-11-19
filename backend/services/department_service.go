@@ -229,7 +229,7 @@ func UpdateDeptById(id string, updateData *models.Department) (interface{}, erro
 	}
 }
 
-func DepartmentListWithFilters(pageDto *dto.DepartmentPageDto) (interface{}, error) {
+func DepartmentListWithFilters(pageDto *dto.DepartmentPageDto, ids []primitive.ObjectID) (interface{}, error) {
 	collection := GetDepartmentCollection()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -243,6 +243,10 @@ func DepartmentListWithFilters(pageDto *dto.DepartmentPageDto) (interface{}, err
 				{"dept_code": bson.M{"$regex": pageDto.Name, "$options": "i"}},
 			},
 		}
+	}
+
+	if len(ids) > 0 {
+		filter["_id"] = bson.M{"$in": ids}
 	}
 
 	findOptions := options.Find()
