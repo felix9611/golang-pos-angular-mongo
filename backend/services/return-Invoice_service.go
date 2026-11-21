@@ -194,7 +194,7 @@ func GetReturnInvoiceById(id string) (interface{}, error) {
 	return dto.ReturnInvoiceDetailResponse{
 		ID:               results[0].ID,
 		InvoiceNumber:    results[0].InvoiceNumber,
-		ReturnDate:       results[0].ReturnDate,
+		ReturnDate:       results[0].CreatedAt,
 		ReturnReason:     results[0].ReturnReason,
 		ReturnLocationId: results[0].ReturnLocationId,
 		ReturnCaseNumber: results[0].ReturnCaseNumber,
@@ -206,6 +206,7 @@ func GetReturnInvoiceById(id string) (interface{}, error) {
 		RefundMethod:     results[0].RefundMethod,
 		ReturnToVendor:   results[0].ReturnToVendor,
 		Invoice:          results[0].Invoice,
+		CreatedAt:        results[0].CreatedAt,
 		// Member:           results[0].Member,
 		ReturnItems: returnItemList,
 	}, err

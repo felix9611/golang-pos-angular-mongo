@@ -22,6 +22,7 @@ export interface CreateReturnInvoiceDto {
     refundMethod: string
     returnToVendor: boolean
     returnItems: CreateReturnInvoiceItemDto[]
+    createdAt: string
 }
 
 export interface UpdateReturnInvoiceDto extends CreateReturnInvoiceDto {
