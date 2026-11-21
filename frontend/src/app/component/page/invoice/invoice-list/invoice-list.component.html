@@ -12,20 +12,16 @@
                 ></nz-range-picker>
             </div>
             <div class="w-[150px] h-full">
-                    <nz-select
-                        nzPlaceHolder="Location"
-                        nzSize="large"
-                        class="w-full h-full" 
-                        name="locationId" 
-                        [(ngModel)]="searchForm.locationId"  
-                        nzMode="multiple"
-                        nzAllowClear 
-                        nzShowArrow
-                    >
-                    @for (option of locationList; track option) {
-                        <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
-                    }
-                </nz-select>
+                <app-filter-list-small
+                    label="Location"
+                    [apiUrl]="'/base/location/filter/list'"
+                    [requestBody]="placeSearchForm"
+                    [postApi]="loadPlaceLists"
+                    [multiple]="true"
+                    [searchDataKey]="['placeCode', 'placeName']"
+                    [(value)]="searchForm.locationIds"
+                    (valueChange)="searchForm.locationIds"
+                />
             </div>
             <div class="w-[150px]">
                 <input class="h-full" nz-input type="text" name="number" placeholder="Invoice No." [(ngModel)]="searchForm.number" />

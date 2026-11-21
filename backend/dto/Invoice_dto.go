@@ -89,7 +89,7 @@ type InvoiceListBody struct {
 type ListInvoiceRequestDto struct {
 	Page        int      `bson:"page" json:"page"`
 	Limit       int      `bson:"limit" json:"limit"`
-	LocationIds []string `bson:"locationId" json:"locationId"`
+	LocationIds []string `json:"locationIds"`
 	Date        []string `bson:"date" json:"date"`
 }
 

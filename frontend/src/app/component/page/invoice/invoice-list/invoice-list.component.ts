@@ -18,6 +18,8 @@ import { Subscription } from 'rxjs'
 import { NzMessageService } from 'ng-zorro-antd/message'
 import { InvoiceListRequestDto } from './interface'
 import { DownloadExcelDataComponent } from '../../../components/download-excel-component/download-excel-data-component.component'
+import { ListOption } from '../../../components/filter-list/filter-list.component'
+import { FilterListApiSmall } from '../../../components/filter-list-small/filter-list.component'
 
 @Component({
     // selector: 'app-footer',
@@ -33,7 +35,8 @@ import { DownloadExcelDataComponent } from '../../../components/download-excel-c
         NzInputModule, 
         NzPaginationModule,
         NzDatePickerModule,
-        DownloadExcelDataComponent
+        DownloadExcelDataComponent,
+        FilterListApiSmall
     ],
     templateUrl: './invoice-list.component.html',
     styleUrl: './invoice-list.component.css',
@@ -63,9 +66,8 @@ export class InvoiceListComponent {
 
         this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
             this.superAdmin = data.superAdmin
-            if (data.superAdmin !== true) {
-                this.locationList = data.locations
-                this.searchForm.locationId = data.placeIds
+            if (!(data.superAdmin || data.manager)) {
+                this.searchForm.locationIds = data.placeIds
             }
         })
     }
@@ -93,7 +95,7 @@ export class InvoiceListComponent {
         limit: 10,
         number: '',
         dateRange: [],
-        locationId: []
+        locationIds: []
     }
 
     userRightInside: any = {
@@ -112,31 +114,15 @@ export class InvoiceListComponent {
 
     ngOnInit() {
         this.loadInvoiceLists()
-        this.loadLocationList()
-    }
-
-    locationList: any[] = []
-
-    async loadLocationList() {
-        if (this.superAdmin === true) {
-            const data = await getApiWithAuth('/base/location/all')
-            this.locationList = data
-        }
     }
 
     async loadInvoiceLists() {
-        if (this.superAdmin === true) {
-            const res = await postApiWithAuth('/invoice/list', this.searchForm)
+        const res = await postApiWithAuth('/invoice/list', this.searchForm)
+        if (res.error) {
+            this.message.error(res.error)
+        } else {
             this.dataLists = res.lists
             this.totals = res.total
-        } else {
-            if (this.searchForm.locationId.length === 0) {
-                this.message.error('Please select least one location')
-            } else {
-                const res = await postApiWithAuth('/invoice/list', this.searchForm)
-                this.dataLists = res.lists
-                this.totals = res.total
-            }
         }
     }
 
@@ -173,5 +159,41 @@ export class InvoiceListComponent {
         const res = await getApiWithAuth(`/sys/excel-field-match/code/${this.excelFileSetting.code}`)
         this.dbFieldList = res.fieldLists.map((item: any) => item.dbFieldName)
         this.excelFieldList = res.fieldLists.map((item: any) => item.excelFieldName)
+    }
+    // Location data
+    placeTotal: number = 0
+    places: any = []
+    placeOptions: ListOption[] = [];
+    placeSearchForm: any = {
+        placeCode: '',
+        placeName: '',
+        page: 1,
+        limit: 10
+    }
+    loadPlaceLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.placeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.places = res ?? [];
+            this.placeTotal = res.length ?? 0;
+        
+            this.placeOptions = this.places.map((a: any) => ({
+                value: a.id,
+                label: `${a.placeCode}`,
+            }))
+    
+            return this.placeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
     }
 }
