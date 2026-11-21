@@ -1,7 +1,7 @@
 export interface DashboardReqFilterDto {
-    typeIds?: string[]
-    placeIds?: string[]
-    deptIds?: string[]
+    typeIds: string[]
+    placeIds: string[]
+    deptIds: string[]
     salesDateRange?: string[]
 }
 

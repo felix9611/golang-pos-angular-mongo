@@ -18,6 +18,8 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker'
 import { UserStoreService } from '../../../../../state/user.service'
 import { findMenuItem } from '../../../tool-function'
 import { Subscription } from 'rxjs'
+import { ListOption } from '../../../components/filter-list/filter-list.component'
+import { FilterListApiSmall } from '../../../components/filter-list-small/filter-list.component'
 
 @Component({
     standalone: true,
@@ -33,29 +35,40 @@ import { Subscription } from 'rxjs'
         CanvasChartComponent,
         NzSelectModule,
         NzDatePickerModule,
+        FilterListApiSmall
     ],
     templateUrl: './invoice-dashboard.component.html',
     // styleUrl: './invoice-dashboard.component.css',
 })
 export class InvoiceDashboardComponent implements OnInit {
     private rightSubscription: Subscription
+    private userRightSubscription: Subscription
     constructor(
         private message: NzMessageService,
         private userStoreService: UserStoreService
     ) {
-            this.rightSubscription = this.userStoreService.menuRole$.subscribe((data: any) => {
-                const answer = findMenuItem(data, 'Dashboard', 'dashboard')
-                this.userRightInside = {
-                    read: answer?.read ?? false
-                     // keep default value
-                }
-            })
-                    
+        this.rightSubscription = this.userStoreService.menuRole$.subscribe((data: any) => {
+            const answer = findMenuItem(data, 'Dashboard', 'dashboard')
+            this.userRightInside = {
+                read: answer?.read ?? false
+                 // keep default value
+            }
+        })
+
+        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            if (!(data.superAdmin || data.manager)) {
+                this.globalFilter.deptIds = data.deptIds
+                this.globalFilter.placeIds = data.placeIds
+            }
+        })              
     }
 
     ngOnDestroy() {
         if (this.userStoreService.menuRole$) {
             this.rightSubscription.unsubscribe()
+        }
+        if (this.userStoreService.user$) {
+            this.userRightSubscription.unsubscribe()
         }
     }
 
@@ -66,29 +79,7 @@ export class InvoiceDashboardComponent implements OnInit {
 
     ngOnInit(): void {
         this.runSearch()
-   //     this.getByTotalCost()
-  //      this.getByTotalCount()
-        this.loadTypeList()
-        this.loadDeptList()
-        this.loadLocationList()
         
-    }
-
-    typeLists: any[] = []
-    async loadTypeList() {
-        this.typeLists = await getApiWithAuth('/product/product-type/all')
-    }
-
-    deptLists: any[] = []
-    async loadDeptList() {
-        const res = await getApiWithAuth('/sys/department/all')
-        this.deptLists = res.data
-    }
-
-    placeLists: any[] = []
-    async loadLocationList() {
-        const res = await getApiWithAuth('/base/location/all')
-        this.placeLists = res.data
     }
 
     async runSearch() {
@@ -103,7 +94,11 @@ export class InvoiceDashboardComponent implements OnInit {
         await this.getbyYearMonthAndPrice() 
     }
 
-    globalFilter: DashboardReqFilterDto = {}
+    globalFilter: DashboardReqFilterDto = {
+        placeIds: [],
+        deptIds: [],
+        typeIds: []
+    }
 
     byTypeAndQtysLoading: boolean = false
     byTypeAndQtys: any = {}
@@ -396,5 +391,110 @@ export class InvoiceDashboardComponent implements OnInit {
 
         return await postApiWithAuth('/query/invoice', finalQuery)
     }
-
+//  Department data
+    departmentTotal: number = 0
+    departments: any = []
+    departmentOptions: ListOption[] = [];
+    departmentSearchForm: any = {
+        name: '',
+        page: 1,
+        limit: 10
+    }
+    loadDeptLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.departmentSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.departments = res ?? [];
+            this.departmentTotal = res.length ?? 0;
+        
+            this.departmentOptions = this.departments.map((a: any) => ({
+                value: a.id,
+                label: `${a.deptCode} - ${a.deptName}`,
+            }))
+    
+            return this.departmentOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
+    }
+//  Product Type data
+    productTypeTotal: number = 0
+    productTypes: any = []
+    productTypeOptions: ListOption[] = [];
+    productTypeSearchForm: any = {
+        name: '',
+        page: 1,
+        limit: 10
+    }
+    loadTypeLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.productTypeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.productTypes = res ?? [];
+            this.productTypeTotal = res.length ?? 0;
+        
+            this.productTypeOptions = this.productTypes.map((a: any) => ({
+                value: a.id,
+                label: `${a.typeCode} - ${a.typeName}`,
+            }))
+    
+            return this.productTypeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
+    }
+    // Location data
+    placeTotal: number = 0
+    places: any = []
+    placeOptions: ListOption[] = [];
+    placeSearchForm: any = {
+        placeCode: '',
+        placeName: '',
+        page: 1,
+        limit: 10
+    }
+    loadPlaceLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.placeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.places = res ?? [];
+            this.placeTotal = res.length ?? 0;
+        
+            this.placeOptions = this.places.map((a: any) => ({
+                value: a.id,
+                label: `${a.placeCode}`,
+            }))
+    
+            return this.placeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
+    }
 }
