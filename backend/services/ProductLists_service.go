@@ -344,11 +344,11 @@ func ListProductItemsWithFilters(req *dto.ListProductReqDto) ([]dto.ListProductD
 	}
 
 	if len(req.TypeIds) > 0 {
-		filters["typeIds"] = bson.M{"$in": req.TypeIds}
+		filters["typeId"] = bson.M{"$in": req.TypeIds}
 	}
 
 	if len(req.DeptIds) > 0 {
-		filters["deptIds"] = bson.M{"$in": req.DeptIds}
+		filters["deptId"] = bson.M{"$in": req.DeptIds}
 	}
 
 	pipeline := mongo.Pipeline{
@@ -476,11 +476,11 @@ func ListProductItems(req *dto.ListProductReqDto) (interface{}, error) {
 	}
 
 	if len(req.TypeIds) > 0 {
-		filters["typeIds"] = bson.M{"$in": req.TypeIds}
+		filters["typeId"] = bson.M{"$in": req.TypeIds}
 	}
 
 	if len(req.DeptIds) > 0 {
-		filters["deptIds"] = bson.M{"$in": req.DeptIds}
+		filters["deptId"] = bson.M{"$in": req.DeptIds}
 	}
 
 	skip := int64((req.Page - 1) * req.Limit)
