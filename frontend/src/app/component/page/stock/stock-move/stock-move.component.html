@@ -20,29 +20,33 @@
                 <nz-form-item>
                     <div class="px-1 w-[105px] flex items-center">Location From</div>
                       <nz-form-control>
-                        <nz-select
-                            class="w-full h-full" 
-                            name="locationId" 
-                            [(ngModel)]="stockInForm.fromLocationId"  
-                            nzAllowClear  nzShowArrow>
-                            @for (option of locationList; track option) {
-                                <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
-                            }
-                        </nz-select>
+                        <app-filter-list-small
+                          class="w-[78%]"
+                          label="Location"
+                          [apiUrl]="'/base/location/filter/list'"
+                          [requestBody]="placeSearchForm"
+                          [postApi]="loadPlaceLists"
+                          [multiple]="false"
+                          [searchDataKey]="['placeCode', 'placeName']"
+                          [(singleValue)]="stockInForm.fromLocationId"
+                          (singleValueChange)="stockInForm.fromLocationId"
+                        />
                       </nz-form-control>
                 </nz-form-item>
                 <nz-form-item>
                   <div class="px-1 w-[105px] flex items-center">Location To</div>
                     <nz-form-control>
-                      <nz-select
-                          class="w-full h-full" 
-                          name="locationId" 
-                          [(ngModel)]="stockInForm.toLocationId"  
-                          nzAllowClear  nzShowArrow>
-                          @for (option of locationList; track option) {
-                              <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
-                          }
-                      </nz-select>
+                      <app-filter-list-small
+                        class="w-[78%]"
+                        label="Location"
+                        [apiUrl]="'/base/location/filter/list'"
+                        [requestBody]="placeSearchForm"
+                        [postApi]="loadPlaceLists"
+                        [multiple]="false"
+                        [searchDataKey]="['placeCode', 'placeName']"
+                        [(singleValue)]="stockInForm.toLocationId"
+                        (singleValueChange)="stockInForm.toLocationId"
+                      />
                     </nz-form-control>
               </nz-form-item>
                 <nz-form-item>

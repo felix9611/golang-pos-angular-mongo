@@ -19,6 +19,8 @@ import { NzMessageService } from 'ng-zorro-antd/message'
 import { ProductLocationListComponent } from '../product-location/product-location.component'
 import { Subscription } from 'rxjs'
 import { UserStoreService } from '../../../../../state/user.service'
+import { ListOption } from '../../../components/filter-list/filter-list.component'
+import { FilterListApiSmall } from '../../../components/filter-list-small/filter-list.component'
 
 @Component({
     imports: [
@@ -37,11 +39,12 @@ import { UserStoreService } from '../../../../../state/user.service'
         MatIconModule, 
         MatButtonModule,
         NzInputNumberModule,
-        ProductLocationListComponent
+        ProductLocationListComponent,
+        FilterListApiSmall
     ],
     templateUrl: './stock-move.component.html'
 })
-export class StockMoveComponent implements OnInit {
+export class StockMoveComponent {
     private userRightSubscription: Subscription
     constructor(
         private message: NzMessageService,
@@ -59,10 +62,6 @@ export class StockMoveComponent implements OnInit {
         if (this.userStoreService.user$) {
             this.userRightSubscription.unsubscribe()
         }
-    }
-
-    ngOnInit(): void {
-        this.loadLocationList()
     }
 
     superAdmin: boolean = false
@@ -160,6 +159,42 @@ export class StockMoveComponent implements OnInit {
         } else {
             this.message.error(res.error)
             this.reloadProductLocation = true
+        }
+    }
+    // Location data
+    placeTotal: number = 0
+    places: any = []
+    placeOptions: ListOption[] = [];
+    placeSearchForm: any = {
+        placeCode: '',
+        placeName: '',
+        page: 1,
+        limit: 10
+    }
+    loadPlaceLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.placeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.places = res ?? [];
+            this.placeTotal = res.length ?? 0;
+        
+            this.placeOptions = this.places.map((a: any) => ({
+                value: a.id,
+                label: `${a.placeCode} - ${a.placeName}`,
+            }))
+    
+            return this.placeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
         }
     }
 }
