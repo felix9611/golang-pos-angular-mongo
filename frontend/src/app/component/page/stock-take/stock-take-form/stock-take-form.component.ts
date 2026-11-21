@@ -22,6 +22,8 @@ import { UserStoreService } from '../../../../../state/user.service'
 import { findMenuItem } from '../../../tool-function'
 import { Subscription } from 'rxjs'
 import { NzInputNumberModule } from 'ng-zorro-antd/input-number'
+import { ListOption } from '../../../components/filter-list/filter-list.component'
+import { FilterListApiSmall } from '../../../components/filter-list-small/filter-list.component'
 
 @Component({
     standalone: true,
@@ -40,7 +42,8 @@ import { NzInputNumberModule } from 'ng-zorro-antd/input-number'
         NzDatePickerModule,
         MatIconModule, 
         MatButtonModule,
-        NzInputNumberModule
+        NzInputNumberModule,
+        FilterListApiSmall
     ],
     templateUrl: './stock-take-form.component.html',
     styleUrl: './stock-take-form.component.css',
@@ -69,9 +72,6 @@ await: any
 
         this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
             this.superAdmin = data.superAdmin
-            if (data.superAdmin !== true) {
-                this.placeLists = data.locations
-            }
         })
     }
 
@@ -121,7 +121,6 @@ await: any
     }
 
     ngOnInit() {
-        this.loadLocationList()
         this.route.queryParams.subscribe((x: any) => {
             if (x.id) {
                 this.theId = x.id
@@ -132,14 +131,6 @@ await: any
 
     async getOne() {
         this.editForm = await getApiWithAuth(`/stock-take/one/${ this.theId}`)    
-    }
-
-    placeLists: any[] = []
-    async loadLocationList() {
-        if (this.superAdmin === true) {
-            const res = await getApiWithAuth('/base/location/all')
-            this.placeLists = res.data
-        }
     }
 
     async updateForm() {
@@ -200,5 +191,41 @@ await: any
 
     backToList() {
         this.routeTo.navigate([`/stock-takes`])
+    }
+    // Location data
+    placeTotal: number = 0
+    places: any = []
+    placeOptions: ListOption[] = [];
+    placeSearchForm: any = {
+        placeCode: '',
+        placeName: '',
+        page: 1,
+        limit: 10
+    }
+    loadPlaceLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.placeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.places = res ?? [];
+            this.placeTotal = res.length ?? 0;
+        
+            this.placeOptions = this.places.map((a: any) => ({
+                value: a.id,
+                label: `${a.placeCode} - ${a.placeName}`,
+            }))
+    
+            return this.placeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
     }
 }

@@ -1,20 +1,20 @@
 <div class="bg-white p-[1rem]">
-    <div *ngIf="userRightInside.write">
+    <div>
+        @if (userRightInside.write) {
         <div class="flex py-3 gap-5">
             <div class="text-[2rem] hover:text-[#ff9200] px-3" (click)="backToList()">
                 <mat-icon cl aria-hidden="false" fontIcon="chevron_left"></mat-icon>
             </div>
             <div class="text-center text-[2rem] font-bold">
                 Stock Detail Form (
-                <span *ngIf="editForm.status === 2">
-                    Finish
-                </span>
-                <span *ngIf="editForm.status === 1">
-                    Active
-                </span>
-                <span *ngIf="editForm.status === 0">
-                    Cancel
-                </span>)
+                    @if (editForm.status === 2) {
+                        Finished
+                    }@else if (editForm.status === 1) {
+                        Active
+                    }@else {
+                        Cancel
+                    }
+                )
             </div>
         </div>
         <form nz-form class="grid lg:grid-cols-4 p-2 gap-2">
@@ -27,17 +27,17 @@
             <nz-form-item>
                 <div class="px-1 w-[60px] flex items-center">Location</div>
                 <nz-form-control [nzSpan]="14">
-                    <nz-select
+                    <app-filter-list-small
+                        label="Location"
+                        [apiUrl]="'/base/location/filter/list'"
+                        [requestBody]="placeSearchForm"
+                        [postApi]="loadPlaceLists"
+                        [multiple]="false"
+                        [searchDataKey]="['placeCode', 'placeName']"
+                        [(singleValue)]="editForm.actionPlaceId"
+                        (singleValueChange)="editForm.actionPlaceId"
                         [disabled]="editForm.status !== 1"
-                        class="w-full h-full" 
-                        name="actionPlaceId" 
-                        [(ngModel)]="editForm.actionPlaceId"  
-                        nzAllowClear nzShowArrow
-                        nzPlaceHolder="Please Select">
-                        @for (option of placeLists; track option) {
-                        <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
-                        }
-                    </nz-select>
+                    />
                 </nz-form-control>
             </nz-form-item>
             <nz-form-item>
@@ -154,5 +154,6 @@
                 </nz-table>
             </div>
         </div>
+    }
     </div>
 </div>
