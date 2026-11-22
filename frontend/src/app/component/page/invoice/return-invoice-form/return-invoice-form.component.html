@@ -147,8 +147,8 @@
                             [postApi]="loadPlaceLists"
                             [multiple]="false"
                             [searchDataKey]="['placeCode', 'placeName']"
-                            [(singleValue)]="invoiceDetail.locationId"
-                            (singleValueChange)="invoiceDetail.locationId"
+                            [(singleValue)]="returnInvoiceForm.returnLocationId"
+                            (singleValueChange)="returnInvoiceForm.returnLocationId"
                         />
                     </nz-form-control>
                 </nz-form-item>
