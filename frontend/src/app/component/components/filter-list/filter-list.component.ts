@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { OnChanges, OnDestroy, OnInit, SimpleChanges, signal } from '@angular/core';
 import { mapListResponse } from './filter-list-api-data';
+import { FilterListPopover } from './filter-list-popover';
 
 export interface ListOption {
   value: string;
@@ -20,12 +21,16 @@ export interface ListOption {
   standalone: true,
   styleUrls: [],
   template: `
-    <div class="filter-list">
+    <div
+      class="filter-list [&_button]:box-border [&_button]:[font:inherit] [&_button]:cursor-pointer [&_button:focus-visible]:[outline:2px_solid_#b09bd7] [&_button:focus-visible]:outline-offset-2 [&_button:disabled]:opacity-50 [&_button:disabled]:cursor-default"
+    >
       <button
         type="button"
-        class="filter-trigger [font:inherit] cursor-pointer [&:focus-visible]:[outline:2px_solid_#b09bd7] [&:focus-visible]:[outline-offset:2px] w-[100%] flex justify-between gap-[10px] [border:1px_solid_#e5dfec] rounded-[6px] p-[11px_12px] [background:#fff] text-left text-[13px] text-[#756780] [&_>_span:first-child]:overflow-hidden [&_>_span:first-child]:text-ellipsis [&_>_span:first-child]:whitespace-nowrap max-[760px]:min-h-[46px] max-[760px]:text-[16px]"
+        #filterTrigger
+        class="filter-trigger flex w-full items-center justify-between gap-[10px] [border:1px_solid_#e5dfec] rounded-[6px] px-[12px] py-[11px] bg-white text-left text-[13px] text-[#756780] [&_>_span:first-child]:overflow-hidden [&_>_span:first-child]:text-ellipsis [&_>_span:first-child]:whitespace-nowrap [&[aria-expanded='true']]:border-[#b09bd7] [&[aria-expanded='true']]:[box-shadow:0_0_0_3px_#a88ad612] max-[760px]:min-h-[46px] max-[760px]:text-[16px]"
         [attr.aria-label]="label"
         [attr.aria-expanded]="expanded"
+        aria-haspopup="dialog"
         (click)="toggle()"
       >
         <span>{{ summary() }}</span
@@ -33,106 +38,90 @@ export interface ListOption {
       </button>
       @if (selectedIds.length) {
         <div
-          class="selected-options flex flex-wrap gap-[6px] [margin-top:8px] [&_button]:[border:1px_solid_#e8dff2] [&_button]:[background:#f6f1fb] [&_button]:p-[6px_9px] [&_button]:rounded-[5px] [&_button]:text-[12px] [&_button]:text-[#9575b1] max-[760px]:[&_button]:min-h-[44px] max-[760px]:[&_button]:text-[13px]"
+          class="selected-options mt-[8px] flex flex-wrap gap-[6px] [&_button]:[border:1px_solid_#e8dff2] [&_button]:bg-[#f6f1fb] [&_button]:px-[9px] [&_button]:py-[6px] [&_button]:rounded-[5px] [&_button]:text-[12px] [&_button]:text-[#9575b1] max-[760px]:[&_button]:min-h-[44px] max-[760px]:[&_button]:text-[13px]"
           aria-live="polite"
           aria-label="Selected options"
         >
           @for (id of selectedIds; track id) {
-            @if (multiple === true) {
-              <button
-                class="[font:inherit] cursor-pointer [&:focus-visible]:[outline:2px_solid_#b09bd7] [&:focus-visible]:[outline-offset:2px]"
-                type="button"
-                (click)="remove(id)"
-                [attr.aria-label]="'Remove ' + name(id)"
-              >
-                {{ name(id) }} ×
-              </button>
-            }
+            <button type="button" (click)="remove(id)" [attr.aria-label]="'Remove ' + name(id)">
+              {{ name(id) }} ×
+            </button>
           }
         </div>
       }
       @if (expanded) {
-        <div
-          class="filter-menu [margin-top:6px] [border:1px_solid_#e5dfec] rounded-[8px] p-[10px] [background:#fff] [&_input]:block [&_input]:w-[100%] [&_input]:m-[0_0_8px] [&_input]:[border:1px_solid_#e5dfec] [&_input]:rounded-[6px] [&_input]:p-[10px] [&_input]:[background:#faf8fd] [&_input]:text-[13px] max-[760px]:[&_input]:min-h-[46px] max-[760px]:[&_input]:text-[16px]"
+        <app-filter-list-popover
+          [label]="label"
+          [anchor]="filterTrigger"
+          (closed)="expanded = false"
         >
-          <input
-            class="[font:inherit] [&:focus-visible]:[outline:2px_solid_#b09bd7] [&:focus-visible]:[outline-offset:2px]"
-            type="search"
-            [name]="searchKeys.join(',')"
-            [value]="query"
-            (input)="onInput($event)"
-            (keydown.enter)="submitSearch($event)"
-            [attr.aria-label]="'Search ' + label"
-            [placeholder]="'Search ' + label + '...'"
-            (keydown.escape)="$event.stopPropagation(); expanded = false"
-          />
-          <div
-            class="api-state text-[12px] text-[#887397] [&_button]:[border:0] [&_button]:[background:#f6f1fb] [&_button]:rounded-[5px] [&_button]:p-[8px] [&_button]:text-[#8664bc] max-[760px]:[&_button]:min-h-[44px] max-[760px]:[&_button]:text-[13px]"
-            aria-live="polite"
-          >
-            @if (loading()) {
-              <p>Loading...</p>
-            }
-            @if (error()) {
-              <p role="alert">{{ error() }}</p>
-              <button
-                class="[font:inherit] cursor-pointer [&:focus-visible]:[outline:2px_solid_#b09bd7] [&:focus-visible]:[outline-offset:2px]"
-                type="button"
-                (click)="loadPage(failedPage)"
-              >
-                Reload
-              </button>
-            }
-          </div>
-          <div
-            class="filter-options max-h-[220px] overflow-y-auto [&_>_button]:flex [&_>_button]:items-center [&_>_button]:justify-between [&_>_button]:w-[100%] [&_>_button]:gap-[10px] [&_>_button]:[border:0] [&_>_button]:rounded-[5px] [&_>_button]:p-[10px] [&_>_button]:[background:#fff] [&_>_button]:text-left [&_>_button]:text-[#8f819e] [&_>_button:hover]:[background:#f3edfb] [&_>_button:hover]:text-[#8664bc] [&_>_button.is-selected]:[background:#f3edfb] [&_>_button.is-selected]:text-[#8664bc] [&_b]:block [&_b]:text-[13px] [&_b]:font-[500] [&_small]:block [&_small]:text-[11px] [&_small]:[margin-top:4px] max-[760px]:[&_>_button]:min-h-[56px] max-[760px]:[&_b]:text-[14px] max-[760px]:[&_small]:text-[12px]"
-            [attr.aria-label]="label + 'options'"
-          >
-            @for (option of filtered(); track option.value) {
-              <button
-                class="[font:inherit] cursor-pointer [&:focus-visible]:[outline:0px_solid_#b09bd7] [&:focus-visible]:[outline-offset:0px]"
-                type="button"
-                [class.is-selected]="selectedIds.includes(option.value)"
-                [attr.aria-pressed]="selectedIds.includes(option.value)"
-                (click)="choose(option.value)"
-              >
-                <span class="text-[#7d7d7d]"
-                  ><b>{{ option.label }}</b
-                  ><small>{{ option.value }}</small></span
-                ><span>{{ selectedItem(option.value) }}</span>
-              </button>
-            } @empty {
-              @if (!loading() && !error()) {
-                <p class="filter-empty text-[12px] text-[#887397]">No results</p>
+          <div class="filter-menu bg-white p-[10px]">
+            <input
+              class="box-border [font:inherit] block w-full m-[0_0_8px] [border:1px_solid_#e5dfec] rounded-[6px] p-[10px] bg-[#faf8fd] text-[13px] text-[#53485f] focus-visible:[outline:2px_solid_#b09bd7] focus-visible:outline-offset-2 max-[760px]:min-h-[46px] max-[760px]:text-[16px]"
+              type="search"
+              [name]="searchKeys.join(',')"
+              [value]="query"
+              (input)="onInput($event)"
+              (keydown.enter)="submitSearch($event)"
+              [attr.aria-label]="'Search ' + label"
+              [placeholder]="'Search ' + label + '...'"
+            />
+            <div
+              class="api-state text-[12px] text-[#887397] [&_button]:border-0 [&_button]:bg-[#f6f1fb] [&_button]:rounded-[5px] [&_button]:p-[8px] [&_button]:text-[#8664bc] max-[760px]:[&_button]:min-h-[44px] max-[760px]:[&_button]:text-[13px]"
+              aria-live="polite"
+            >
+              @if (loading()) {
+                <p>載入中...</p>
               }
+              @if (error()) {
+                <p role="alert">{{ error() }}</p>
+                <button type="button" (click)="loadPage(failedPage)">Reload</button>
+              }
+            </div>
+            <div
+              class="filter-options max-h-[220px] overflow-y-auto overscroll-contain [&_>_button]:flex [&_>_button]:items-center [&_>_button]:justify-between [&_>_button]:w-full [&_>_button]:gap-[10px] [&_>_button]:border-0 [&_>_button]:rounded-[5px] [&_>_button]:p-[10px] [&_>_button]:bg-white [&_>_button]:text-left [&_>_button]:text-[#8f819e] [&_>_button:hover]:bg-[#f3edfb] [&_>_button:hover]:text-[#8664bc] [&_>_button.is-selected]:bg-[#f3edfb] [&_>_button.is-selected]:text-[#8664bc] [&_>_button_>_span:first-child]:min-w-0 [&_>_button_>_span:first-child]:[overflow-wrap:anywhere] [&_b]:block [&_b]:text-[13px] [&_b]:font-medium [&_small]:block [&_small]:text-[11px] [&_small]:mt-[4px] max-[760px]:[&_>_button]:min-h-[56px] max-[760px]:[&_b]:text-[14px] max-[760px]:[&_small]:text-[12px]"
+              [attr.aria-label]="label + '選項'"
+            >
+              @for (option of filtered(); track option.value) {
+                <button
+                  type="button"
+                  [class.is-selected]="selectedIds.includes(option.value)"
+                  [attr.aria-pressed]="selectedIds.includes(option.value)"
+                  (click)="choose(option.value)"
+                >
+                  <span
+                    ><b>{{ option.label }}</b
+                    ><small>{{ option.value }}</small></span
+                  ><span>{{ selectedIds.includes(option.value) ? '✓' : '＋' }}</span>
+                </button>
+              } @empty {
+                @if (!loading() && !error()) {
+                  <p class="filter-empty text-[12px] text-[#887397]">Not found matched</p>
+                }
+              }
+            </div>
+            @if (hasMore() && !error()) {
+              <button
+                type="button"
+                class="load-more w-full min-h-[44px] mt-[8px] [border:1px_solid_#e5dfec] rounded-[6px] bg-[#f6f1fb] text-[#8664bc]"
+                [disabled]="loading()"
+                (click)="loadPage(page + 1)"
+              >
+                Load More
+              </button>
             }
-          </div>
-          @if (hasMore() && !error()) {
-            <button
-              type="button"
-              class="load-more [font:inherit] cursor-pointer [&:focus-visible]:[outline:2px_solid_#b09bd7] [&:focus-visible]:[outline-offset:2px] w-[100%] min-h-[44px] [margin-top:8px] [border:1px_solid_#e5dfec] rounded-[6px] [background:#f6f1fb] text-[#8664bc] [&:disabled]:opacity-[0.5] [&:disabled]:cursor-default"
-              [disabled]="loading()"
-              (click)="loadPage(page + 1)"
+            <div
+              class="filter-menu-footer [border-top:1px_solid_#f0ebf5] mt-[6px] pt-[8px] flex items-center justify-between gap-[8px] [&_small]:text-[12px] [&_small]:text-[#887397] [&_button]:border-0 [&_button]:bg-[#f6f1fb] [&_button]:rounded-[5px] [&_button]:p-[8px] [&_button]:text-[#8664bc] max-[760px]:[&_button]:min-h-[44px] max-[760px]:[&_button]:text-[13px]"
             >
-              Load more
-            </button>
-          }
-          <div
-            class="filter-menu-footer [border-top:1px_solid_#f0ebf5] [margin-top:6px] [padding-top:8px] flex items-center justify-between gap-[8px] [&_small]:text-[12px] [&_small]:text-[#887397] [&_button]:[border:0] [&_button]:[background:#f6f1fb] [&_button]:rounded-[5px] [&_button]:p-[8px] [&_button]:text-[#8664bc] max-[760px]:[&_button]:min-h-[44px] max-[760px]:[&_button]:text-[13px]"
-          >
-            <small>{{ filtered().length }} options</small
-            ><button
-              class="[font:inherit] cursor-pointer [&:focus-visible]:[outline:2px_solid_#b09bd7] [&:focus-visible]:[outline-offset:2px]"
-              type="button"
-              (click)="clear()"
-            >
-              Clear
-            </button>
+              <small>{{ filtered().length }} options</small
+              ><button type="button" (click)="clear()">Clear All</button>
+            </div>
           </div>
-        </div>
+        </app-filter-list-popover>
       }
     </div>
   `,
+  imports: [FilterListPopover],
 })
 export class FilterListApi implements OnChanges, OnInit, OnDestroy {
   @Input() apiUrl = '/sys/user/list';
@@ -236,14 +225,14 @@ export class FilterListApi implements OnChanges, OnInit, OnDestroy {
     this.error.set('');
     if (typeof this.postApi !== 'function' || !this.apiUrl.trim()) {
       this.loading.set(false);
-      this.error.set('未設定 API：請綁定 [postApi]="loadUserLists" 及 apiUrl。');
+      this.error.set('Not configured API：Please bind [postApi]="loadUserLists" 及 apiUrl。');
       return;
     }
     const requestedLimit = Number(this.requestBody['limit']);
     const limit = Number.isInteger(requestedLimit) && requestedLimit > 0 ? requestedLimit : 10;
     if (!this.searchKeys.length) {
       this.loading.set(false);
-      this.error.set('請設定搜尋欄位 searchDataKey。');
+      this.error.set('Please set searchDataKey in searchDataKey。');
       return;
     }
     const filters = Object.fromEntries(this.searchKeys.map((key) => [key, this.query.trim()]));

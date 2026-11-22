@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs'
 import { NzMessageService } from 'ng-zorro-antd/message'
 import { ReturnInvoiceListRequestDto } from './interface'
 import { DownloadExcelDataComponent } from '../../../components/download-excel-component/download-excel-data-component.component'
+import { FilterListApiSmall, ListOption } from '../../../components/filter-list-small/filter-list.component'
 
 @Component({
     // selector: 'app-footer',
@@ -33,7 +34,8 @@ import { DownloadExcelDataComponent } from '../../../components/download-excel-c
         NzInputModule, 
         NzPaginationModule,
         NzDatePickerModule,
-        DownloadExcelDataComponent
+        DownloadExcelDataComponent,
+        FilterListApiSmall 
     ],
     templateUrl: './return-invoice-list.component.html',
     styleUrl: './return-invoice-list.component.css',
@@ -64,8 +66,7 @@ export class ReturnInvoiceListComponent {
 
         this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
             this.superAdmin = data.superAdmin
-            if (data.superAdmin !== true) {
-                this.placeLists = data.locations
+            if (data.superAdmin || data.manager) {
                 this.searchForm.returnLocationIds = data.placeIds
             }
         })
@@ -77,18 +78,14 @@ export class ReturnInvoiceListComponent {
         }
     }
 
+    ngOnInit() {
+        this.loadInvoiceLists()
+    }
+
     superAdmin: boolean = false
 
     excelFileSetting: any = {
         code: ''
-    }
-
-    placeLists: any[] = []
-    async loadLocationList() {
-        if (this.superAdmin === true) {
-            const res = await getApiWithAuth('/base/location/all')
-            this.placeLists = res.data
-        }
     }
 
     dbFieldList: string[] = []
@@ -116,11 +113,6 @@ export class ReturnInvoiceListComponent {
     editFormDialog: boolean = false
     removeDialog: boolean = false
     handleId: string = ''
-
-    ngOnInit() {
-        this.loadInvoiceLists()
-        this.loadLocationList()
-    }
 
     async loadInvoiceLists() {
         const res = await postApiWithAuth('/return-invoice/list', this.searchForm)
@@ -150,5 +142,41 @@ export class ReturnInvoiceListComponent {
         const res = await getApiWithAuth(`/sys/excel-field-match/code/${this.excelFileSetting.code}`)
         this.dbFieldList = res.fieldLists.map((item: any) => item.dbFieldName)
         this.excelFieldList = res.fieldLists.map((item: any) => item.excelFieldName)
+    }
+    // Location data
+    placeTotal: number = 0
+    places: any = []
+    placeOptions: ListOption[] = [];
+    placeSearchForm: any = {
+        placeCode: '',
+        placeName: '',
+        page: 1,
+        limit: 10
+    }
+    loadPlaceLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.placeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.places = res ?? [];
+            this.placeTotal = res.length ?? 0;
+        
+            this.placeOptions = this.places.map((a: any) => ({
+                value: a.id,
+                label: `${a.placeCode} - ${a.placeName}`,
+            }))
+    
+            return this.placeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
     }
 }

@@ -18,6 +18,8 @@ import { NzSelectModule } from 'ng-zorro-antd/select'
 import { findMenuItem } from '../../tool-function'
 import { UserStoreService } from '../../../../state/user.service'
 import { NzCheckboxModule } from 'ng-zorro-antd/checkbox'
+import { ListOption } from '../../components/filter-list/filter-list.component'
+import { FilterListApiSmall } from '../../components/filter-list-small/filter-list.component'
 
 @Component({
     // selector: 'app-footer',
@@ -34,6 +36,7 @@ import { NzCheckboxModule } from 'ng-zorro-antd/checkbox'
         NzUploadModule,
         NzSelectModule,
         NzCheckboxModule,
+        FilterListApiSmall
     ],
     templateUrl: './users.component.html',
     styleUrl: './users.component.css',
@@ -58,6 +61,7 @@ export class UsersComponent {
 
         this.userSubscription = this.userStoreService.user$.subscribe((data: any) => {
             this.superAdmin = data.superAdmin
+            this.manager = data.manager
         })
     }
 
@@ -71,6 +75,7 @@ export class UsersComponent {
     }
 
     superAdmin: boolean = false
+    manager: boolean = false
 
     userRightInside: any = {
         read: true,
@@ -82,16 +87,20 @@ export class UsersComponent {
 
     searchForm: any = {
         page: 1,
-        limit: 10
+        limit: 10,
+        deptIds: [],
+        roles: [],
+        placeIds: []
     }
 
     editForm: UserForm=  {
         id: '',
         username: '',
         avatarBase64: '',
-        deptIds: [],
         email: '',
+        deptIds: [],
         roles: [],
+        placeIds: []
     }
 
     okText: string = 'Create'
@@ -136,25 +145,6 @@ export class UsersComponent {
 
     ngOnInit() {
         this.loadUserLists()
-        this.loadDeptLists()
-        this.loadRoleLists()
-        this.loadLocationList()
-    }
-
-    async loadRoleLists() {
-        const res = await getApiWithAuth('/sys/role/all')
-        this.roleLists = res.data
-    }
-
-    async loadDeptLists() {
-        const res = await getApiWithAuth('/sys/department/all')
-        this.deptLists = res.data
-    }
-
-    placeLists: any[] = []
-    async loadLocationList() {
-        const res = await getApiWithAuth('/base/location/all')
-        this.placeLists = res.data
     }
 
     async submitForm() {
@@ -184,7 +174,8 @@ export class UsersComponent {
                 avatarBase64: '',
                 deptIds: [],
                 email: '',
-                roles: []
+                roles: [],
+                placeIds: []
             }
 
             this.okText = 'Create'
@@ -276,4 +267,111 @@ export class UsersComponent {
         this.avatarUrl = response.data
     }
 
+// Department data
+    deptTotal: number = 0
+    depts: any = []
+    deptOptions: ListOption[] = [];
+    deptSearchForm: any = {
+        deptCode: '',
+        deptName: '',
+        page: 1,
+        limit: 10
+    }
+    loadDeptLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.deptSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload)
+        
+            this.depts = res ?? []
+            this.deptTotal = res.length ?? 0
+        
+            this.deptOptions = this.depts.map((a: any) => ({
+                value: a.id,
+                label: `${a.deptCode}`,
+            }));
+        
+            return this.deptOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
+    }
+    // rOLE data
+    roleTotal: number = 0
+    roles: any = []
+    roleOptions: ListOption[] = [];
+    roleSearchForm: any = {
+        name: '',
+        page: 1,
+        limit: 10
+    }
+    loadRoleLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.roleSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload)
+        
+            this.roles = res.data.lists ?? []
+            this.roleTotal = res.data.total ?? 0
+        
+            this.roleOptions = this.roles.map((a: any) => ({
+                value: a.id,
+                label: `${a.name}`,
+            }));
+        
+            return this.roleOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
+    }
+    // Location data
+    placeTotal: number = 0
+    places: any = []
+    placeOptions: ListOption[] = [];
+    placeSearchForm: any = {
+        placeCode: '',
+        placeName: '',
+        page: 1,
+        limit: 10
+    }
+    loadPlaceLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.placeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.places = res ?? [];
+            this.placeTotal = res.length ?? 0;
+        
+            this.placeOptions = this.places.map((a: any) => ({
+                value: a.id,
+                label: `${a.placeCode}`,
+            }))
+    
+            return this.placeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
+    }
 }

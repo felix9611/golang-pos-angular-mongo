@@ -81,6 +81,7 @@ type ReturnInvoiceDetailResponse struct {
 	ReturnToVendor   bool                      `json:"returnToVendor" bson:"returnToVendor"`
 	Invoice          models.Invoice            `json:"invoice" bson:"invoice"`
 	Member           models.MemberLists        `json:"member" bson:"member"`
+	CreatedAt        string                    `json:"createAt"`
 	ReturnItems      []ReturnInvoiceItemDetail `json:"returnItems" bson:"returnItems"`
 }
 

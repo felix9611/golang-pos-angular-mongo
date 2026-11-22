@@ -42,6 +42,7 @@ import { Subscription } from 'rxjs'
 export class RoleComponent implements OnInit{
     @ViewChild('nzTreeComponent', { static: false }) nzTreeComponent!: NzTreeComponent
      private rightSubscription: Subscription
+    private userSubscription: Subscription
     constructor(
         private message: NzMessageService,
         private userStoreService: UserStoreService
@@ -55,15 +56,24 @@ export class RoleComponent implements OnInit{
                 delete: answer.delete ?? false
                  // keep default value
             }
-        })   
+        }) 
+        
+        this.userSubscription = this.userStoreService.user$.subscribe((data: any) => {
+            this.superAdmin = data.superAdmin
+        })
     }
     
     ngOnDestroy() {
         if (this.userStoreService.menuRole$) {
-            //    this.rightSubscription.unsubscribe()
+            this.rightSubscription.unsubscribe()
+        }
+        if (this.userStoreService.user$) {
+            this.userSubscription.unsubscribe()
         }
     }
-    
+
+    superAdmin: boolean = false
+    manager: boolean = false
 
     userRightInside: any = {
         read: false,

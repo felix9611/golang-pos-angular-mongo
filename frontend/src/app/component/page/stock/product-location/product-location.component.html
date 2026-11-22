@@ -5,20 +5,16 @@
                 <input class="h-full" nz-input type="text" name="assetCode" placeholder="Asset Code" [(ngModel)]="searchForm.assetCode" />
             </div>
             <div class="w-[300px] h-full">
-                <nz-select
-                    nzSize="large"
-                    class="w-full h-full" 
-                    name="typeId" 
-                    [(ngModel)]="searchForm.locationIds"  
-                    nzMode="multiple" 
-                    nzAllowClear  
-                    nzShowArrow
-                    nzPlaceHolder="Location"
-                >
-                    @for (option of locationList; track option) {
-                        <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
-                    }
-                </nz-select>
+                <app-filter-list-small
+                    label="Location"
+                    [apiUrl]="'/base/location/filter/list'"
+                    [requestBody]="placeSearchForm"
+                    [postApi]="loadPlaceLists"
+                    [multiple]="true"
+                    [searchDataKey]="['placeCode', 'placeName']"
+                    [(value)]="searchForm.locationIds"
+                    (valueChange)="searchForm.locationIds"
+                />
             </div>
             <div (click)="loadProductLocationLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
                 Search

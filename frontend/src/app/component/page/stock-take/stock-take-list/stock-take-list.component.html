@@ -5,17 +5,16 @@
                 <input class="h-full" nz-input type="text" id="name" name="name" placeholder="Input Name" [(ngModel)]="searchForm.name" />
             </div>
             <div class="w-[150px] h-full">
-                <nz-select
-                    nzSize="large"
-                    class="w-full h-full" 
-                    name="placeId" 
-                    [(ngModel)]="searchForm.placeIds"  
-                    nzMode="multiple" nzAllowClear nzShowArrow
-                     nzPlaceHolder="Location">
-                    @for (option of placeLists; track option) {
-                      <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
-                    }
-                </nz-select>
+                <app-filter-list-small
+                    label="Location"
+                    [apiUrl]="'/base/location/filter/list'"
+                    [requestBody]="placeSearchForm"
+                    [postApi]="loadPlaceLists"
+                    [multiple]="true"
+                    [searchDataKey]="['placeCode', 'placeName']"
+                    [(value)]="searchForm.placeIds"
+                    (valueChange)="searchForm.placeIds"
+                />
             </div>
             <div (click)="loadStockTakeLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
                 Search
@@ -111,16 +110,17 @@
                     <nz-form-item>
                         <nz-form-label [nzSpan]="6" nzFor="email">Location Code</nz-form-label>
                         <nz-form-control [nzSpan]="14">
-                            <nz-select
-                                class="w-full h-full" 
-                                name="actionPlaceId" 
-                                [(ngModel)]="editForm.actionPlaceId"  
-                                nzAllowClear nzShowArrow
-                                nzPlaceHolder="Please Select">
-                                @for (option of placeLists; track option) {
-                                <nz-option [nzLabel]="option.placeName" [nzValue]="option.id"></nz-option>
-                                }
-                            </nz-select>
+                            <app-filter-list-small
+                                class="w-[78%]"
+                                label="Location"
+                                [apiUrl]="'/base/location/filter/list'"
+                                [requestBody]="placeSearchForm"
+                                [postApi]="loadPlaceLists"
+                                [multiple]="false"
+                                [searchDataKey]="['placeCode', 'placeName']"
+                                [(singleValue)]="editForm.actionPlaceId"
+                                (singleValueChange)="editForm.actionPlaceId"
+                            />
                         </nz-form-control>
                     </nz-form-item>
                     <nz-form-item>

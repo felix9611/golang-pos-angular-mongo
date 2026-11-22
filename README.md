@@ -1,6 +1,7 @@
 <h1>POS System</h1>
 <p><strong>Golang Gin & Angular SSR | Cloud-based Web Application for POS System</strong></p>
 <p>NCPL（Non-Commercial Public License）</p>
+<p>Current version: V1.9 Main </p>
 
 <h2>🌟 Project Overview</h2>
 <p>This is a full-stack <strong>POS (Point of Sale) System</strong> built with <strong>Golang Gin Framework</strong> and <strong>Angular SSR</strong>, It is designed for businesses to manage purchase orders, transactions, inventory, and product records.</p>

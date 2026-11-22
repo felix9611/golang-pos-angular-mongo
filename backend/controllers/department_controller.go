@@ -212,17 +212,38 @@ func VoidDepartmentById(c *gin.Context) {
 // @Success      200      {object}  []models.Department
 // @Router       /sys/department/filter/list [post]
 func ListPageDepartmentWithFilter(c *gin.Context) {
-	var deptPageDto dto.DepartmentPageDto
-	if err := c.ShouldBindJSON(&deptPageDto); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	value, _ := c.Get(identityKey)
+	user, ok := value.(*auth.AuthUser)
+	if !ok || user == nil {
+		c.JSON(401, gin.H{"error": "Invalid user"})
 		return
 	}
-	departments, err := services.DepartmentListWithFilters(&deptPageDto)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
-		return
+
+	if !(user.SuperAdmin || user.Manager) {
+		var deptPageDto dto.DepartmentPageDto
+		if err := c.ShouldBindJSON(&deptPageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		departments, err := services.DepartmentListWithFilters(&deptPageDto, user.DeptIds)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
+			return
+		}
+		c.JSON(http.StatusOK, departments)
+	} else {
+		var deptPageDto dto.DepartmentPageDto
+		if err := c.ShouldBindJSON(&deptPageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		departments, err := services.DepartmentListWithFilters(&deptPageDto, nil)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to list departments"})
+			return
+		}
+		c.JSON(http.StatusOK, departments)
 	}
-	c.JSON(http.StatusOK, departments)
 }
 
 // @Summary      List Departments

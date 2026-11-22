@@ -16,6 +16,8 @@ import { NzMessageService } from 'ng-zorro-antd/message'
 import { UserStoreService } from '../../../../../state/user.service'
 import { debounceTime, Subscription, timer } from 'rxjs'
 import { findMenuItem } from '../../../tool-function'
+import { ListOption } from '../../../components/filter-list/filter-list.component'
+import { FilterListApiSmall } from '../../../components/filter-list-small/filter-list.component'
 
 @Component({
     imports: [
@@ -29,12 +31,12 @@ import { findMenuItem } from '../../../tool-function'
             MatIconModule,
             NzDatePickerModule,
             NzCheckboxModule, 
+            FilterListApiSmall 
         ],
         templateUrl: './return-invoice-form.component.html'
 })
-export class ReturnInvoiceFormComponent implements OnInit {
+export class ReturnInvoiceFormComponent {
     private rightSubscription: Subscription
-    private userRightSubscription: Subscription
     constructor(
             private route: ActivatedRoute, 
             private routeTo: Router,
@@ -52,21 +54,11 @@ export class ReturnInvoiceFormComponent implements OnInit {
                      // keep default value
                 }
         })
-
-        this.userRightSubscription = this.userStoreService.user$.subscribe((data: any) => {
-            this.superAdmin = data.superAdmin
-            if (data.superAdmin !== true) {
-                this.locationList = data.locations
-            }
-        })
     }
 
     ngOnDestroy() {
         if (this.userStoreService.menuRole$) {
             this.rightSubscription.unsubscribe()
-        }
-        if (this.userStoreService.user$) {
-            this.userRightSubscription.unsubscribe()
         }
     }
 
@@ -74,10 +66,6 @@ export class ReturnInvoiceFormComponent implements OnInit {
         read: false,
         write: false,
         update: false
-    }
-
-    ngOnInit(): void {
-        this.loadLocationList()
     }
 
     returnInvoiceForm: UpdateReturnInvoiceDto = {
@@ -121,14 +109,6 @@ export class ReturnInvoiceFormComponent implements OnInit {
         if (event)  {
             const data = await getApiWithAuth(`/invoice/number/${event}`)
             this.invoiceDetail = data
-        }
-    }
-
-    locationList: any[] = []
-    async loadLocationList() {
-        if (this.superAdmin === true) {
-            const data = await getApiWithAuth('/base/location/all')
-            this.locationList = data
         }
     }
 
@@ -211,6 +191,41 @@ export class ReturnInvoiceFormComponent implements OnInit {
             this.message.error(data.error)
         }
     }
-
+    // Location data
+    placeTotal: number = 0
+    places: any = []
+    placeOptions: ListOption[] = [];
+    placeSearchForm: any = {
+        placeCode: '',
+        placeName: '',
+        page: 1,
+        limit: 10
+    }
+    loadPlaceLists = async (
+        url: string,
+        body: Record<string, unknown>,
+    ): Promise<ListOption[]> => {
+        const payload = {
+          ...this.placeSearchForm,
+          ...body,
+        }
+    
+        try {
+            const res = await postApiWithAuth(url, payload);
+        
+            this.places = res ?? [];
+            this.placeTotal = res.length ?? 0;
+        
+            this.placeOptions = this.places.map((a: any) => ({
+                value: a.id,
+                label: `${a.placeCode} - ${a.placeName}`,
+            }))
+    
+            return this.placeOptions
+        } catch (error) {
+            this.message.error('API request failed')
+            throw error
+        }
+    }
 }
 

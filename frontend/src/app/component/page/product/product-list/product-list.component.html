@@ -8,31 +8,29 @@
                 <input class="h-full" nz-input type="text" name="assetName" placeholder="Asset Name" [(ngModel)]="searchForm.assetName" />
             </div>
             
-            <div class="w-[150px] h-full">
-                <nz-select
-                    nzSize="large"
-                    class="w-full h-full" 
-                    name="typeId" 
-                    [(ngModel)]="searchForm.typeIds"  
-                    nzMode="multiple" nzAllowClear  nzShowArrow
-                     nzPlaceHolder="Product Type">
-                    @for (option of typeLists; track option) {
-                      <nz-option [nzLabel]="option.typeName" [nzValue]="option.id"></nz-option>
-                    }
-                </nz-select>
+           <div class="lg:w-[200px] h-full">
+                <app-filter-list-small
+                    label="Product Type"
+                    [apiUrl]="'/product/product-type/filter/list'"
+                    [requestBody]="productTypeSearchForm"
+                    [postApi]="loadTypeLists"
+                    [multiple]="true"
+                    [searchDataKey]="['name']"
+                    [(value)]="searchForm.typeIds"
+                    (valueChange)="searchForm.typeIds"
+                />
             </div>
-            <div class="w-[150px] h-full">
-                <nz-select
-                    nzSize="large"
-                    class="w-full h-full" 
-                    name="deptId" 
-                    [(ngModel)]="searchForm.deptIds"  
-                    nzMode="multiple" nzAllowClear  nzShowArrow
-                     nzPlaceHolder="Department">
-                    @for (option of deptLists; track option) {
-                      <nz-option [nzLabel]="option.deptName" [nzValue]="option.id"></nz-option>
-                    }
-                </nz-select>
+            <div class="lg:w-[200px] h-full">
+                <app-filter-list-small
+                    label="Department"
+                    [apiUrl]="'/sys/department/filter/list'"
+                    [requestBody]="departmentSearchForm"
+                    [postApi]="loadDeptLists"
+                    [multiple]="true"
+                    [searchDataKey]="['name']"
+                    [(value)]="searchForm.deptIds"
+                    (valueChange)="searchForm.deptIds"
+                />
             </div>
             <div (click)="loadProductLists()" class="w-[100px]  border-1 border-[#54A4FF] hover:bg-[#2E7FDB] text-center px-1 py-2 rounded-lg">
                 Search

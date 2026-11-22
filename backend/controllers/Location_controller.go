@@ -237,10 +237,20 @@ func LocationListWithFilter(c *gin.Context) {
 		return
 	}
 
-	if !user.SuperAdmin {
-		c.JSON(403, gin.H{
-			"error": "Access denied",
-		})
+	if !(user.SuperAdmin || user.Manager) {
+		var locationPageDto dto.LocationPageDto
+		if err := c.ShouldBindJSON(&locationPageDto); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		result, err := services.LocationListWithFilter(&locationPageDto, user.PlaceIds)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, result)
 	} else {
 		var locationPageDto dto.LocationPageDto
 		if err := c.ShouldBindJSON(&locationPageDto); err != nil {
@@ -248,7 +258,7 @@ func LocationListWithFilter(c *gin.Context) {
 			return
 		}
 
-		result, err := services.LocationListWithFilter(&locationPageDto)
+		result, err := services.LocationListWithFilter(&locationPageDto, nil)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
