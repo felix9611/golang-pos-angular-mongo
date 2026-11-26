@@ -13,8 +13,8 @@
 <p>The system is <strong>cloud-based</strong>, reducing IT infrastructure costs and offering ease of use with no installation required.</p>
 
 <p>🔗 <strong><a href="https://pos-gin.felix9611.com/login" target="_blank">Online Demo</a></strong></p>
-<p><strong>Username:</strong> <code>Demo</code><br>
-<strong>Password:</strong> <code>888888</code></p>
+<p><strong>Username:</strong> <code>demo</code><br>
+<strong>Password:</strong> <code>possystem</code></p>
 <p><em>Note: Backend and Frontend both hosted on self-hosted Raspberry Pi5 with Cloudflare</em></p>
 
 <!-- Add example images here if available -->
