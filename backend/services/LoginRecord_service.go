@@ -14,7 +14,7 @@ func GetLoginRecordsCollection() *mongo.Collection {
 	return config.GetCollection("login_records")
 }
 
-func AddLoginRecord(username string, ip string, loginStatus string) (interface{}, error) {
+func AddLoginRecord(username string, ip string, loginStatus string, ray string) (interface{}, error) {
 	collection := GetLoginRecordsCollection()
 
 	saveData := bson.M{
@@ -22,6 +22,7 @@ func AddLoginRecord(username string, ip string, loginStatus string) (interface{}
 		"ipAddress":   ip,
 		"loginStatus": loginStatus,
 		"loginTime":   time.Now(),
+		"ray":         ray,
 	}
 
 	res, err := collection.InsertOne(context.Background(), saveData)
