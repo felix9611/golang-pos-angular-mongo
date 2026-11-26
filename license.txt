@@ -1,8 +1,15 @@
 NCPL（Non-Commercial Public License）
-This software is licensed under the No-Cost Public License (NCPL). The terms are as follows:
+This software is licensed under the Non-Commercial Public License (NCPL). The terms are as follows:
 
-- Free for personal and non-commercial use.
+- Permission is granted to use, copy, modify solely for personal and non-commercial purposes, subject to the terms of this license
 - For commercial purposes (including enterprise or organization internal use), a commercial license is required.
+- All copies and derivative versions must retain the original author's copyright and licensing statements.
+- Commercial use is prohibited without written commercial authorization.
+- Violation of any licensing terms will result in the termination of the license.
+- These licensing restrictions apply to the software in whole or in part, including modified versions, derivative works, and incorporated source code.
+- No commercial redistribution, sublicensing, sale, or incorporation into commercial products or services is permitted without prior written authorization from the copyright holder.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED. TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE AUTHOR SHALL NOT BE LIABLE FOR ANY DAMAGES OR LOSSES ARISING FROM THE USE OF THE SOFTWARE.
 
 To obtain a commercial license or customized services, please contact:
 
@@ -12,3 +19,11 @@ About the Developer:
 I am a full-stack developer specializing in management solutions. I offer customized services, including report generation, system integration, and more. Companies are welcome to collaborate with me to tailor this tool to your specific needs!
 
 For any questions, feedback, or collaboration inquiries, feel free to reach out.
+
+Copyright (c) 2026 Felix9611
+All rights reserved except as expressly granted
+under this license.
+
+Third-party components remain subject to their
+respective licenses. This license applies only
+to software owned by the copyright holder.
