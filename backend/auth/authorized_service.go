@@ -4,6 +4,9 @@ import (
 	"golang-pos-mongo-backend/backend/dto"
 	"golang-pos-mongo-backend/backend/services"
 	"golang-pos-mongo-backend/backend/tools"
+	"net"
+	"os"
+	"strings"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
@@ -66,6 +69,32 @@ func LoginAuthenticator() func(c *gin.Context) (interface{}, error) {
 			return "", err
 		}
 
+		ipAddress := loginVals.IpAddress
+		rayId := ""
+		if os.Getenv("PROD") == "YES" {
+			ipAddress = c.GetHeader("CF-Connecting-IP")
+			rayId = c.GetHeader("CF-Ray")
+		}
+
+		var InvalidApiAddress = map[string]struct{}{
+			"0.0.0.0":   {},
+			"127.0.0.1": {},
+			"1.1.1.1":   {},
+			"1.2.3.4":   {},
+			"::1":       {},
+			"::":        {},
+		}
+
+		ip := strings.TrimSpace(ipAddress)
+		_, invalid := InvalidApiAddress[ip]
+
+		if ip == "" || net.ParseIP(ip) == nil || invalid {
+			c.JSON(401, gin.H{
+				"code":    401,
+				"message": "Not Allow to login!",
+			})
+		}
+
 		userID := loginVals.Username
 		password := loginVals.Password
 
@@ -80,10 +109,10 @@ func LoginAuthenticator() func(c *gin.Context) (interface{}, error) {
 		}
 
 		if user.Password != hashedPassword {
-			services.AddLoginRecord(user.Username, loginVals.IpAddress, "failed")
+			services.AddLoginRecord(user.Username, loginVals.IpAddress, "failed", rayId)
 			return nil, jwt.ErrFailedAuthentication
 		} else {
-			services.AddLoginRecord(user.Username, loginVals.IpAddress, "success")
+			services.AddLoginRecord(user.Username, loginVals.IpAddress, "success", rayId)
 			return &AuthUser{
 				Username:   user.Username,
 				RoleIds:    user.Roles,
