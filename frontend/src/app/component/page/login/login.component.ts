@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit{
 
         const res = await postApiWithAuth('/login', this.loginForm)
 
-        if (!res.msg) {
+        if (!res.message) {
             this.userStoreService.setAccessToken(res.token)
             const checkpoint = await this.userStoreService.isAuthenticated()
             if (checkpoint) {
@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit{
                 // this.router.navigate(['/sale-point'])
             }
         } else {
-            this.message.error(res.msg)
+            this.message.error(res.message)
         }
     }
 
