@@ -70,7 +70,7 @@ export class UserInfoComponent implements OnInit {
         if (this.resetPwForm.newPassword === this.resetPwForm.againNewPassword) {
             const res = await postApiWithAuth('/sys/user/user-self/update-password', {   username: this.userInfo.username, newPassword: this.resetPwForm.newPassword })
 
-            if (res.ModifiedCount === 1) {
+            if (res.result.ModifiedCount === 1) {
                 this.message.info('Reset password successfully!')
                 this.closeResetPWDialog()
             } else {

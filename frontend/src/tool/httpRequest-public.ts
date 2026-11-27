@@ -15,6 +15,11 @@ export const postApi = async (url: string, data: any) => {
         },
         body: JSON.stringify(data)
     })
+
+    if (rawResponse.status === 204) {
+        return null
+    }
+
     const content: any = await rawResponse.json()
     return content
 }
@@ -27,6 +32,11 @@ export const getApi = async (url: string) => {
             'Content-Type': contentType
         }
     })
+
+    if (rawResponse.status === 204) {
+        return null
+    }
+
     const content: any = await rawResponse.json()
     return content
 }
@@ -37,6 +47,11 @@ export const getApiFromOutside = async (url: string, headers?: any) => {
             'Content-Type': contentType
         } */
     })
+
+    if (rawResponse.status === 204) {
+        return null
+    }
+
     const content: any = await rawResponse.json()
     return content
 }
